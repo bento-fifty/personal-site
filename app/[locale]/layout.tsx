@@ -16,10 +16,24 @@ const geistMono = Geist_Mono({
   subsets: ['latin'],
 });
 
-export const metadata: Metadata = {
-  title: 'Evan Chang',
-  description: 'Event Planner & Brand Experience Consultant',
-};
+export function generateStaticParams() {
+  return routing.locales.map((locale) => ({locale}));
+}
+
+export async function generateMetadata({
+  params,
+}: {
+  params: Promise<{locale: string}>;
+}): Promise<Metadata> {
+  const {locale} = await params;
+  return {
+    title: 'Evan Chang',
+    description:
+      locale === 'zh-TW'
+        ? '活動企劃 · 品牌體驗顧問'
+        : 'Event Planner & Brand Experience Consultant',
+  };
+}
 
 export default async function LocaleLayout({
   children,
