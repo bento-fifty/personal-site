@@ -63,7 +63,7 @@ function CaseRow({ c, locale }: { c: Case; locale: string }) {
 
       {/* Middle: title + desc */}
       <div className="flex-1 min-w-0">
-        <h2 className="font-display text-[#1A1A1A] text-[1.75rem] md:text-3xl font-light leading-snug mb-2 group-hover:text-[#C8A96E] transition-colors">
+        <h2 className="font-display text-[#1A1A1A] text-[1.75rem] md:text-3xl font-light leading-snug mb-2 group-hover:text-[#0891B2] transition-colors">
           {title}
         </h2>
         <p className="font-label text-[#1A1A1A]/35 text-[0.625rem]">{desc}</p>
@@ -74,7 +74,7 @@ function CaseRow({ c, locale }: { c: Case; locale: string }) {
         <span className="font-label text-[#1A1A1A]/25 text-[0.5625rem]">
           {c.date}
         </span>
-        <div className="w-36 aspect-[4/3] bg-[rgba(0,0,0,0.04)] border border-[rgba(0,0,0,0.06)] overflow-hidden flex items-center justify-center group-hover:border-[rgba(200,169,110,0.35)] transition-colors">
+        <div className="w-36 aspect-[4/3] bg-[rgba(0,0,0,0.04)] border border-[rgba(0,0,0,0.06)] overflow-hidden flex items-center justify-center group-hover:border-[rgba(8,145,178,0.35)] transition-colors">
           <span className="font-label text-[#1A1A1A]/10 text-[0.5rem]">
             IMG_{c.id}
           </span>
@@ -82,7 +82,7 @@ function CaseRow({ c, locale }: { c: Case; locale: string }) {
       </div>
 
       {/* Arrow */}
-      <span className="font-label text-[#1A1A1A]/20 text-xs group-hover:text-[#C8A96E] group-hover:translate-x-1 transition-all">
+      <span className="font-label text-[#1A1A1A]/20 text-xs group-hover:text-[#0891B2] group-hover:translate-x-1 transition-all">
         →
       </span>
     </Link>

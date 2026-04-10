@@ -57,13 +57,20 @@ export default function DataStreams() {
   }, []);
 
   return (
+    <>
+    <style>{`
+      @keyframes dataFall {
+        from { transform: translateY(0); }
+        to   { transform: translateY(-50%); }
+      }
+    `}</style>
     <div
       aria-hidden
       className="absolute inset-0 overflow-hidden pointer-events-none select-none"
       style={{
         // PCB dot grid: ultra-faint gold dots
         backgroundImage:
-          'radial-gradient(circle, rgba(200,169,110,0.07) 1px, transparent 1px)',
+          'radial-gradient(circle, rgba(92,225,255,0.07) 1px, transparent 1px)',
         backgroundSize: '24px 24px',
       }}
     >
@@ -106,5 +113,6 @@ export default function DataStreams() {
         </div>
       ))}
     </div>
+    </>
   );
 }

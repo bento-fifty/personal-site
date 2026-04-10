@@ -64,7 +64,7 @@ export default async function CaseStudyPage({
           </p>
           <Link
             href="/work"
-            className="font-label text-[#1A1A1A]/35 text-[0.625rem] hover:text-[#C8A96E] transition-colors"
+            className="font-label text-[#1A1A1A]/35 text-[0.625rem] hover:text-[#0891B2] transition-colors"
           >
             ← {locale === 'zh-TW' ? '返回作品集' : 'Back to Work'}
           </Link>

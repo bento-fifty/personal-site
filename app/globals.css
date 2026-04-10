@@ -1,6 +1,6 @@
 @import "tailwindcss";
 
-/* ── Design Tokens ─────────────────────────────── */
+/* ── Design Tokens · neon-blue palette ─────────── */
 :root {
   /* Themes */
   --bg-dark: #080808;
@@ -10,9 +10,11 @@
   --text-light-primary: #1A1A1A;
   --text-light-secondary: #666666;
 
-  /* Accent */
-  --accent: #C8A96E;
-  --accent-dim: rgba(200, 169, 110, 0.15);
+  /* Accent — neon blue */
+  --accent: #5CE1FF;
+  --accent-dim: rgba(92, 225, 255, 0.15);
+  --accent-deep: #0891B2;
+  --accent-glow: rgba(92, 225, 255, 0.45);
 
   /* Borders */
   --border-dark: rgba(255, 255, 255, 0.08);

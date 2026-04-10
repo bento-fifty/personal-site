@@ -7,6 +7,8 @@ import {Cormorant_Garamond, DM_Sans, Space_Mono, Noto_Serif_TC, Noto_Sans_TC} fr
 import Nav from '@/components/layout/Nav';
 import Footer from '@/components/layout/Footer';
 import { NavThemeProvider } from '@/contexts/NavThemeContext';
+import { Analytics } from '@vercel/analytics/next';
+import { SpeedInsights } from '@vercel/speed-insights/next';
 import '../globals.css';
 
 const cormorant = Cormorant_Garamond({
@@ -89,6 +91,8 @@ export default async function LocaleLayout({
             <Footer />
           </NavThemeProvider>
         </NextIntlClientProvider>
+        <Analytics />
+        <SpeedInsights />
       </body>
     </html>
   );

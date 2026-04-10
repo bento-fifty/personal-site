@@ -64,7 +64,7 @@ export default function FeaturedWork() {
               </div>
 
               {/* Title + desc */}
-              <h3 className="font-display text-white text-2xl font-light leading-snug mb-2 group-hover:text-[#C8A96E] transition-colors">
+              <h3 className="font-display text-white text-2xl font-light leading-snug mb-2 group-hover:text-[#5CE1FF] transition-colors">
                 {c.title}
               </h3>
               <p className="font-label text-white/30 text-[0.625rem]">{c.desc}</p>
@@ -76,7 +76,7 @@ export default function FeaturedWork() {
         <div className="mt-20 text-center">
           <Link
             href="/work"
-            className="inline-block font-label text-[0.6875rem] border border-white/20 text-white/50 px-10 py-4 hover:border-[#C8A96E] hover:text-[#C8A96E] transition-colors"
+            className="inline-block font-label text-[0.6875rem] border border-white/20 text-white/50 px-10 py-4 hover:border-[#5CE1FF] hover:text-[#5CE1FF] transition-colors"
           >
             {t('cta_work')} →
           </Link>
