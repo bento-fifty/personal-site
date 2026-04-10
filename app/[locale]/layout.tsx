@@ -6,6 +6,7 @@ import {getMessages} from 'next-intl/server';
 import {Cormorant_Garamond, DM_Sans, Space_Mono, Noto_Serif_TC, Noto_Sans_TC} from 'next/font/google';
 import Nav from '@/components/layout/Nav';
 import Footer from '@/components/layout/Footer';
+import { NavThemeProvider } from '@/contexts/NavThemeContext';
 import '../globals.css';
 
 const cormorant = Cormorant_Garamond({
@@ -80,11 +81,13 @@ export default async function LocaleLayout({
     >
       <body className="min-h-full flex flex-col">
         <NextIntlClientProvider messages={messages}>
-          <Nav />
-          <main className="flex-1 pt-14">
-            {children}
-          </main>
-          <Footer />
+          <NavThemeProvider>
+            <Nav />
+            <main className="flex-1 pt-14">
+              {children}
+            </main>
+            <Footer />
+          </NavThemeProvider>
         </NextIntlClientProvider>
       </body>
     </html>

@@ -1,10 +1,13 @@
-import {useTranslations} from 'next-intl';
+import DarkNavActivator from '@/components/home/DarkNavActivator';
+import Hero from '@/components/home/Hero';
+import FeaturedWork from '@/components/home/FeaturedWork';
 
 export default function HomePage() {
-  const t = useTranslations('home');
   return (
-    <main>
-      <h1>{t('headline')}</h1>
-    </main>
+    <>
+      <DarkNavActivator />
+      <Hero />
+      <FeaturedWork />
+    </>
   );
 }

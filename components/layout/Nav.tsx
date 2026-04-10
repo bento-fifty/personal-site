@@ -3,6 +3,7 @@
 import {useTranslations, useLocale} from 'next-intl';
 import {Link, usePathname} from '@/i18n/navigation';
 import {useState} from 'react';
+import {useNavTheme} from '@/contexts/NavThemeContext';
 
 const NAV_ITEMS = [
   {key: 'about',    href: '/about'},
@@ -12,10 +13,11 @@ const NAV_ITEMS = [
   {key: 'contact',  href: '/contact'},
 ] as const;
 
-export default function Nav({theme = 'light'}: {theme?: 'dark' | 'light'}) {
+export default function Nav() {
   const t = useTranslations('nav');
   const pathname = usePathname();
   const [menuOpen, setMenuOpen] = useState(false);
+  const { theme } = useNavTheme();
 
   const isDark = theme === 'dark';
   const borderColor = isDark ? 'border-[rgba(255,255,255,0.08)]' : 'border-[rgba(0,0,0,0.08)]';
