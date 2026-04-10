@@ -3,17 +3,41 @@ import {NextIntlClientProvider, hasLocale} from 'next-intl';
 import {notFound} from 'next/navigation';
 import {routing} from '@/i18n/routing';
 import {getMessages} from 'next-intl/server';
-import {Geist, Geist_Mono} from 'next/font/google';
+import {Cormorant_Garamond, DM_Sans, Space_Mono, Noto_Serif_TC, Noto_Sans_TC} from 'next/font/google';
+import Nav from '@/components/layout/Nav';
+import Footer from '@/components/layout/Footer';
 import '../globals.css';
 
-const geistSans = Geist({
-  variable: '--font-geist-sans',
+const cormorant = Cormorant_Garamond({
+  variable: '--font-cormorant',
   subsets: ['latin'],
+  weight: ['300', '400', '500', '600', '700'],
+  display: 'swap',
 });
 
-const geistMono = Geist_Mono({
-  variable: '--font-geist-mono',
+const dmSans = DM_Sans({
+  variable: '--font-dm-sans',
   subsets: ['latin'],
+  display: 'swap',
+});
+
+const spaceMono = Space_Mono({
+  variable: '--font-space-mono',
+  subsets: ['latin'],
+  weight: ['400', '700'],
+  display: 'swap',
+});
+
+const notoSerifTC = Noto_Serif_TC({
+  variable: '--font-noto-serif-tc',
+  weight: ['400', '500', '600', '700'],
+  display: 'swap',
+});
+
+const notoSansTC = Noto_Sans_TC({
+  variable: '--font-noto-sans-tc',
+  weight: ['400', '500', '700'],
+  display: 'swap',
 });
 
 export function generateStaticParams() {
@@ -52,11 +76,15 @@ export default async function LocaleLayout({
   return (
     <html
       lang={locale}
-      className={`${geistSans.variable} ${geistMono.variable} h-full antialiased`}
+      className={`${cormorant.variable} ${dmSans.variable} ${spaceMono.variable} ${notoSerifTC.variable} ${notoSansTC.variable} h-full antialiased`}
     >
       <body className="min-h-full flex flex-col">
         <NextIntlClientProvider messages={messages}>
-          {children}
+          <Nav />
+          <main className="flex-1 pt-14">
+            {children}
+          </main>
+          <Footer />
         </NextIntlClientProvider>
       </body>
     </html>
