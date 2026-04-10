@@ -1,0 +1,17 @@
+{
+  "nav": {
+    "home": "Home",
+    "about": "About",
+    "work": "Work",
+    "services": "Services",
+    "blog": "Blog",
+    "contact": "Contact"
+  },
+  "home": {
+    "headline": "Events That Leave a Mark",
+    "subheading": "Event Planner · Brand Experience Consultant",
+    "cta_work": "View Work",
+    "cta_contact": "Let's Work Together",
+    "scroll": "Scroll to explore"
+  }
+}
