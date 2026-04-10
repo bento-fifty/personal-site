@@ -37,7 +37,7 @@ yarn-error.log*
 .vercel
 
 # worktrees & brainstorm
-.worktrees/
+.worktrees
 .superpowers/
 
 # typescript
