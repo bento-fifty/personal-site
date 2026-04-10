@@ -19,7 +19,7 @@ export default function Nav({theme = 'light'}: {theme?: 'dark' | 'light'}) {
 
   const isDark = theme === 'dark';
   const textColor = isDark ? 'text-white/70 hover:text-white' : 'text-[#1A1A1A]/60 hover:text-[#1A1A1A]';
-  const borderColor = isDark ? 'border-white/8' : 'border-black/8';
+  const borderColor = isDark ? 'border-[rgba(255,255,255,0.08)]' : 'border-[rgba(0,0,0,0.08)]';
   const bgColor = isDark ? 'bg-[#080808]' : 'bg-[#F7F5F2]';
 
   return (
