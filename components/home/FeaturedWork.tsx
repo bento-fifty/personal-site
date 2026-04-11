@@ -61,7 +61,7 @@ function FeaturedIntro() {
             whileInView={{ opacity: 1, y: 0 }}
             viewport={{ once: true, amount: 0.4 }}
             transition={{ duration: 1, ease: [0.22, 1, 0.36, 1] }}
-            className="font-display font-light text-white text-4xl md:text-5xl lg:text-6xl leading-[1.02] max-w-xl"
+            className="font-display text-white text-[33px] md:text-[44px] lg:text-[55px] leading-[1.02] max-w-xl"
           >
             Three chapters,
             <br />
@@ -164,6 +164,9 @@ function StatCard({ caseData, index }: { caseData: Case; index: number }) {
       clearTimeout(kickoff);
       clearTimeout(next);
       clearTimeout(reset);
+      // Force-clear burst state so we never leave the card on a glitch symbol
+      setBurstScramble(null);
+      setBurstFx(false);
     };
   }, [cardInView, index, primaryStat.value]);
 
@@ -191,8 +194,8 @@ function StatCard({ caseData, index }: { caseData: Case; index: number }) {
       {/* Giant ambient index behind */}
       <span
         aria-hidden
-        className="absolute -top-6 -left-2 font-display font-light text-white/[0.04] leading-none pointer-events-none select-none"
-        style={{ fontSize: 'clamp(7rem, 14vw, 11rem)' }}
+        className="absolute -top-6 -left-2 font-display text-white/[0.04] leading-none pointer-events-none select-none"
+        style={{ fontSize: 'clamp(110px, 14vw, 176px)' }}
       >
         0{index + 1}
       </span>
@@ -201,9 +204,9 @@ function StatCard({ caseData, index }: { caseData: Case; index: number }) {
         [ 0{index + 1} ]
       </span>
       <p
-        className="relative font-display font-light leading-[0.95] mb-4 origin-left tabular-nums"
+        className="relative font-display leading-[0.95] mb-4 origin-left tabular-nums"
         style={{
-          fontSize:   'clamp(3.5rem, 8vw, 6.5rem)',
+          fontSize:   'clamp(55px, 8vw, 99px)',
           color:      burstScramble !== null ? '#5CE1FF' : '#FFFFFF',
           textShadow: burstFx
             ? '-5px 0 0 rgba(255, 40, 120, 1), 5px 0 0 rgba(60, 255, 255, 1), 0 0 40px rgba(92,225,255,0.9)'
@@ -306,7 +309,7 @@ function CaseSection({ c }: { c: Case }) {
         </motion.div>
 
         {/* Title — per-character blur→focus stagger */}
-        <h3 className="font-display font-light text-white leading-[0.98] tracking-tight text-[11vw] md:text-[7.5vw] lg:text-[5.75rem] mb-5 flex flex-wrap">
+        <h3 className="font-display text-white leading-[0.98] text-[44px] md:text-[66px] lg:text-[88px] mb-5 flex flex-wrap">
           {titleChars.map((ch, i) => (
             <TitleChar key={i} ch={ch} index={i} total={titleChars.length} progress={scrollYProgress} />
           ))}
@@ -315,7 +318,7 @@ function CaseSection({ c }: { c: Case }) {
         {/* English subtitle — scramble decode on enter */}
         <motion.p
           style={{ opacity: subOpacity, y: subY }}
-          className="font-display text-white/55 text-base md:text-lg lg:text-xl font-light italic tracking-wide mb-14 md:mb-16"
+          className="font-label text-white/55 text-xs md:text-sm tracking-[0.22em] uppercase mb-14 md:mb-16"
         >
           {subTriggered ? (
             <GlitchText text={c.titleEn} key={c.titleEn} speed={26} once />
@@ -412,6 +415,8 @@ function CaseStatCell({
       clearTimeout(kickoff);
       clearTimeout(next);
       clearTimeout(reset);
+      // Force-clear so stat never stays on a glitch character after unmount / scroll-out
+      setScramble(null);
     };
   }, [inView, stat.value, index]);
 
@@ -435,6 +440,7 @@ function CaseStatCell({
       clearTimeout(kickoff);
       clearTimeout(next);
       clearTimeout(reset);
+      setChromatic(false);
     };
   }, [inView, index]);
 
@@ -444,7 +450,7 @@ function CaseStatCell({
         [ 0{index + 1} ]
       </span>
       <p
-        className="relative font-display text-[#5CE1FF] font-light text-3xl md:text-4xl lg:text-5xl leading-none mb-3"
+        className="relative font-display text-[#5CE1FF] text-[22px] md:text-[33px] lg:text-[44px] leading-none mb-3 tabular-nums"
         style={{
           textShadow: chromatic
             ? '-2px 0 0 rgba(255, 40, 120, 0.95), 2px 0 0 rgba(60, 255, 255, 0.95), 0 0 18px rgba(92,225,255,0.55)'

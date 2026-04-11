@@ -3,7 +3,8 @@ import {NextIntlClientProvider, hasLocale} from 'next-intl';
 import {notFound} from 'next/navigation';
 import {routing} from '@/i18n/routing';
 import {getMessages} from 'next-intl/server';
-import {Cormorant_Garamond, DM_Sans, Space_Mono, Noto_Serif_TC, Noto_Sans_TC} from 'next/font/google';
+import {Geist, Noto_Serif_TC, Noto_Sans_TC} from 'next/font/google';
+import localFont from 'next/font/local';
 import Nav from '@/components/layout/Nav';
 import Footer from '@/components/layout/Footer';
 import { NavThemeProvider } from '@/contexts/NavThemeContext';
@@ -11,23 +12,25 @@ import { Analytics } from '@vercel/analytics/next';
 import { SpeedInsights } from '@vercel/speed-insights/next';
 import '../globals.css';
 
-const cormorant = Cormorant_Garamond({
-  variable: '--font-cormorant',
-  subsets: ['latin'],
-  weight: ['300', '400', '500', '600', '700'],
-  display: 'swap',
-});
-
-const dmSans = DM_Sans({
-  variable: '--font-dm-sans',
+const geist = Geist({
+  variable: '--font-geist',
   subsets: ['latin'],
   display: 'swap',
 });
 
-const spaceMono = Space_Mono({
-  variable: '--font-space-mono',
-  subsets: ['latin'],
-  weight: ['400', '700'],
+const departureMono = localFont({
+  src: '../../public/fonts/DepartureMono-Regular.woff2',
+  variable: '--font-departure-mono',
+  weight: '400',
+  style: 'normal',
+  display: 'swap',
+});
+
+const cubic11 = localFont({
+  src: '../../public/fonts/Cubic_11.woff2',
+  variable: '--font-cubic-11',
+  weight: '400',
+  style: 'normal',
   display: 'swap',
 });
 
@@ -79,7 +82,7 @@ export default async function LocaleLayout({
   return (
     <html
       lang={locale}
-      className={`${cormorant.variable} ${dmSans.variable} ${spaceMono.variable} ${notoSerifTC.variable} ${notoSansTC.variable} h-full antialiased`}
+      className={`${geist.variable} ${departureMono.variable} ${cubic11.variable} ${notoSerifTC.variable} ${notoSansTC.variable} h-full antialiased`}
     >
       <body className="min-h-full flex flex-col">
         <NextIntlClientProvider messages={messages}>

@@ -67,7 +67,7 @@ export default function LocationsMap() {
           transition={{ duration: 1, ease: [0.22, 1, 0.36, 1] }}
           className="flex flex-col md:flex-row md:items-end gap-6 md:gap-10 mb-16"
         >
-          <h2 className="font-display font-light text-white text-4xl md:text-5xl lg:text-6xl leading-[1.02] max-w-xl">
+          <h2 className="font-display text-white text-[33px] md:text-[44px] lg:text-[55px] leading-[1.02] max-w-xl">
             Where the work
             <br />
             has happened.
@@ -77,8 +77,9 @@ export default function LocationsMap() {
           </p>
         </motion.div>
 
-        {/* Map + list grid */}
-        <div className="grid grid-cols-1 lg:grid-cols-[320px_1fr] gap-12 lg:gap-20 items-start">
+        {/* Map + list grid — centered cluster so map hugs the mid-axis
+            and the list column doesn't fan into the right-side void */}
+        <div className="grid grid-cols-1 lg:grid-cols-[320px_520px] gap-12 lg:gap-20 items-start lg:justify-center">
           {/* ── Map column ─────────────────────────── */}
           <motion.div
             initial={{ opacity: 0 }}
@@ -255,7 +256,7 @@ export default function LocationsMap() {
                       x={pin.x + 14}
                       y={pin.y - 2}
                       fill={isActive ? '#5CE1FF' : 'rgba(255,255,255,0.8)'}
-                      fontFamily="var(--font-space-mono), monospace"
+                      fontFamily="var(--font-mono), monospace"
                       fontSize="14"
                       fontWeight="500"
                       letterSpacing="1.2"
@@ -277,7 +278,7 @@ export default function LocationsMap() {
                       x={pin.x + 14}
                       y={pin.y + 13}
                       fill="rgba(92,225,255,0.55)"
-                      fontFamily="var(--font-space-mono), monospace"
+                      fontFamily="var(--font-mono), monospace"
                       fontSize="9"
                       letterSpacing="0.6"
                       initial={{ opacity: 0 }}

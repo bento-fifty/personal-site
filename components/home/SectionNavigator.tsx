@@ -106,22 +106,26 @@ export default function SectionNavigator() {
             >
               {num}&nbsp;/&nbsp;{label}
             </span>
-            <span
-              className={[
-                'relative inline-block rounded-full transition-all duration-300',
-                isActive
-                  ? 'w-[14px] h-[14px] bg-[#5CE1FF]'
-                  : 'w-[7px] h-[7px] bg-white/35 group-hover:bg-[#5CE1FF]/80 group-hover:scale-125',
-              ].join(' ')}
-              style={
-                isActive
-                  ? {
-                      boxShadow:
-                        '0 0 14px rgba(92,225,255,0.95), 0 0 3px rgba(92,225,255,1)',
-                    }
-                  : undefined
-              }
-            />
+            {/* Fixed 14px slot centers both active (14px) and inactive (7px)
+                dots on the same axis, so both sit on the progress line */}
+            <span className="relative inline-flex items-center justify-center w-[14px] h-[14px]">
+              <span
+                className={[
+                  'inline-block rounded-full transition-all duration-300',
+                  isActive
+                    ? 'w-[14px] h-[14px] bg-[#5CE1FF]'
+                    : 'w-[7px] h-[7px] bg-white/35 group-hover:bg-[#5CE1FF]/80 group-hover:scale-125',
+                ].join(' ')}
+                style={
+                  isActive
+                    ? {
+                        boxShadow:
+                          '0 0 14px rgba(92,225,255,0.95), 0 0 3px rgba(92,225,255,1)',
+                      }
+                    : undefined
+                }
+              />
+            </span>
           </button>
         );
       })}

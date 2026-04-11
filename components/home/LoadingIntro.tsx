@@ -220,7 +220,7 @@ export default function LoadingIntro({ onComplete }: Props) {
             <p
               className="text-[#5CE1FF] mb-6 uppercase"
               style={{
-                fontFamily:    'var(--font-space-mono), monospace',
+                fontFamily:    'var(--font-mono), monospace',
                 fontSize:      'clamp(1rem, 1.5vw, 1.375rem)',
                 letterSpacing: '0.4em',
                 textShadow:    '0 0 18px rgba(92,225,255,0.6), 0 0 4px rgba(92,225,255,0.9)',

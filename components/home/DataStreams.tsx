@@ -94,7 +94,7 @@ export default function DataStreams() {
               display:        'flex',
               flexDirection:  'column',
               fontSize:       lane.fontSize,
-              fontFamily:     'var(--font-space-mono), monospace',
+              fontFamily:     'var(--font-mono), monospace',
               lineHeight:     `${lane.lineHeight}px`,
               color:          '#ffffff',
               textAlign:      'center',

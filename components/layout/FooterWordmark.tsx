@@ -61,10 +61,13 @@ export default function FooterWordmark() {
   return (
     <h3
       ref={ref}
-      className="font-display font-light text-white leading-[0.92] mb-6"
+      className="text-white leading-[0.92] mb-6"
       style={{
-        fontSize:      'clamp(2.5rem, 5vw, 4rem)',
-        letterSpacing: '-0.01em',
+        fontFamily:          'var(--font-geist), "Chiron Sung HK WS", sans-serif',
+        fontWeight:          500,
+        fontSize:            'clamp(2.5rem, 5vw, 4rem)',
+        letterSpacing:       '-0.01em',
+        WebkitFontSmoothing: 'antialiased',
       }}
     >
       {/* Evan */}

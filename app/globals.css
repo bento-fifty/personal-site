@@ -1,3 +1,11 @@
+/* ── CJK web fonts (Chiron — subsetted via jsdelivr CDN) ──
+   Chiron Hei HK WS  = modern sharper Hei (body / sans CJK)
+   Chiron Sung HK WS = modern Ming (display / serif CJK)
+   Each CSS declares many @font-face with unicode-range, so the browser
+   only downloads the chunks that cover characters actually used.
+   MUST precede @import "tailwindcss" per CSS spec (all @import first). */
+@import url('https://cdn.jsdelivr.net/gh/chiron-fonts/chiron-hei-hk@release/WOFF2_TTF/css/vf.t1.css');
+@import url('https://cdn.jsdelivr.net/gh/chiron-fonts/chiron-sung-hk@release/WOFF2_TTF/css/vf.t1.css');
 @import "tailwindcss";
 
 /* ── Design Tokens · neon-blue palette ─────────── */
@@ -20,12 +28,16 @@
   --border-dark: rgba(255, 255, 255, 0.08);
   --border-light: rgba(0, 0, 0, 0.08);
 
-  /* Font variables (set by next/font) */
-  --font-heading: var(--font-cormorant);
-  --font-body: var(--font-dm-sans);
-  --font-mono: var(--font-space-mono);
-  --font-cjk-serif: var(--font-noto-serif-tc);
-  --font-cjk-sans: var(--font-noto-sans-tc);
+  /* Font variables (set by next/font) ───
+     ⚡ PIXEL-ONLY MODE — all typography routed through Departure Mono (Latin)
+     + Cubic 11 (CJK). To revert to hybrid Geist+Chiron mode, flip these
+     four assignments back to --font-geist / Chiron Hei HK WS / Chiron Sung HK WS. */
+  --font-heading: var(--font-departure-mono);
+  --font-body: var(--font-departure-mono);
+  --font-mono: var(--font-departure-mono);
+  --font-cjk-display: var(--font-cubic-11), var(--font-noto-serif-tc);
+  --font-cjk-sans: var(--font-cubic-11), var(--font-noto-sans-tc);
+  --font-cjk-mono: var(--font-cubic-11);
 }
 
 @theme inline {
@@ -35,9 +47,9 @@
   --color-bg-light: var(--bg-light);
   --color-text-dark: var(--text-dark-primary);
   --color-text-light: var(--text-light-primary);
-  --font-heading: var(--font-cormorant);
-  --font-body: var(--font-dm-sans);
-  --font-mono: var(--font-space-mono);
+  --font-heading: var(--font-geist);
+  --font-body: var(--font-geist);
+  --font-mono: var(--font-departure-mono);
 }
 
 /* ── Base Styles ───────────────────────────────── */
@@ -46,7 +58,7 @@ html {
 }
 
 body {
-  font-family: var(--font-body), var(--font-cjk-sans), sans-serif;
+  font-family: var(--font-body), var(--font-cjk-sans), monospace;
   background: var(--bg-light);
   color: var(--text-light-primary);
   -webkit-font-smoothing: antialiased;
@@ -54,14 +66,21 @@ body {
 
 /* ── Typography Utilities ──────────────────────── */
 .font-display {
-  font-family: var(--font-heading), var(--font-cjk-serif), serif;
+  font-family: var(--font-heading), var(--font-cjk-display), monospace;
+  font-weight: 400;
+  letter-spacing: 0;
+  /* Pixel-mode: kill antialiasing so Departure Mono / Cubic 11 stay crisp */
+  -webkit-font-smoothing: none;
+  font-smooth: never;
 }
 
 .font-label {
-  font-family: var(--font-mono), monospace;
+  font-family: var(--font-mono), var(--font-cjk-mono), monospace;
   font-size: 0.6875rem;
   letter-spacing: 0.15em;
   text-transform: uppercase;
+  -webkit-font-smoothing: none;
+  font-smooth: never;
 }
 
 /* ── Page Theme Variants ───────────────────────── */
@@ -80,7 +99,7 @@ body {
 .terminal-bracket::after  { content: ' ]'; }
 
 .case-number {
-  font-family: var(--font-mono), monospace;
+  font-family: var(--font-mono), var(--font-cjk-mono), monospace;
   font-size: 0.625rem;
   letter-spacing: 0.1em;
   color: var(--accent);

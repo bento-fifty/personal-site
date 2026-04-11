@@ -1,13 +1,14 @@
+import { getTranslations } from 'next-intl/server';
 import { Link } from '@/i18n/navigation';
 import CopyrightYear from './CopyrightYear';
 import BackToTop from './BackToTop';
 import FooterWordmark from './FooterWordmark';
 
 const NAV_LINKS = [
-  { label: 'About',    href: '/about' as const },
-  { label: 'Work',     href: '/work' as const },
-  { label: 'Services', href: '/services' as const },
-  { label: 'Blog',     href: '/blog' as const },
+  { key: 'about',    href: '/about'    as const },
+  { key: 'work',     href: '/work'     as const },
+  { key: 'services', href: '/services' as const },
+  { key: 'blog',     href: '/blog'     as const },
 ] as const;
 
 const SOCIAL_LINKS = [
@@ -16,7 +17,8 @@ const SOCIAL_LINKS = [
   { label: 'Behance',   href: 'https://behance.net' },
 ] as const;
 
-export default function Footer() {
+export default async function Footer() {
+  const t = await getTranslations('nav');
   return (
     <footer id="contact" className="relative bg-[#080808] text-white border-t border-[rgba(92,225,255,0.12)] overflow-hidden">
       {/* Top-edge glow bar */}
@@ -42,7 +44,7 @@ export default function Footer() {
           >
             {'// LET\'S WORK TOGETHER'}
           </p>
-          <h2 className="font-display font-light text-white text-[2.25rem] md:text-5xl lg:text-[3.75rem] leading-[1.05] max-w-2xl mb-10">
+          <h2 className="font-display text-white text-[33px] md:text-[44px] lg:text-[55px] leading-[1.05] max-w-2xl mb-10">
             Have a project
             <br />
             worth remembering?
@@ -61,7 +63,7 @@ export default function Footer() {
           {/* Brand + location */}
           <div className="md:col-span-5 lg:col-span-6">
             <FooterWordmark />
-            <p className="font-display text-white/60 text-lg md:text-xl font-light italic mb-8 max-w-sm">
+            <p className="font-label text-white/55 text-[0.75rem] tracking-[0.2em] uppercase mb-8 max-w-sm">
               Event planner, producer & consultant.
             </p>
             <div className="font-label text-[0.625rem] text-white/30 space-y-2">
@@ -92,13 +94,13 @@ export default function Footer() {
               [ NAVIGATE ]
             </p>
             <ul className="space-y-3">
-              {NAV_LINKS.map(({ label, href }) => (
-                <li key={label}>
+              {NAV_LINKS.map(({ key, href }) => (
+                <li key={key}>
                   <Link
                     href={href}
                     className="font-display text-white/75 text-lg hover:text-[#5CE1FF] transition-colors inline-flex items-baseline gap-2 group"
                   >
-                    <span>{label}</span>
+                    <span>{t(key)}</span>
                     <span className="font-label text-[0.5625rem] text-white/20 group-hover:text-[#5CE1FF]/60 transition-colors">↗</span>
                   </Link>
                 </li>

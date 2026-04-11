@@ -39,11 +39,11 @@ export default function Nav() {
       className={`fixed top-0 left-0 right-0 z-50 border-b ${borderCol} ${bgCol}/90 backdrop-blur-sm`}
       onKeyDown={(e) => e.key === 'Escape' && setMenuOpen(false)}
     >
-      <div className="relative max-w-7xl mx-auto px-6 h-14 flex items-center justify-between">
+      <div className="relative max-w-7xl mx-auto px-6 h-14 grid grid-cols-[1fr_auto_1fr] items-center gap-6">
         {/* Logo — pulsing dot + blinking terminal cursor + hover scramble */}
         <Link
           href="/"
-          className={`group inline-flex items-center gap-2.5 font-label text-xs tracking-widest ${textBase}`}
+          className={`group justify-self-start inline-flex items-center gap-2.5 font-label text-[11px] tracking-widest ${textBase}`}
           onMouseEnter={() => setLogoHoverCount((n) => n + 1)}
         >
           {/* Pulsing status dot — sharper contrast */}
@@ -67,9 +67,9 @@ export default function Nav() {
           />
         </Link>
 
-        {/* Desktop nav with sliding underline */}
+        {/* Desktop nav with sliding underline — centered via grid column */}
         <ul
-          className="hidden md:flex items-center gap-10"
+          className="hidden md:flex items-center gap-10 justify-self-center"
           onMouseLeave={() => setHoveredKey(null)}
         >
           {NAV_ITEMS.map(({ key, href }) => {
@@ -85,7 +85,7 @@ export default function Nav() {
                   href={href}
                   aria-current={isActive ? 'page' : undefined}
                   className={[
-                    'relative block px-1 pt-1.5 pb-2 font-label text-xs transition-colors',
+                    'relative block px-1 pt-1.5 pb-2 font-label text-[11px] transition-colors',
                     isActive
                       ? isDark ? 'text-white' : 'text-[#1A1A1A]'
                       : isDark
@@ -118,7 +118,7 @@ export default function Nav() {
         </ul>
 
         {/* Right side */}
-        <div className="flex items-center gap-5">
+        <div className="justify-self-end flex items-center gap-5">
           {/* Desktop HUD readout — static, no blinking */}
           {isDark && (
             <div
@@ -139,7 +139,7 @@ export default function Nav() {
             aria-expanded={menuOpen}
             aria-controls="mobile-nav"
             aria-label={menuOpen ? 'Close menu' : 'Open menu'}
-            className={`md:hidden font-label text-xs ${isDark ? 'text-white/70' : 'text-[#1A1A1A]/60'}`}
+            className={`md:hidden font-label text-[11px] ${isDark ? 'text-white/70' : 'text-[#1A1A1A]/60'}`}
           >
             {menuOpen ? '[ CLOSE ]' : '[ MENU ]'}
           </button>
@@ -159,7 +159,7 @@ export default function Nav() {
                     aria-current={isActive ? 'page' : undefined}
                     onClick={() => setMenuOpen(false)}
                     className={[
-                      'font-label text-xs transition-colors',
+                      'font-label text-[11px] transition-colors',
                       isActive
                         ? isDark ? 'text-white font-bold' : 'text-[#1A1A1A] font-bold'
                         : isDark
@@ -185,7 +185,7 @@ function LanguageSwitcher({ isDark }: { isDark: boolean }) {
   const locales = ['zh-TW', 'en'] as const;
 
   return (
-    <div className="font-label text-xs flex items-center gap-2">
+    <div className="font-label text-[11px] flex items-center gap-2">
       {locales.map((loc, i) => (
         <Fragment key={loc}>
           {i > 0 && (

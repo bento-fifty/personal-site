@@ -1,11 +1,11 @@
 {
   "nav": {
     "home": "首頁",
-    "about": "關於我",
-    "work": "作品集",
+    "about": "艾文",
+    "work": "經歷",
     "services": "服務",
     "blog": "文章",
-    "contact": "合作詢問"
+    "contact": "聯繫"
   },
   "home": {
     "headline": "Happy Together, Epic Forever",

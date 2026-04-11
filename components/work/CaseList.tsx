@@ -75,7 +75,7 @@ function CaseRow({ c, locale }: { c: Case; locale: string }) {
 
       {/* Middle: title + desc */}
       <div className="flex-1 min-w-0">
-        <h2 className="font-display text-[#1A1A1A] text-[1.75rem] md:text-3xl font-light leading-snug mb-2 group-hover:text-[#0891B2] transition-colors">
+        <h2 className="font-display text-[#1A1A1A] text-[22px] md:text-[33px] leading-snug mb-2 group-hover:text-[#0891B2] transition-colors">
           {title}
         </h2>
         <p className="font-label text-[#1A1A1A]/35 text-[0.625rem]">{desc}</p>

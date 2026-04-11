@@ -123,15 +123,18 @@ export default function Hero() {
       {/* Layer 0: Loading intro */}
       <LoadingIntro onComplete={() => setLoaded(true)} />
 
-      {/* Layer 1: Ghost text EVENTS — dimmed, static position, CRT + slow glow breath */}
+      {/* Layer 1: Ghost text EVENTS — sits behind the headline, nudged up
+          so it reads as the headline's atmospheric backdrop rather than
+          centering across the full hero block */}
       <motion.div
-        style={{ y: ghostY, opacity: ghostOpacity }}
+        style={{ y: ghostY, opacity: ghostOpacity, paddingBottom: '18vh' }}
         className="absolute inset-0 flex items-center justify-center pointer-events-none select-none"
         aria-hidden
       >
         <div className="relative inline-block leading-none">
           <motion.span
-            className="font-display font-bold text-[22vw] leading-none whitespace-nowrap text-white/[0.028] block"
+            className="font-bold text-[22vw] leading-none whitespace-nowrap text-white/[0.028] block"
+            style={{ fontFamily: 'var(--font-geist), "Chiron Sung HK WS", sans-serif', WebkitFontSmoothing: 'antialiased' }}
             initial={{ filter: 'blur(48px)', opacity: 0 }}
             animate={{
               filter:  loaded ? 'blur(0px)' : 'blur(48px)',
@@ -173,11 +176,13 @@ export default function Hero() {
           {loaded && ghostGlitch && (
             <span
               aria-hidden
-              className="absolute inset-0 font-display font-bold text-[22vw] leading-none whitespace-nowrap block pointer-events-none"
+              className="absolute inset-0 font-bold text-[22vw] leading-none whitespace-nowrap block pointer-events-none"
               style={{
-                color:      'rgba(92, 225, 255, 0.18)',
-                clipPath:   `inset(${ghostGlitch.top}% 0 ${100 - ghostGlitch.top - ghostGlitch.height}% 0)`,
-                transform:  `translate3d(${ghostGlitch.x}px, 0, 0)`,
+                fontFamily:   'var(--font-geist), "Chiron Sung HK WS", sans-serif',
+                WebkitFontSmoothing: 'antialiased',
+                color:        'rgba(92, 225, 255, 0.18)',
+                clipPath:     `inset(${ghostGlitch.top}% 0 ${100 - ghostGlitch.top - ghostGlitch.height}% 0)`,
+                transform:    `translate3d(${ghostGlitch.x}px, 0, 0)`,
                 mixBlendMode: 'screen',
                 textShadow:
                   '-2px 0 0 rgba(255, 40, 120, 0.22), 2px 0 0 rgba(60, 255, 255, 0.22)',
@@ -214,12 +219,16 @@ export default function Hero() {
           }}
         />
         <div className="relative">
-        {/* EVAN CHANG label with flicker + horizontal tear */}
+        {/* Headline — scan line + letter scramble + blinking cursor */}
+        <HeadlineWithMotion text={t('headline')} loaded={loaded} />
+
+        {/* EVAN CHANG signature — placed BELOW headline so it functions
+            as the byline/brand reinforcement after the main claim */}
         <p
-          className="text-[#5CE1FF] mb-10 md:mb-12 uppercase"
+          className="text-[#5CE1FF] mt-8 md:mt-10 mb-8 md:mb-10 uppercase"
           style={{
-            fontFamily:    'var(--font-space-mono), monospace',
-            fontSize:      'clamp(1.125rem, 1.55vw, 1.5rem)',
+            fontFamily:    'var(--font-mono), monospace',
+            fontSize:      'clamp(22px, 2.4vw, 33px)',
             letterSpacing: '0.42em',
             textShadow:    '0 0 20px rgba(92,225,255,0.6), 0 0 5px rgba(92,225,255,1)',
             transform:     `translate3d(${labelTear}px, 0, 0)`,
@@ -229,10 +238,6 @@ export default function Hero() {
         >
           EVAN&nbsp;&nbsp;·&nbsp;&nbsp;CHANG
         </p>
-
-        {/* Headline — scan line + letter scramble + blinking cursor */}
-        <HeadlineWithMotion text={t('headline')} loaded={loaded} />
-
 
         {/* Subheading — serif + divider, hover reveals decoded translation */}
         <SubheadingHoverReveal roles={roles} />
@@ -365,8 +370,12 @@ function HeadlineWithMotion({ text, loaded }: { text: string; loaded: boolean })
   return (
     <div className="relative inline-block mb-10 max-w-3xl mx-auto">
       <h1
-        className="font-display text-white text-[2.75rem] leading-[1.1] md:text-7xl lg:text-[6rem] font-light"
+        className="text-white text-[2.75rem] leading-[1.1] md:text-7xl lg:text-[6rem]"
         style={{
+          fontFamily:          'var(--font-geist), "Chiron Sung HK WS", sans-serif',
+          fontWeight:          500,
+          letterSpacing:       '-0.015em',
+          WebkitFontSmoothing: 'antialiased',
           textShadow:
             '0 0 32px rgba(8,8,8,0.94), 0 0 12px rgba(8,8,8,0.85), 0 2px 18px rgba(8,8,8,0.7)',
         }}
