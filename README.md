@@ -1,36 +1,73 @@
-This is a [Next.js](https://nextjs.org) project bootstrapped with [`create-next-app`](https://nextjs.org/docs/app/api-reference/cli/create-next-app).
+# Evan Chang — Personal Site
 
-## Getting Started
+Bilingual (zh-TW / en) portfolio site for **Evan Chang** — event planner,
+producer, and consultant based in Taipei. Editorial × cyber-HUD aesthetic:
+dark background, neon-blue accents, scan lines, CRT glitches, scroll-linked
+animations.
 
-First, run the development server:
+## Stack
+
+- **[Next.js 16](https://nextjs.org)** with App Router + Turbopack
+- **[Tailwind v4](https://tailwindcss.com)** (CSS-first, no config file)
+- **[framer-motion](https://motion.dev)** for all animations
+- **[next-intl](https://next-intl.dev)** — bilingual routing, zh-TW default
+- **TypeScript** strict mode
+- **Cormorant Garamond** + **Noto Serif TC** (display) + **Space Mono** (labels)
+- Deploy target: **Vercel** (with `@vercel/analytics` + `@vercel/speed-insights`)
+
+## Commands
 
 ```bash
-npm run dev
-# or
-yarn dev
-# or
-pnpm dev
-# or
-bun dev
+npm run dev      # Dev server on :3000 (Turbopack)
+npm run build    # Production build
+npm run start    # Run production build locally
+npm run lint     # ESLint check
 ```
 
-Open [http://localhost:3000](http://localhost:3000) with your browser to see the result.
+No test suite yet.
 
-You can start editing the page by modifying `app/page.tsx`. The page auto-updates as you edit the file.
+## Architecture
 
-This project uses [`next/font`](https://nextjs.org/docs/app/building-your-application/optimizing/fonts) to automatically optimize and load [Geist](https://vercel.com/font), a new font family for Vercel.
+The home page is a single scrollable experience composed of:
 
-## Learn More
+1. **`Hero`** — loading intro → headline with scan-line + character scramble
+   + blinking cursor, EVENTS ghost text with CRT scan + slice glitch,
+   subheading (企劃 · 統籌 · 顧問) where each role clicks through to
+   `/work?type=BRAND|EVENT|CORP`
+2. **`FeaturedWork`** — typography-first featured stats with count-up + burst
+   glitches, then three scroll-linked full-viewport case sections with
+   per-character CJK title reveal and English subtitle scramble decode
+3. **`LocationsMap`** — SVG Taiwan with lat/lng-clipped grid + constellation
+   pin lines. Pins auto-render from `lib/work-data.ts` cases tagged with
+   `location: 'taipei'` etc. (catalog in `lib/locations.ts`).
+4. **`Footer`** — large editorial `Evan Chang.` wordmark with signature-draw
+   intro + periodic letter glitch + period pulse
 
-To learn more about Next.js, take a look at the following resources:
+Held together by:
 
-- [Next.js Documentation](https://nextjs.org/docs) - learn about Next.js features and API.
-- [Learn Next.js](https://nextjs.org/learn) - an interactive Next.js tutorial.
+- **`HomeAmbientBg`** — page-level fixed DataStreams (matrix character rain)
+  as a single continuous backdrop so sections don't feel panelled
+- **`SectionNavigator`** — right-edge fixed dots + scroll progress line,
+  jumps between the four sections
 
-You can check out [the Next.js GitHub repository](https://github.com/vercel/next.js) - your feedback and contributions are welcome!
+Routing lives under `app/[locale]/`. The rest of the inner pages
+(`about`, `services`, `blog`, `contact`) are still stubs. `work/` has a real
+`CaseList` with `?type` query-param filtering (wrapped in `<Suspense>` so
+`useSearchParams` doesn't deopt the build).
 
-## Deploy on Vercel
+See **[`docs/ARCHITECTURE.md`](docs/ARCHITECTURE.md)** for the hybrid
+Vercel + Cloudflare Workers deploy plan (main site on Vercel, high-traffic
+APIs can be split to CF Workers later via `lib/api-client.ts`'s
+`NEXT_PUBLIC_API_BASE` env var). See **[`CLAUDE.md`](CLAUDE.md)** for a
+deeper component-by-component tour, including Next.js 16 gotchas.
 
-The easiest way to deploy your Next.js app is to use the [Vercel Platform](https://vercel.com/new?utm_medium=default-template&filter=next.js&utm_source=create-next-app&utm_campaign=create-next-app-readme) from the creators of Next.js.
+## Deploy
 
-Check out our [Next.js deployment documentation](https://nextjs.org/docs/app/building-your-application/deploying) for more details.
+Intended for Vercel:
+
+```bash
+vercel
+```
+
+Domain / custom URL setup not yet configured. DNS will live on Cloudflare
+when it happens, with a CNAME to `cname.vercel-dns.com`.
