@@ -1,6 +1,7 @@
 'use client';
 
 import { useState } from 'react';
+import { useSearchParams } from 'next/navigation';
 import { Link } from '@/i18n/navigation';
 import { CASES, EVENT_TYPES, type EventType, type Case } from '@/lib/work-data';
 
@@ -8,8 +9,19 @@ interface Props {
   locale: string;
 }
 
+// Narrow a raw string to EventType | 'ALL'. Anything else falls back to ALL.
+function parseType(raw: string | null): EventType | 'ALL' {
+  if (!raw) return 'ALL';
+  const allowed: (EventType | 'ALL')[] = ['ALL', 'BRAND', 'EVENT', 'CORP', 'OTHER'];
+  return (allowed as string[]).includes(raw) ? (raw as EventType | 'ALL') : 'ALL';
+}
+
 export default function CaseList({ locale }: Props) {
-  const [activeType, setActiveType] = useState<EventType | 'ALL'>('ALL');
+  const searchParams = useSearchParams();
+  // Read ?type=XXX once on first render. Re-renders from user clicks use local state.
+  const [activeType, setActiveType] = useState<EventType | 'ALL'>(() =>
+    parseType(searchParams.get('type')),
+  );
 
   const filtered =
     activeType === 'ALL' ? CASES : CASES.filter((c) => c.type === activeType);

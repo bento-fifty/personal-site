@@ -1,3 +1,5 @@
+import type { LocationKey } from './locations';
+
 export type EventType = 'BRAND' | 'EVENT' | 'CORP' | 'OTHER';
 
 export interface CaseStat {
@@ -21,6 +23,8 @@ export interface Case {
   videoUrl: string;
   description: string;
   descriptionEn: string;
+  /** Taiwan city key — referenced by LocationsMap to render pin + link */
+  location?: LocationKey;
 }
 
 export const CASES: Case[] = [
@@ -35,6 +39,7 @@ export const CASES: Case[] = [
     desc: '線下沈浸式場景設計與全程執行',
     descEn: 'Full-service offline immersive environment design & production',
     featured: true,
+    location: 'taipei',
     stats: [
       { label: '參與人數', labelEn: 'Attendees',  value: '2,000+' },
       { label: '媒體露出', labelEn: 'Media Hits', value: '50+'    },
@@ -55,10 +60,11 @@ export const CASES: Case[] = [
     desc: '千人以上戶外演唱活動全程統籌',
     descEn: 'End-to-end management for 1,000+ outdoor concert',
     featured: true,
+    location: 'kaohsiung',
     stats: [
-      { label: '入場人數', labelEn: 'Attendees',  value: '3,500+' },
+      { label: '入場人數', labelEn: 'Attendees',   value: '3,500+'  },
       { label: '直播觀看', labelEn: 'Live Views',  value: '12,000+' },
-      { label: '執行天數', labelEn: 'Days On-Site', value: '5'    },
+      { label: '執行天數', labelEn: 'Days On-Site', value: '5'      },
     ],
     videoUrl: '',
     description: '此案例內容尚待填入。',
@@ -74,7 +80,8 @@ export const CASES: Case[] = [
     date: '2024-11',
     desc: '跨部門溝通活化工作坊設計與執行',
     descEn: 'Cross-department engagement workshop design & facilitation',
-    featured: false,
+    featured: true,
+    location: 'taichung',
     stats: [
       { label: '參與員工', labelEn: 'Participants', value: '800+' },
       { label: '滿意度',   labelEn: 'Satisfaction', value: '96%'  },
@@ -99,4 +106,9 @@ export const EVENT_TYPES: {
 
 export function getCaseBySlug(slug: string): Case | undefined {
   return CASES.find((c) => c.slug === slug);
+}
+
+/** Cases that have a location tag — consumed by LocationsMap to render pins. */
+export function getCasesWithLocation(): (Case & { location: LocationKey })[] {
+  return CASES.filter((c): c is Case & { location: LocationKey } => Boolean(c.location));
 }

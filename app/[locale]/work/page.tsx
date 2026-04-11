@@ -1,4 +1,5 @@
 import type { Metadata } from 'next';
+import { Suspense } from 'react';
 import CaseList from '@/components/work/CaseList';
 import { CASES } from '@/lib/work-data';
 
@@ -33,7 +34,9 @@ export default async function WorkPage({
           </span>
         </div>
 
-        <CaseList locale={locale} />
+        <Suspense fallback={null}>
+          <CaseList locale={locale} />
+        </Suspense>
       </div>
     </div>
   );
