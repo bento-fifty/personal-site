@@ -108,8 +108,15 @@ export default function TerminalCursor() {
       const interactive = target?.closest?.(
         'a, button, [role="button"], input, textarea, select',
       ) as HTMLElement | null;
+      const scanTarget = target?.closest?.(
+        '[data-scan-target="true"]',
+      ) as HTMLElement | null;
       if (interactive) {
         hotAction = resolveAction(interactive);
+        setHot(true);
+      } else if (scanTarget) {
+        // Hovering the hero headline — reticle enters SCAN mode
+        hotAction = 'SCAN TEXT';
         setHot(true);
       } else {
         hotAction = null;

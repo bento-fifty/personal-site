@@ -323,7 +323,8 @@ function HeadlineWithMotion({ text, loaded }: { text: string; loaded: boolean })
 
   return (
     <div className="relative inline-block mb-10 max-w-3xl mx-auto">
-      <h1
+      <motion.h1
+        data-scan-target="true"
         className="text-white text-[2.75rem] leading-[1.1] md:text-7xl lg:text-[6rem]"
         style={{
           fontFamily:          'var(--font-geist), "Chiron Sung HK WS", sans-serif',
@@ -333,6 +334,27 @@ function HeadlineWithMotion({ text, loaded }: { text: string; loaded: boolean })
           textShadow:
             '0 0 36px rgba(5,5,5,0.96), 0 0 14px rgba(5,5,5,0.88), 0 2px 18px rgba(5,5,5,0.72)',
           perspective:         '820px',
+        }}
+        animate={
+          loaded
+            ? {
+                filter: [
+                  'brightness(1) saturate(1)',
+                  'brightness(1) saturate(1)',
+                  'brightness(1.55) saturate(1.3)',
+                  'brightness(1) saturate(1)',
+                  'brightness(1) saturate(1)',
+                ],
+              }
+            : undefined
+        }
+        transition={{
+          duration:    1.8,
+          times:       [0, 0.42, 0.52, 0.62, 1],
+          repeat:      Infinity,
+          repeatDelay: 3.5,
+          ease:        'easeIn',
+          delay:       2.5,
         }}
       >
         {words.map((word, wIdx) => {
@@ -395,7 +417,7 @@ function HeadlineWithMotion({ text, loaded }: { text: string; loaded: boolean })
             }}
           />
         )}
-      </h1>
+      </motion.h1>
 
       {/* Horizontal scan line sweeping across the headline */}
       {loaded && (

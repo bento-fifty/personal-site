@@ -51,11 +51,11 @@ export default function CaseShowcase3D() {
   return (
     <section
       id="showcase"
-      className="relative min-h-[100dvh] flex flex-col justify-center py-20 md:py-24"
+      className="relative min-h-[100dvh] flex flex-col py-14 md:py-16"
     >
-      <div className="hud-grid">
+      <div className="hud-grid shrink-0">
         {/* Header */}
-        <div className="col-span-12 mb-10 text-center">
+        <div className="col-span-12 mb-4 text-center">
           <motion.p
             initial={{ opacity: 0, y: 10 }}
             whileInView={{ opacity: 1, y: 0 }}
@@ -87,23 +87,25 @@ export default function CaseShowcase3D() {
           </p>
         </div>
 
-        {/* 3D Stage */}
+      </div>
+
+      {/* 3D Stage — grows to fill remaining space between header and nav */}
+      <div
+        className="relative flex-1 flex items-center justify-center min-h-0"
+        style={{ perspective: '1400px', perspectiveOrigin: '50% 45%' }}
+      >
         <div
-          className="col-span-12 relative min-h-[460px] md:min-h-[520px]"
-          style={{ perspective: '1400px', perspectiveOrigin: '50% 45%' }}
+          className="relative w-full h-full"
+          style={{ transformStyle: 'preserve-3d' }}
         >
-          <div
-            className="absolute inset-0"
-            style={{ transformStyle: 'preserve-3d' }}
-          >
-            {FEATURED.map((c, i) => {
+          {FEATURED.map((c, i) => {
               const pos = getPosition(i);
               const anim =
                 pos === 'center'
                   ? { x: 0,    rotateY: 0,    z: 0,    scale: 1,    opacity: 1    }
                   : pos === 'left'
-                    ? { x: -320, rotateY: 38,  z: -220, scale: 0.82, opacity: 0.45 }
-                    : { x: 320,  rotateY: -38, z: -220, scale: 0.82, opacity: 0.45 };
+                    ? { x: -440, rotateY: 40,  z: -240, scale: 0.78, opacity: 0.42 }
+                    : { x: 440,  rotateY: -40, z: -240, scale: 0.78, opacity: 0.42 };
               const isCenter = pos === 'center';
 
               return (
@@ -123,24 +125,26 @@ export default function CaseShowcase3D() {
                   }}
                   transition={{ type: 'spring', stiffness: 180, damping: 26 }}
                   style={{
-                    width:          '540px',
-                    height:         '380px',
-                    marginLeft:     '-270px',
-                    marginTop:      '-190px',
+                    width:          '480px',
+                    height:         '340px',
+                    marginLeft:     '-240px',
+                    marginTop:      '-170px',
                     transformStyle: 'preserve-3d',
-                    zIndex:         isCenter ? 30 : 10,
+                    zIndex:         isCenter ? 30 : 15,
                     cursor:         'pointer',
+                    pointerEvents:  'auto',
                   }}
                 >
                   <CaseCard c={c} isCenter={isCenter} />
                 </motion.button>
               );
             })}
-          </div>
         </div>
+      </div>
 
-        {/* Nav */}
-        <div className="col-span-12 flex items-center justify-center gap-8 mt-10">
+      {/* Nav — outside flex-1 stage so it's always pinned in viewport */}
+      <div className="hud-grid shrink-0 mt-4">
+        <div className="col-span-12 flex items-center justify-center gap-8">
           <button
             type="button"
             onClick={() => go(-1)}
