@@ -53,3 +53,7 @@ Component tour, routing, home composition, data conventions — **read the code 
 
 - **Dev server runs in `.worktrees/build/`** on branch `feature/build-personal-site`, NOT the main checkout. Edit files at the worktree path during active sessions — main-path edits won't be picked up by HMR.
 - **`git push` is blocked** by a harness hook per user rule. Commit freely; always stop before push and let the user run `git push` manually.
+
+## 品質管控
+
+交給用戶前必須：build 通過、Playwright 截圖自審（無殘留/穿透/不可見元素）、對照最新指令、不重複已否決做法。未通過不準叫用戶看。
