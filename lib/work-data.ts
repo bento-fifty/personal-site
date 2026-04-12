@@ -8,6 +8,12 @@ export interface CaseStat {
   value: string;
 }
 
+/** Bilingual free-text block for case detail OSER sections. */
+export interface LocalizedText {
+  zh: string;
+  en: string;
+}
+
 export interface Case {
   id: string;
   slug: string;
@@ -25,6 +31,15 @@ export interface Case {
   descriptionEn: string;
   /** Taiwan city key — referenced by LocationsMap to render pin + link */
   location?: LocationKey;
+
+  // ── Case detail OSER fields ──────────────────────────
+  // Objective → Strategy → Execution → Result. All optional so existing
+  // cases keep working; the detail page falls back to "content pending"
+  // for any missing field.
+  objective?: LocalizedText;
+  strategy?:  LocalizedText;
+  execution?: LocalizedText;
+  result?:    LocalizedText;
 }
 
 export const CASES: Case[] = [
@@ -48,6 +63,23 @@ export const CASES: Case[] = [
     videoUrl: '',
     description: '此案例內容尚待填入。這裡將說明活動背景、執行挑戰與解決方案，以及最終成果。',
     descriptionEn: 'Case description pending. This section will cover event background, execution challenges, solutions, and outcomes.',
+    // TODO: Evan — replace sample copy below with real case details before launch.
+    objective: {
+      zh: '客戶希望用最低媒體預算製造最大聲量——在不投放大量廣告的前提下，讓目標受眾願意花時間到場體驗，並且離開後願意主動在自己的社群分享。',
+      en: 'Client wanted maximum buzz on a constrained media budget — get target audiences to visit on their own volition and share the experience organically afterward.',
+    },
+    strategy: {
+      zh: '我們把「可分享」而不是「好看」當成場景設計的主要 KPI。動線設計成一條必經敘事路徑，每個節點都安排一個被設計過的拍照可能性，讓來賓在不自覺間成為內容產生者。',
+      en: 'We treated shareability — not aesthetics — as the primary design KPI. The floor flow became a single narrative path with deliberate photo moments at each node, turning guests into organic content creators.',
+    },
+    execution: {
+      zh: '3 週前期概念與視覺開發，2 週場地佈建，活動當天全程 14 小時現場統籌。包含 KOL 預覽場、媒體專場、公眾體驗場，每一場的節奏、燈光、音樂都獨立設定。',
+      en: '3 weeks of concept and visual development, 2 weeks of on-site build, 14 hours of live on-site management on event day. Covered a KOL soft launch, media preview, and public experience window — each tuned separately for pacing, lighting, and sound.',
+    },
+    result: {
+      zh: '2,000+ 人次完整走完體驗動線，媒體自然露出 50+ 篇，NPS 92 — 遠高於活動類品牌專案的平均值。關鍵在於：來賓離開時，帶走的是一個只屬於當晚的記憶。',
+      en: '2,000+ guests completed the full walkthrough. 50+ earned media mentions. NPS of 92 — well above the average for brand experiential work. The real win: every guest left with a memory that only belonged to that night.',
+    },
   },
   {
     id: '002',

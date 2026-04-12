@@ -1,7 +1,5 @@
-export default function AboutPage() {
-  return (
-    <main>
-      <h1>About</h1>
-    </main>
-  );
+import AboutPage from '@/components/about/AboutPage';
+
+export default function Page() {
+  return <AboutPage />;
 }

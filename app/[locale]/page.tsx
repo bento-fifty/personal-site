@@ -4,6 +4,7 @@ import SectionNavigator from '@/components/home/SectionNavigator';
 import Hero from '@/components/home/Hero';
 import FeaturedWork from '@/components/home/FeaturedWork';
 import LocationsMap from '@/components/home/LocationsMap';
+import HomeCta from '@/components/home/HomeCta';
 
 export default function HomePage() {
   return (
@@ -14,6 +15,7 @@ export default function HomePage() {
       <Hero />
       <FeaturedWork />
       <LocationsMap />
+      <HomeCta />
     </>
   );
 }

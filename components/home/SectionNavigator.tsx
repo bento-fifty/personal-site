@@ -17,7 +17,7 @@ const SECTIONS = [
   { id: 'hero',      label: 'INTRO',         num: '01' },
   { id: 'featured',  label: 'SELECTED WORK', num: '02' },
   { id: 'footprint', label: 'FOOTPRINT',     num: '03' },
-  { id: 'contact',   label: 'CONTACT',       num: '04' },
+  { id: 'cta',       label: 'CONTACT',       num: '04' },
 ] as const;
 
 export default function SectionNavigator() {

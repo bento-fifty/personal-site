@@ -225,7 +225,7 @@ export default function Hero() {
         {/* EVAN CHANG signature — placed BELOW headline so it functions
             as the byline/brand reinforcement after the main claim */}
         <p
-          className="text-[#5CE1FF] mt-8 md:mt-10 mb-8 md:mb-10 uppercase"
+          className="text-[#5CE1FF] mt-8 md:mt-10 mb-6 md:mb-7 uppercase"
           style={{
             fontFamily:    'var(--font-mono), monospace',
             fontSize:      'clamp(22px, 2.4vw, 33px)',
@@ -238,6 +238,43 @@ export default function Hero() {
         >
           EVAN&nbsp;&nbsp;·&nbsp;&nbsp;CHANG
         </p>
+
+        {/* Positioning — scope list + value prop. Answers "what I do / for whom"
+            in the 3-second scan, sitting between byline and role links. */}
+        <motion.div
+          initial={{ opacity: 0, y: 6 }}
+          animate={{ opacity: loaded ? 1 : 0, y: loaded ? 0 : 6 }}
+          transition={{ duration: 1, ease: [0.22, 1, 0.36, 1], delay: 0.45 }}
+          className="relative flex flex-col items-center gap-3 md:gap-4 mb-7 md:mb-9"
+        >
+          <span
+            className="font-label uppercase text-[#5CE1FF]/90 text-center px-4"
+            style={{
+              fontSize:      'clamp(11px, 1vw, 14px)',
+              letterSpacing: '0.22em',
+              textShadow:    '0 0 14px rgba(92,225,255,0.5), 0 0 3px rgba(92,225,255,0.9)',
+            }}
+          >
+            {t('positioning_scope')}
+          </span>
+          <span
+            aria-hidden
+            className="block w-10 border-t border-[#5CE1FF]/35"
+            style={{ boxShadow: '0 0 8px rgba(92,225,255,0.4)' }}
+          />
+          <span
+            className="font-display text-white/85 text-center px-4"
+            style={{
+              fontSize:      'clamp(15px, 1.5vw, 22px)',
+              fontWeight:    300,
+              fontStyle:     'italic',
+              letterSpacing: '0.01em',
+              textShadow:    '0 0 20px rgba(8,8,8,0.85)',
+            }}
+          >
+            {t('positioning_value')}
+          </span>
+        </motion.div>
 
         {/* Subheading — serif + divider, hover reveals decoded translation */}
         <SubheadingHoverReveal roles={roles} />
