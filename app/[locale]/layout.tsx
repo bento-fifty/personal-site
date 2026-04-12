@@ -3,11 +3,10 @@ import {NextIntlClientProvider, hasLocale} from 'next-intl';
 import {notFound} from 'next/navigation';
 import {routing} from '@/i18n/routing';
 import {getMessages} from 'next-intl/server';
-import {Geist, Noto_Serif_TC, Noto_Sans_TC} from 'next/font/google';
+import {Geist, Playfair_Display, Noto_Serif_TC, Noto_Sans_TC} from 'next/font/google';
 import localFont from 'next/font/local';
 import Nav from '@/components/layout/Nav';
 import Footer from '@/components/layout/Footer';
-import TerminalCursor from '@/components/shared/TerminalCursor';
 import { NavThemeProvider } from '@/contexts/NavThemeContext';
 import { Analytics } from '@vercel/analytics/next';
 import { SpeedInsights } from '@vercel/speed-insights/next';
@@ -19,17 +18,16 @@ const geist = Geist({
   display: 'swap',
 });
 
-const departureMono = localFont({
-  src: '../../public/fonts/DepartureMono-Regular.woff2',
-  variable: '--font-departure-mono',
-  weight: '400',
-  style: 'normal',
+const playfairDisplay = Playfair_Display({
+  variable: '--font-playfair',
+  subsets: ['latin'],
+  weight: ['400', '500', '600', '700'],
   display: 'swap',
 });
 
-const cubic11 = localFont({
-  src: '../../public/fonts/Cubic_11.woff2',
-  variable: '--font-cubic-11',
+const departureMono = localFont({
+  src: '../../public/fonts/DepartureMono-Regular.woff2',
+  variable: '--font-departure-mono',
   weight: '400',
   style: 'normal',
   display: 'swap',
@@ -58,11 +56,11 @@ export async function generateMetadata({
 }): Promise<Metadata> {
   const {locale} = await params;
   return {
-    title: 'Evan Chang',
+    title: 'The Level Studio',
     description:
       locale === 'zh-TW'
         ? '活動企劃 · 品牌體驗顧問'
-        : 'Event Planner & Brand Experience Consultant',
+        : 'Event Planning & Brand Experience Consulting',
   };
 }
 
@@ -83,7 +81,7 @@ export default async function LocaleLayout({
   return (
     <html
       lang={locale}
-      className={`${geist.variable} ${departureMono.variable} ${cubic11.variable} ${notoSerifTC.variable} ${notoSansTC.variable} h-full antialiased`}
+      className={`${geist.variable} ${playfairDisplay.variable} ${departureMono.variable} ${notoSerifTC.variable} ${notoSansTC.variable} h-full antialiased`}
     >
       <body className="min-h-full flex flex-col">
         <NextIntlClientProvider messages={messages}>
@@ -93,7 +91,6 @@ export default async function LocaleLayout({
               {children}
             </main>
             <Footer />
-            <TerminalCursor />
           </NavThemeProvider>
         </NextIntlClientProvider>
         <Analytics />

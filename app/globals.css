@@ -8,76 +8,110 @@
 @import url('https://cdn.jsdelivr.net/gh/chiron-fonts/chiron-sung-hk@release/WOFF2_TTF/css/vf.t1.css');
 @import "tailwindcss";
 
-/* ── Design Tokens · neon-blue palette ─────────── */
+/* ── Design Tokens · White Galaxy narrative palette ─── */
 :root {
-  /* Themes */
-  --bg-dark: #080808;
-  --bg-light: #F7F5F2;
-  --text-dark-primary: #FFFFFF;
-  --text-dark-secondary: #888888;
-  --text-light-primary: #1A1A1A;
-  --text-light-secondary: #666666;
+  /* ── Section surfaces (white → gray → dark journey) ── */
+  --bg-space: #FAFAF8;
+  --bg-descent: #F0EEEB;
+  --bg-lunar: #E8E5E0;
+  --bg-lunar-deep: #D5D0C8;
+  --bg-abyss: #1A1918;
+  --bg-base: #0C0C0E;
 
-  /* Accent — neon blue */
-  --accent: #5CE1FF;
-  --accent-dim: rgba(92, 225, 255, 0.15);
-  --accent-deep: #0891B2;
-  --accent-glow: rgba(92, 225, 255, 0.45);
+  /* Legacy aliases for components not yet migrated */
+  --bg-primary: #FAFAF8;
+  --bg-secondary: #F0EEEB;
+  --bg-dark: #0C0C0E;
 
-  /* Borders */
+  /* ── Text ── */
+  --text-primary: #141413;
+  --text-secondary: #6B6B67;
+  --text-tertiary: #A8A8A3;
+  --text-on-dark: #EAEAE8;
+  --text-on-dark-secondary: #888886;
+
+  /* ── Accent — contextual ── */
+  --accent: #4F46E5;         /* indigo for light sections */
+  --accent-light: #818CF8;
+  --accent-subtle: rgba(79, 70, 229, 0.08);
+  --accent-cyan: #5CE1FF;    /* cyan returns in dark sections */
+  --accent-cyan-dim: rgba(92, 225, 255, 0.15);
+  --accent-cyan-glow: rgba(92, 225, 255, 0.45);
+
+  /* ── Borders ── */
+  --border: rgba(20, 20, 19, 0.07);
+  --border-medium: rgba(20, 20, 19, 0.12);
   --border-dark: rgba(255, 255, 255, 0.08);
-  --border-light: rgba(0, 0, 0, 0.08);
+  --border-dark-medium: rgba(255, 255, 255, 0.12);
 
-  /* Font variables (set by next/font) ───
-     ⚡ PIXEL-ONLY MODE — all typography routed through Departure Mono (Latin)
-     + Cubic 11 (CJK). To revert to hybrid Geist+Chiron mode, flip these
-     four assignments back to --font-geist / Chiron Hei HK WS / Chiron Sung HK WS. */
-  --font-heading: var(--font-departure-mono);
-  --font-body: var(--font-departure-mono);
+  /* ── Font assignments ── */
+  --font-heading: var(--font-playfair);
+  --font-body: var(--font-geist);
   --font-mono: var(--font-departure-mono);
-  --font-cjk-display: var(--font-cubic-11), var(--font-noto-serif-tc);
-  --font-cjk-sans: var(--font-cubic-11), var(--font-noto-sans-tc);
-  --font-cjk-mono: var(--font-cubic-11);
+  --font-cjk-display: var(--font-noto-serif-tc), "Chiron Sung HK WS";
+  --font-cjk-sans: var(--font-noto-sans-tc), "Chiron Hei HK WS";
 }
 
 @theme inline {
   --color-accent: var(--accent);
-  --color-accent-dim: var(--accent-dim);
-  --color-bg-dark: var(--bg-dark);
-  --color-bg-light: var(--bg-light);
-  --color-text-dark: var(--text-dark-primary);
-  --color-text-light: var(--text-light-primary);
-  --font-heading: var(--font-geist);
+  --color-accent-light: var(--accent-light);
+  --color-accent-cyan: var(--accent-cyan);
+  --color-bg-space: var(--bg-space);
+  --color-bg-lunar: var(--bg-lunar);
+  --color-bg-abyss: var(--bg-abyss);
+  --color-bg-base: var(--bg-base);
+  --color-text-primary: var(--text-primary);
+  --color-text-secondary: var(--text-secondary);
+  --color-text-tertiary: var(--text-tertiary);
+  --font-heading: var(--font-playfair);
   --font-body: var(--font-geist);
   --font-mono: var(--font-departure-mono);
 }
 
-/* ── Base Styles ───────────────────────────────── */
+/* ── Base ─────────────────────────────────────────── */
 html {
   scroll-behavior: smooth;
-  /* Round 2.1 v2: mandatory snap so every section stops fully in view.
-     Paired with `scroll-snap-stop: always` on sections, fast scrolls
-     still hit each section — matches the SynaBun hard-jump rhythm. */
-  scroll-snap-type: y mandatory;
-}
-
-/* Each top-level <section> inside <main> becomes a snap target. */
-main > section {
-  scroll-snap-align: start;
-  scroll-snap-stop: always;
 }
 
 @media (prefers-reduced-motion: reduce) {
   html {
     scroll-behavior: auto;
-    scroll-snap-type: none;
-  }
-  main > section {
-    scroll-snap-align: none;
   }
 }
 
-/* ── HUD 12-column grid utility ────────────────── */
+body {
+  font-family: var(--font-body), var(--font-cjk-sans), sans-serif;
+  background: var(--bg-space);
+  color: var(--text-primary);
+  -webkit-font-smoothing: antialiased;
+}
+
+/* ── Typography ───────────────────────────────────── */
+.font-display {
+  font-family: var(--font-heading), var(--font-cjk-display), serif;
+  -webkit-font-smoothing: antialiased;
+}
+
+.font-label {
+  font-family: var(--font-mono), monospace;
+  font-size: 0.625rem;
+  letter-spacing: 0.12em;
+  text-transform: uppercase;
+}
+
+/* ── Grain texture overlay (lunar surface) ────────── */
+.grain-texture::after {
+  content: '';
+  position: absolute;
+  inset: 0;
+  opacity: 0.035;
+  pointer-events: none;
+  background-image: url("data:image/svg+xml,%3Csvg viewBox='0 0 256 256' xmlns='http://www.w3.org/2000/svg'%3E%3Cfilter id='n'%3E%3CfeTurbulence type='fractalNoise' baseFrequency='0.9' numOctaves='4' stitchTiles='stitch'/%3E%3C/filter%3E%3Crect width='100%25' height='100%25' filter='url(%23n)'/%3E%3C/svg%3E");
+  background-repeat: repeat;
+  background-size: 256px 256px;
+}
+
+/* ── HUD grid (restored for v2 components) ────────── */
 .hud-grid {
   display: grid;
   grid-template-columns: repeat(12, minmax(0, 1fr));
@@ -95,56 +129,20 @@ main > section {
   }
 }
 
-body {
-  font-family: var(--font-body), var(--font-cjk-sans), monospace;
-  background: var(--bg-light);
-  color: var(--text-light-primary);
-  -webkit-font-smoothing: antialiased;
+/* ── Content grid (White Galaxy sections) ─────────── */
+.content-grid {
+  display: grid;
+  grid-template-columns: repeat(12, minmax(0, 1fr));
+  gap: 1.5rem;
+  max-width: 1200px;
+  margin-inline: auto;
+  padding-inline: 3rem;
+  width: 100%;
 }
 
-/* ── Typography Utilities ──────────────────────── */
-.font-display {
-  font-family: var(--font-heading), var(--font-cjk-display), monospace;
-  font-weight: 400;
-  letter-spacing: 0;
-  /* Pixel-mode: kill antialiasing so Departure Mono / Cubic 11 stay crisp */
-  -webkit-font-smoothing: none;
-  font-smooth: never;
-}
-
-.font-label {
-  font-family: var(--font-mono), var(--font-cjk-mono), monospace;
-  font-size: 0.6875rem;
-  letter-spacing: 0.15em;
-  text-transform: uppercase;
-  -webkit-font-smoothing: none;
-  font-smooth: never;
-}
-
-/* ── Page Theme Variants ───────────────────────── */
-.theme-dark {
-  background-color: var(--bg-dark);
-  color: var(--text-dark-primary);
-}
-
-.theme-light {
-  background-color: var(--bg-light);
-  color: var(--text-light-primary);
-}
-
-/* ── Nerdy-Pixel Details ───────────────────────── */
-.terminal-bracket::before { content: '[ '; }
-.terminal-bracket::after  { content: ' ]'; }
-
-.case-number {
-  font-family: var(--font-mono), var(--font-cjk-mono), monospace;
-  font-size: 0.625rem;
-  letter-spacing: 0.1em;
-  color: var(--accent);
-}
-
-/* ── DataStreams Animation ─────────────────────────────── */
-@keyframes dataFall {
-  from { transform: translateY(0); }
-  to   { transform: translateY(-50%); }
+@media (max-width: 768px) {
+  .content-grid {
+    padding-inline: 1.5rem;
+    gap: 1rem;
+  }
 }
