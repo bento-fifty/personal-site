@@ -1,24 +1,34 @@
 'use client';
 
-import DataStreams from './DataStreams';
+import HyperspaceField from './HyperspaceField';
 
 /**
- * Page-level ambient background. Sits fixed behind all home sections so the
- * matrix data streams + dot grid become a single continuous backdrop from
- * Hero all the way to Footer, rather than repeating per section.
+ * Page-level ambient background. Sits fixed behind all home sections so
+ * the hyperspace particle field becomes a single continuous backdrop from
+ * Hero all the way to Footer.
  *
- * Uses a large negative z-index so relatively-positioned sections above it
- * naturally stack on top without needing explicit z-index on every child.
+ * Round 2.1 v2 swapped FlowField → HyperspaceField — from "crowd flow"
+ * curves (read as organic / bio) to "hyperspace jump" radial streaks
+ * (read as sci-fi / cosmic). Base color darkened from #080808 to #050505
+ * to match the deeper-space feel.
  */
 export default function HomeAmbientBg() {
   return (
     <div
       aria-hidden
-      className="fixed inset-0 -z-10 pointer-events-none bg-[#080808]"
+      className="fixed inset-0 -z-10 pointer-events-none bg-[#050505]"
     >
-      <div style={{ opacity: 0.5 }}>
-        <DataStreams />
-      </div>
+      <HyperspaceField />
+      {/* Vignette overlay — darkens centre a touch so readable content
+          lives in a softer "safe zone" rather than fighting streak glare */}
+      <div
+        aria-hidden
+        className="absolute inset-0 pointer-events-none"
+        style={{
+          background:
+            'radial-gradient(ellipse 75% 55% at 50% 50%, rgba(5,5,5,0.5) 0%, rgba(5,5,5,0.15) 45%, transparent 80%)',
+        }}
+      />
     </div>
   );
 }

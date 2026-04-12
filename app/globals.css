@@ -55,6 +55,44 @@
 /* ── Base Styles ───────────────────────────────── */
 html {
   scroll-behavior: smooth;
+  /* Round 2.1 v2: mandatory snap so every section stops fully in view.
+     Paired with `scroll-snap-stop: always` on sections, fast scrolls
+     still hit each section — matches the SynaBun hard-jump rhythm. */
+  scroll-snap-type: y mandatory;
+}
+
+/* Each top-level <section> inside <main> becomes a snap target. */
+main > section {
+  scroll-snap-align: start;
+  scroll-snap-stop: always;
+}
+
+@media (prefers-reduced-motion: reduce) {
+  html {
+    scroll-behavior: auto;
+    scroll-snap-type: none;
+  }
+  main > section {
+    scroll-snap-align: none;
+  }
+}
+
+/* ── HUD 12-column grid utility ────────────────── */
+.hud-grid {
+  display: grid;
+  grid-template-columns: repeat(12, minmax(0, 1fr));
+  gap: 1.5rem;
+  max-width: 1440px;
+  margin-inline: auto;
+  padding-inline: 3rem;
+  width: 100%;
+}
+
+@media (max-width: 768px) {
+  .hud-grid {
+    padding-inline: 1.5rem;
+    gap: 1rem;
+  }
 }
 
 body {

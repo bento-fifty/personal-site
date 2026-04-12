@@ -45,48 +45,72 @@ export default function LocationsMap() {
   const [active, setActive] = useState<LocationKey | null>(null);
 
   return (
-    <section id="footprint" className="relative overflow-hidden py-28 md:py-36 px-6 md:px-10">
+    <section id="footprint" className="relative min-h-[100dvh] flex flex-col justify-center overflow-hidden py-24 md:py-28 px-6 md:px-10">
 
-      <div className="relative max-w-7xl mx-auto">
-        {/* Section label */}
-        <motion.p
-          initial={{ opacity: 0, y: 12 }}
-          whileInView={{ opacity: 1, y: 0 }}
-          viewport={{ once: true, amount: 0.6 }}
-          transition={{ duration: 0.7, ease: 'easeOut' }}
-          className="font-label text-[0.625rem] text-[#5CE1FF]/75 mb-8 tracking-[0.28em]"
-          style={{ textShadow: '0 0 12px rgba(92,225,255,0.45)' }}
-        >
-          {'// FOOTPRINT / TAIWAN'}
-        </motion.p>
-
+      <div className="relative max-w-7xl mx-auto w-full">
+        {/* Terminal header strip */}
         <motion.div
-          initial={{ opacity: 0, y: 20 }}
+          initial={{ opacity: 0, y: 10 }}
+          whileInView={{ opacity: 1, y: 0 }}
+          viewport={{ once: true, amount: 0.5 }}
+          transition={{ duration: 0.7, ease: 'easeOut' }}
+          className="mb-6"
+        >
+          <p
+            className="font-label text-[11px] text-[#5CE1FF]/80 mb-3 tracking-[0.28em]"
+            style={{ textShadow: '0 0 12px rgba(92,225,255,0.5)' }}
+          >
+            {'// 06 // GEO SCAN'}
+          </p>
+          <div
+            className="font-label text-[10px] text-white/45 tracking-[0.16em] space-y-0.5"
+            style={{ fontFamily: 'var(--font-mono), ui-monospace, monospace' }}
+          >
+            <div>
+              <span className="text-[#5CE1FF]/80">$ geoscan</span>{' '}
+              <span className="text-white/55">--region=taiwan --layer=active</span>
+            </div>
+            <div className="text-white/55">
+              <span className="text-white/80">&gt; SCAN:</span>{' '}
+              <span className="text-[#5CE1FF]/80">OK</span>
+              <span className="text-white/15">&nbsp;&nbsp;|&nbsp;&nbsp;</span>
+              <span className="text-white/80">ACTIVE PINS:</span>{' '}
+              <span className="text-[#5CE1FF]/80 tabular-nums">
+                {pins.length.toString().padStart(2, '0')}
+              </span>
+              <span className="text-white/15">&nbsp;&nbsp;|&nbsp;&nbsp;</span>
+              <span className="text-white/80">LAST:</span>{' '}
+              <span className="text-[#5CE1FF]/80">2024-11</span>
+            </div>
+          </div>
+        </motion.div>
+
+        <motion.h2
+          initial={{ opacity: 0, y: 18 }}
           whileInView={{ opacity: 1, y: 0 }}
           viewport={{ once: true, amount: 0.4 }}
           transition={{ duration: 1, ease: [0.22, 1, 0.36, 1] }}
-          className="flex flex-col md:flex-row md:items-end gap-6 md:gap-10 mb-16"
+          className="text-white text-[33px] md:text-[44px] lg:text-[55px] leading-[1.05] max-w-3xl mb-12"
+          style={{
+            fontFamily:          'var(--font-geist), "Chiron Sung HK WS", sans-serif',
+            fontWeight:          500,
+            letterSpacing:       '-0.015em',
+            WebkitFontSmoothing: 'antialiased',
+            textShadow:          '0 0 22px rgba(5,5,5,0.9)',
+          }}
         >
-          <h2 className="font-display text-white text-[33px] md:text-[44px] lg:text-[55px] leading-[1.02] max-w-xl">
-            Where the work
-            <br />
-            has happened.
-          </h2>
-          <p className="font-label text-[0.6875rem] text-white/45 md:max-w-xs leading-relaxed md:pb-3">
-            Live signals across the island. Tap a node to jump into the case.
-          </p>
-        </motion.div>
+          Where the work has happened.
+        </motion.h2>
 
-        {/* Map + list grid — centered cluster so map hugs the mid-axis
-            and the list column doesn't fan into the right-side void */}
-        <div className="grid grid-cols-1 lg:grid-cols-[320px_520px] gap-12 lg:gap-20 items-start lg:justify-center">
+        {/* 12-col HUD grid: map on left, active signal cards on right */}
+        <div className="grid grid-cols-1 lg:grid-cols-12 gap-10 lg:gap-14 items-start">
           {/* ── Map column ─────────────────────────── */}
           <motion.div
             initial={{ opacity: 0 }}
             whileInView={{ opacity: 1 }}
             viewport={{ once: true, amount: 0.25 }}
             transition={{ duration: 1.2, ease: 'easeOut' }}
-            className="relative mx-auto w-full max-w-[320px]"
+            className="relative mx-auto w-full max-w-[280px] lg:col-span-5"
           >
             {/* HUD corners */}
             {(['tl','tr','bl','br'] as const).map((pos) => (
@@ -301,64 +325,137 @@ export default function LocationsMap() {
             </div>
           </motion.div>
 
-          {/* ── Case list column ───────────────────── */}
-          <div>
-            <p className="font-label text-[0.625rem] text-white/30 mb-6 tracking-[0.22em]">
-              [ {pins.length.toString().padStart(2, '0')}&nbsp;ACTIVE&nbsp;SIGNALS&nbsp;—&nbsp;TAIWAN ]
+          {/* ── Active signal cards — grid style ───── */}
+          <div className="lg:col-span-7">
+            <p className="font-label text-[10px] text-white/30 mb-6 tracking-[0.22em]">
+              [ {pins.length.toString().padStart(2, '0')}&nbsp;ACTIVE&nbsp;SIGNALS ]
             </p>
-            <ul className="space-y-px bg-white/[0.04]">
-              {pins.map((pin) => {
+            <div className="grid grid-cols-1 md:grid-cols-2 xl:grid-cols-3 gap-4">
+              {pins.map((pin, i) => {
                 const primary = pin.cases[0];
                 const isActive = active === pin.key;
                 return (
-                  <li key={pin.key} className="bg-[#080808]">
-                    <Link
-                      href={`/work/${primary.slug}`}
-                      onMouseEnter={() => setActive(pin.key)}
-                      onMouseLeave={() => setActive(null)}
-                      onFocus={() => setActive(pin.key)}
-                      onBlur={() => setActive(null)}
-                      className="group flex items-center gap-5 px-6 py-5 transition-colors hover:bg-[rgba(92,225,255,0.07)]"
-                    >
+                  <Link
+                    key={pin.key}
+                    href={`/work/${primary.slug}`}
+                    onMouseEnter={() => setActive(pin.key)}
+                    onMouseLeave={() => setActive(null)}
+                    onFocus={() => setActive(pin.key)}
+                    onBlur={() => setActive(null)}
+                    className={
+                      'group relative block border p-5 transition-all ' +
+                      (isActive
+                        ? 'border-[#5CE1FF]/50 bg-[#5CE1FF]/[0.04]'
+                        : 'border-white/[0.08] bg-[#050505]/40 hover:border-[#5CE1FF]/35')
+                    }
+                    style={{ backdropFilter: 'blur(3px)' }}
+                  >
+                    {/* HUD corners */}
+                    {(['tl', 'tr', 'bl', 'br'] as const).map((cr) => {
+                      const style: React.CSSProperties = {
+                        position: 'absolute',
+                        width:    '6px',
+                        height:   '6px',
+                      };
+                      if (cr.includes('t')) style.top = '-1px';
+                      else style.bottom = '-1px';
+                      if (cr.includes('l')) style.left = '-1px';
+                      else style.right = '-1px';
+                      return (
+                        <span key={cr} aria-hidden style={style}>
+                          <span
+                            className="absolute bg-[#5CE1FF]/55"
+                            style={{
+                              width:  '100%',
+                              height: '1px',
+                              [cr.includes('t') ? 'top' : 'bottom']: 0,
+                            }}
+                          />
+                          <span
+                            className="absolute bg-[#5CE1FF]/55"
+                            style={{
+                              width:  '1px',
+                              height: '100%',
+                              [cr.includes('l') ? 'left' : 'right']: 0,
+                            }}
+                          />
+                        </span>
+                      );
+                    })}
+
+                    {/* Top row — node id + type */}
+                    <div className="flex items-center justify-between mb-4">
                       <span
-                        className={`w-1.5 h-1.5 rounded-full transition-all flex-shrink-0 ${
-                          isActive
-                            ? 'bg-[#5CE1FF] shadow-[0_0_12px_rgba(92,225,255,0.9)]'
-                            : 'bg-[#5CE1FF]/40'
-                        }`}
-                      />
-                      <div className="flex-1 min-w-0">
-                        <p
-                          className={`font-label text-[0.6875rem] tracking-[0.22em] transition-colors ${
-                            isActive
-                              ? 'text-[#5CE1FF]'
-                              : 'text-white/70 group-hover:text-white'
-                          }`}
-                        >
-                          {locale === 'zh-TW' ? pin.labelZh : pin.labelEn.toUpperCase()}&nbsp;
-                          <span className="text-white/25 font-normal">
-                            /&nbsp;{pin.lat.toFixed(2)}°N&nbsp;{pin.lng.toFixed(2)}°E
-                          </span>
-                        </p>
-                        <p className="font-display text-white/55 text-sm md:text-base mt-1">
-                          {locale === 'zh-TW' ? primary.title : primary.titleEn}
-                          <span className="ml-3 font-label text-[0.5625rem] text-white/30 tracking-[0.22em] align-middle">
-                            ·&nbsp;{primary.date.slice(0, 4)}
-                          </span>
-                        </p>
-                      </div>
-                      <span className="font-label text-[0.5625rem] text-white/25 group-hover:text-[#5CE1FF]/70 transition-colors flex-shrink-0">
-                        →
+                        className="font-label text-[10px] text-[#5CE1FF] tracking-[0.22em]"
+                        style={{ textShadow: '0 0 8px rgba(92,225,255,0.5)' }}
+                      >
+                        NODE-{(i + 1).toString().padStart(2, '0')}
                       </span>
-                    </Link>
-                  </li>
+                      <span className="font-label text-[9px] text-white/35 tracking-[0.22em]">
+                        [ {primary.type} ]
+                      </span>
+                    </div>
+
+                    {/* Coord terminal readout */}
+                    <div
+                      className="font-label text-[10px] text-white/45 mb-4 leading-[1.7]"
+                      style={{
+                        fontFamily: 'var(--font-mono), ui-monospace, monospace',
+                      }}
+                    >
+                      <div>
+                        <span className="text-white/80">&gt; LAT:</span>{' '}
+                        <span className="text-[#5CE1FF]/70 tabular-nums">
+                          {pin.lat.toFixed(4)}°N
+                        </span>
+                      </div>
+                      <div>
+                        <span className="text-white/80">&gt; LNG:</span>{' '}
+                        <span className="text-[#5CE1FF]/70 tabular-nums">
+                          {pin.lng.toFixed(4)}°E
+                        </span>
+                      </div>
+                      <div>
+                        <span className="text-white/80">&gt; CITY:</span>{' '}
+                        <span className="text-[#5CE1FF]/70">
+                          {pin.labelEn.toUpperCase()}
+                        </span>
+                      </div>
+                    </div>
+
+                    {/* Case title */}
+                    <h3
+                      className="text-white text-[14px] md:text-[15px] leading-[1.3] mb-3 line-clamp-2"
+                      style={{
+                        fontFamily:
+                          'var(--font-geist), "Chiron Sung HK WS", sans-serif',
+                        fontWeight:          500,
+                        WebkitFontSmoothing: 'antialiased',
+                      }}
+                    >
+                      {locale === 'zh-TW' ? primary.title : primary.titleEn}
+                    </h3>
+
+                    {/* Bottom row — date + arrow */}
+                    <div className="pt-3 border-t border-white/[0.06] group-hover:border-[#5CE1FF]/25 transition-colors flex items-center justify-between">
+                      <span className="font-label text-[9px] text-white/35 tracking-[0.22em]">
+                        {primary.date}
+                      </span>
+                      <span
+                        className="font-label text-[10px] text-white/40 group-hover:text-[#5CE1FF] transition-colors"
+                        style={{
+                          textShadow: isActive
+                            ? '0 0 8px rgba(92,225,255,0.55)'
+                            : 'none',
+                        }}
+                      >
+                        OPEN →
+                      </span>
+                    </div>
+                  </Link>
                 );
               })}
-            </ul>
-
-            <p className="font-label text-[0.5rem] text-white/20 mt-6 tracking-[0.2em] leading-relaxed">
-              New signals appear here as case studies are tagged with a location.
-            </p>
+            </div>
           </div>
         </div>
       </div>

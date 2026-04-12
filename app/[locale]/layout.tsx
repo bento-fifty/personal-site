@@ -7,6 +7,7 @@ import {Geist, Noto_Serif_TC, Noto_Sans_TC} from 'next/font/google';
 import localFont from 'next/font/local';
 import Nav from '@/components/layout/Nav';
 import Footer from '@/components/layout/Footer';
+import TerminalCursor from '@/components/shared/TerminalCursor';
 import { NavThemeProvider } from '@/contexts/NavThemeContext';
 import { Analytics } from '@vercel/analytics/next';
 import { SpeedInsights } from '@vercel/speed-insights/next';
@@ -92,6 +93,7 @@ export default async function LocaleLayout({
               {children}
             </main>
             <Footer />
+            <TerminalCursor />
           </NavThemeProvider>
         </NextIntlClientProvider>
         <Analytics />

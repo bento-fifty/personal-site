@@ -35,31 +35,12 @@ export default async function Footer() {
         }}
       />
 
-      <div className="relative max-w-7xl mx-auto px-6 md:px-10 pt-24 pb-10">
-        {/* ── CTA block — stacked tight ───────────────── */}
-        <div className="pb-20 border-b border-white/[0.06]">
-          <p
-            className="font-label text-[0.625rem] text-[#5CE1FF]/70 mb-6 tracking-[0.25em]"
-            style={{ textShadow: '0 0 10px rgba(92,225,255,0.45)' }}
-          >
-            {'// LET\'S WORK TOGETHER'}
-          </p>
-          <h2 className="font-display text-white text-[33px] md:text-[44px] lg:text-[55px] leading-[1.05] max-w-2xl mb-10">
-            Have a project
-            <br />
-            worth remembering?
-          </h2>
-          <Link
-            href="/contact"
-            className="group inline-flex items-center gap-4 font-label text-xs text-white hover:text-[#5CE1FF] border border-white/20 hover:border-[#5CE1FF]/60 px-8 py-5 tracking-[0.22em] transition-colors"
-          >
-            <span>START A PROJECT</span>
-            <span className="inline-block transition-transform group-hover:translate-x-1">→</span>
-          </Link>
-        </div>
+      <div className="relative max-w-7xl mx-auto px-6 md:px-10 pt-16 pb-10">
+        {/* CTA block removed — BookingWizardConsole (section 07) now owns
+            the "start a project" hand-off. Footer is meta-only. */}
 
         {/* ── Middle grid: brand · navigate · social ──── */}
-        <div className="grid grid-cols-1 md:grid-cols-12 gap-12 md:gap-8 py-20">
+        <div className="grid grid-cols-1 md:grid-cols-12 gap-12 md:gap-8 py-10">
           {/* Brand + location */}
           <div className="md:col-span-5 lg:col-span-6">
             <FooterWordmark />

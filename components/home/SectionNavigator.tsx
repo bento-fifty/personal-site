@@ -14,10 +14,13 @@ import { motion, useScroll, useSpring } from 'framer-motion';
  */
 
 const SECTIONS = [
-  { id: 'hero',      label: 'INTRO',         num: '01' },
-  { id: 'featured',  label: 'SELECTED WORK', num: '02' },
-  { id: 'footprint', label: 'FOOTPRINT',     num: '03' },
-  { id: 'cta',       label: 'CONTACT',       num: '04' },
+  { id: 'hero',         label: 'BOOT',         num: '01' },
+  { id: 'toolbelt',     label: 'SYSTEMS',      num: '02' },
+  { id: 'mission-log',  label: 'MISSION LOG',  num: '03' },
+  { id: 'featured-ops', label: 'FEATURED OPS', num: '04' },
+  { id: 'showcase',     label: 'SHOWCASE',     num: '05' },
+  { id: 'footprint',    label: 'GEO SCAN',     num: '06' },
+  { id: 'console',      label: 'CONSOLE',      num: '07' },
 ] as const;
 
 export default function SectionNavigator() {
