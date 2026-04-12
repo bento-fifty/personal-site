@@ -117,8 +117,8 @@ export default function LocationsMap() {
             </span>
           </div>
 
-          {/* Body grid: stream + PIP map */}
-          <div className="relative grid grid-cols-1 md:grid-cols-[1fr_180px] min-h-[420px]">
+          {/* Body grid: stream + larger map (map is co-star not PIP) */}
+          <div className="relative grid grid-cols-1 md:grid-cols-[1fr_340px] min-h-[520px]">
             {/* Stream column */}
             <div className="p-5 md:p-6 text-[11px] md:text-[12px] leading-[1.7]">
               <div className="text-[#5CE1FF]/85 mb-1">
@@ -235,9 +235,9 @@ export default function LocationsMap() {
               </div>
             </div>
 
-            {/* PIP mini map — desktop only, top-right corner */}
+            {/* Right column — larger featured Taiwan map with plate lines */}
             <div className="hidden md:flex items-center justify-center p-5 border-l border-white/[0.06] bg-[#050505]/40 relative">
-              <div className="relative w-full max-w-[140px] aspect-[400/800]">
+              <div className="relative w-full max-w-[260px] aspect-[400/800]">
                 {(['tl', 'tr', 'bl', 'br'] as const).map((cr) => {
                   const style: React.CSSProperties = {
                     position: 'absolute',
@@ -281,31 +281,69 @@ export default function LocationsMap() {
                       <path d={TAIWAN_OUTLINE_PATH} />
                     </clipPath>
                   </defs>
-                  {/* Grid inside Taiwan */}
-                  <g
-                    clipPath="url(#tw-clip-mini)"
-                    stroke="rgba(92,225,255,0.2)"
-                    strokeWidth="1.2"
-                  >
-                    {Array.from({ length: 16 }).map((_, i) => (
-                      <line
-                        key={`lt-${i}`}
-                        x1="0"
-                        y1={i * 50}
-                        x2="400"
-                        y2={i * 50}
-                      />
-                    ))}
+                  {/* Ambient background grid — outside island bounds */}
+                  <g stroke="rgba(92,225,255,0.05)" strokeWidth="0.8">
                     {Array.from({ length: 9 }).map((_, i) => (
-                      <line
-                        key={`ln-${i}`}
-                        x1={i * 50}
-                        y1="0"
-                        x2={i * 50}
-                        y2="800"
-                      />
+                      <line key={`bh-${i}`} x1="0" y1={i * 100} x2="400" y2={i * 100} />
+                    ))}
+                    {Array.from({ length: 5 }).map((_, i) => (
+                      <line key={`bv-${i}`} x1={i * 100} y1="0" x2={i * 100} y2="800" />
                     ))}
                   </g>
+                  {/* Dense lat/lng grid INSIDE Taiwan only (clipped) */}
+                  <g
+                    clipPath="url(#tw-clip-mini)"
+                    stroke="rgba(92,225,255,0.26)"
+                    strokeWidth="1.3"
+                  >
+                    {Array.from({ length: 20 }).map((_, i) => (
+                      <line key={`lt-${i}`} x1="0" y1={i * 40} x2="400" y2={i * 40} />
+                    ))}
+                    {Array.from({ length: 11 }).map((_, i) => (
+                      <line key={`ln-${i}`} x1={i * 40} y1="0" x2={i * 40} y2="800" />
+                    ))}
+                  </g>
+                  {/* Central mountain spine — 中央山脈 as dashed cyan bezier */}
+                  <path
+                    d="M 200 80 Q 215 200 225 360 Q 238 520 228 680 L 220 740"
+                    fill="none"
+                    stroke="rgba(92,225,255,0.55)"
+                    strokeWidth="2.2"
+                    strokeDasharray="6 8"
+                    strokeLinecap="round"
+                    clipPath="url(#tw-clip-mini)"
+                    style={{ filter: 'drop-shadow(0 0 4px rgba(92,225,255,0.5))' }}
+                  />
+                  {/* Region boundary lines — north / central / south */}
+                  <g
+                    clipPath="url(#tw-clip-mini)"
+                    stroke="rgba(92,225,255,0.4)"
+                    strokeWidth="1.4"
+                    strokeDasharray="3 5"
+                  >
+                    <line x1="0" y1="265" x2="400" y2="265" />
+                    <line x1="0" y1="515" x2="400" y2="515" />
+                  </g>
+                  {/* Region labels */}
+                  <g
+                    fill="rgba(92,225,255,0.55)"
+                    fontSize="18"
+                    fontFamily="var(--font-mono), monospace"
+                    letterSpacing="2"
+                  >
+                    <text x="280" y="180" opacity="0.7">NORTH</text>
+                    <text x="300" y="410" opacity="0.7">MID</text>
+                    <text x="290" y="680" opacity="0.7">SOUTH</text>
+                  </g>
+                  {/* Coastal tick marks — short dashes around outline */}
+                  <path
+                    d={TAIWAN_OUTLINE_PATH}
+                    fill="none"
+                    stroke="rgba(92,225,255,0.3)"
+                    strokeWidth="4"
+                    strokeDasharray="2 10"
+                    strokeLinecap="round"
+                  />
                   {/* Outline */}
                   <motion.path
                     d={TAIWAN_OUTLINE_PATH}

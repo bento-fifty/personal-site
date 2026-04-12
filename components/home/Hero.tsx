@@ -323,7 +323,7 @@ function HeadlineWithMotion({ text, loaded }: { text: string; loaded: boolean })
 
   return (
     <div className="relative inline-block mb-10 max-w-3xl mx-auto">
-      <motion.h1
+      <h1
         data-scan-target="true"
         className="text-white text-[2.75rem] leading-[1.1] md:text-7xl lg:text-[6rem]"
         style={{
@@ -334,27 +334,6 @@ function HeadlineWithMotion({ text, loaded }: { text: string; loaded: boolean })
           textShadow:
             '0 0 36px rgba(5,5,5,0.96), 0 0 14px rgba(5,5,5,0.88), 0 2px 18px rgba(5,5,5,0.72)',
           perspective:         '820px',
-        }}
-        animate={
-          loaded
-            ? {
-                filter: [
-                  'brightness(1) saturate(1)',
-                  'brightness(1) saturate(1)',
-                  'brightness(1.55) saturate(1.3)',
-                  'brightness(1) saturate(1)',
-                  'brightness(1) saturate(1)',
-                ],
-              }
-            : undefined
-        }
-        transition={{
-          duration:    1.8,
-          times:       [0, 0.42, 0.52, 0.62, 1],
-          repeat:      Infinity,
-          repeatDelay: 3.5,
-          ease:        'easeIn',
-          delay:       2.5,
         }}
       >
         {words.map((word, wIdx) => {
@@ -417,7 +396,51 @@ function HeadlineWithMotion({ text, loaded }: { text: string; loaded: boolean })
             }}
           />
         )}
-      </motion.h1>
+      </h1>
+
+      {/* Scan reveal overlay — cyan text layer synced to the scan line,
+          revealed from top as the beam passes down through the headline. */}
+      {loaded && (
+        <motion.div
+          aria-hidden
+          className="absolute inset-0 pointer-events-none"
+          initial={{ clipPath: 'inset(0 0 100% 0)', opacity: 0 }}
+          animate={{
+            clipPath: [
+              'inset(0 0 100% 0)',  // fully masked (scan above text)
+              'inset(0 0 100% 0)',  // still masked until scan enters
+              'inset(0 0 0% 0)',    // fully revealed when scan exits bottom
+              'inset(0 0 0% 0)',    // hold briefly
+              'inset(100% 0 0% 0)', // mask from top (reverse fade)
+            ],
+            opacity: [0, 1, 1, 1, 0],
+          }}
+          transition={{
+            duration:    1.8,
+            times:       [0, 0.12, 0.88, 0.92, 1],
+            repeat:      Infinity,
+            repeatDelay: 3.5,
+            ease:        'linear',
+            delay:       2.5,
+          }}
+        >
+          <h1
+            aria-hidden
+            className="text-[2.75rem] leading-[1.1] md:text-7xl lg:text-[6rem]"
+            style={{
+              fontFamily:          'var(--font-geist), "Chiron Sung HK WS", sans-serif',
+              fontWeight:          500,
+              letterSpacing:       '-0.015em',
+              WebkitFontSmoothing: 'antialiased',
+              color:               '#5CE1FF',
+              textShadow:
+                '0 0 18px rgba(92,225,255,0.85), 0 0 6px rgba(92,225,255,1), 0 0 32px rgba(92,225,255,0.45)',
+            }}
+          >
+            {chars.map((ch, i) => (ch === ' ' ? <span key={i}>&nbsp;</span> : <span key={i}>{ch}</span>))}
+          </h1>
+        </motion.div>
+      )}
 
       {/* Horizontal scan line sweeping across the headline */}
       {loaded && (

@@ -324,14 +324,54 @@ function CaseCard({
 }) {
   return (
     <div
-      className="relative w-full h-full border border-white/[0.12] bg-[#050505]/85 overflow-hidden"
+      className={
+        'relative w-full h-full overflow-hidden transition-colors ' +
+        (isCenter
+          ? 'border border-white/[0.12] bg-[#050505]/85'
+          : 'border-2 border-dashed border-[#5CE1FF]/40 bg-[#050505]/70 hover:border-[#5CE1FF]/75 hover:bg-[#5CE1FF]/[0.03]')
+      }
       style={{
         backdropFilter: 'blur(4px)',
         boxShadow: isCenter
           ? '0 30px 80px rgba(0,0,0,0.6), 0 0 60px rgba(92,225,255,0.07)'
-          : '0 15px 40px rgba(0,0,0,0.5)',
+          : '0 15px 40px rgba(0,0,0,0.5), 0 0 24px rgba(92,225,255,0.12)',
       }}
     >
+      {/* Side-card select overlay — visible only when not the active card */}
+      {!isCenter && (
+        <>
+          {(['tl', 'tr', 'bl', 'br'] as const).map((cr) => {
+            const style: React.CSSProperties = {
+              position: 'absolute',
+              width:    '14px',
+              height:   '14px',
+              zIndex:   5,
+            };
+            if (cr.includes('t')) {
+              style.top = '-3px';
+              style.borderTop = '2px solid #5CE1FF';
+            } else {
+              style.bottom = '-3px';
+              style.borderBottom = '2px solid #5CE1FF';
+            }
+            if (cr.includes('l')) {
+              style.left = '-3px';
+              style.borderLeft = '2px solid #5CE1FF';
+            } else {
+              style.right = '-3px';
+              style.borderRight = '2px solid #5CE1FF';
+            }
+            return <span key={cr} aria-hidden style={style} />;
+          })}
+          <div
+            aria-hidden
+            className="absolute top-3 left-1/2 -translate-x-1/2 z-10 font-label text-[9px] text-[#5CE1FF] tracking-[0.28em] whitespace-nowrap px-2 py-1 border border-[#5CE1FF]/40 bg-[#050505]/80"
+            style={{ textShadow: '0 0 8px rgba(92,225,255,0.6)' }}
+          >
+            [ SELECT ]
+          </div>
+        </>
+      )}
       {/* Cover mock — top 55% */}
       <div
         className="absolute top-0 left-0 right-0 h-[55%] overflow-hidden"

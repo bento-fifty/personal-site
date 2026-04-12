@@ -35,9 +35,44 @@ export default async function Footer() {
         }}
       />
 
-      <div className="relative max-w-7xl mx-auto px-6 md:px-10 pt-16 pb-10">
-        {/* CTA block removed — BookingWizardConsole (section 07) now owns
-            the "start a project" hand-off. Footer is meta-only. */}
+      <div className="relative max-w-7xl mx-auto px-6 md:px-10 pt-12 pb-10">
+        {/* ── Terminal status strip — footer as a live readout ───── */}
+        <div
+          className="flex flex-wrap items-center gap-x-5 gap-y-2 border-y border-white/[0.06] py-4 text-[10px] text-white/45 tracking-[0.14em]"
+          style={{ fontFamily: 'var(--font-mono), ui-monospace, monospace' }}
+        >
+          <span className="text-[#5CE1FF]/85">$ status --live</span>
+          <span className="text-white/15">|</span>
+          <span>
+            UPTIME <span className="text-[#5CE1FF]/75 tabular-nums">42d</span>
+          </span>
+          <span className="text-white/15 hidden sm:inline">|</span>
+          <span className="hidden sm:inline">
+            LAT/LNG{' '}
+            <span className="text-[#5CE1FF]/75 tabular-nums">
+              25.03°N&nbsp;121.57°E
+            </span>
+          </span>
+          <span className="text-white/15 hidden md:inline">|</span>
+          <span className="hidden md:inline">
+            SYS <span className="text-[#5CE1FF]/75">SIG_ARCH v1.0</span>
+          </span>
+          <span className="text-white/15 hidden lg:inline">|</span>
+          <span
+            className="hidden lg:inline text-[#5CE1FF]/85"
+            style={{ textShadow: '0 0 8px rgba(92,225,255,0.55)' }}
+          >
+            LINK_ESTABLISHED
+          </span>
+          <span className="ml-auto flex items-center gap-2">
+            <span
+              aria-hidden
+              className="inline-block w-1.5 h-1.5 rounded-full bg-[#3cd66d]"
+              style={{ boxShadow: '0 0 8px rgba(60,214,109,0.9)' }}
+            />
+            <span className="text-[#3cd66d]/80">ONLINE</span>
+          </span>
+        </div>
 
         {/* ── Middle grid: brand · navigate · social ──── */}
         <div className="grid grid-cols-1 md:grid-cols-12 gap-12 md:gap-8 py-10">

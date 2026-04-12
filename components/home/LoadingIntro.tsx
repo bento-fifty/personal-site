@@ -12,13 +12,17 @@ const BOOT_LINES = [
   '> SIGNAL_ARCHITECTURE ........ RUN',
 ];
 
+// Progress stages — bar is divided into N segments, label reflects active
+const STAGES = ['INIT_CORE', 'LOAD_EVENTS', 'VERIFY_LINK', 'READY'] as const;
+
 // Phase timing (ms)
 const ENTER_DURATION  = 1000;
 const LOAD_DURATION   = 2400;
-const HOLD_DURATION   = 380;
+const HOLD_DURATION   = 240;
+const FLASH_DURATION  = 360;
 const EXPAND_DURATION = 820;
 
-type Phase = 'entering' | 'loading' | 'expanding' | 'done';
+type Phase = 'entering' | 'loading' | 'online-flash' | 'expanding' | 'done';
 type Corner = 'tl' | 'tr' | 'bl' | 'br';
 
 interface Props {
@@ -51,10 +55,16 @@ export default function LoadingIntro({ onComplete }: Props) {
 
   useEffect(() => {
     if (phase === 'loading' && progress >= 1) {
-      const t = setTimeout(() => setPhase('expanding'), HOLD_DURATION);
+      const t = setTimeout(() => setPhase('online-flash'), HOLD_DURATION);
       return () => clearTimeout(t);
     }
   }, [phase, progress]);
+
+  useEffect(() => {
+    if (phase !== 'online-flash') return;
+    const t = setTimeout(() => setPhase('expanding'), FLASH_DURATION);
+    return () => clearTimeout(t);
+  }, [phase]);
 
   useEffect(() => {
     if (phase !== 'expanding') return;
@@ -64,6 +74,13 @@ export default function LoadingIntro({ onComplete }: Props) {
     }, EXPAND_DURATION);
     return () => clearTimeout(t);
   }, [phase, onComplete]);
+
+  // Current stage derived from progress (0..1 → 0..STAGES.length-1)
+  const stageIdx = Math.min(
+    Math.floor(progress * STAGES.length),
+    STAGES.length - 1,
+  );
+  const currentStage = STAGES[stageIdx];
 
   const expanding = phase === 'expanding';
 
@@ -229,7 +246,7 @@ export default function LoadingIntro({ onComplete }: Props) {
               EVAN&nbsp;&nbsp;·&nbsp;&nbsp;CHANG
             </p>
 
-            <div className="relative h-px w-full bg-white/[0.06] overflow-hidden">
+            <div className="relative h-[2px] w-full bg-white/[0.06] overflow-hidden">
               <div
                 className="absolute inset-y-0 left-0 bg-[#5CE1FF]"
                 style={{
@@ -238,10 +255,32 @@ export default function LoadingIntro({ onComplete }: Props) {
                   transition: 'width 60ms linear',
                 }}
               />
+              {/* Stage tick marks */}
+              {STAGES.slice(0, -1).map((_, i) => {
+                const pct = ((i + 1) / STAGES.length) * 100;
+                const passed = progress * 100 > pct;
+                return (
+                  <span
+                    key={i}
+                    aria-hidden
+                    className="absolute top-[-3px] h-[8px] w-[1px]"
+                    style={{
+                      left:       `${pct}%`,
+                      background: passed ? '#5CE1FF' : 'rgba(255,255,255,0.25)',
+                      boxShadow:  passed
+                        ? '0 0 6px rgba(92,225,255,0.9)'
+                        : 'none',
+                      transition: 'background 150ms linear',
+                    }}
+                  />
+                );
+              })}
             </div>
 
             <div className="flex justify-between mt-3 font-label text-[0.5rem]">
-              <span className="text-white/30">[ LOADING SIGNAL ]</span>
+              <span className="text-[#5CE1FF]/80 tracking-[0.22em]">
+                [ {currentStage} ]
+              </span>
               <span className="text-[#5CE1FF]/70 tabular-nums">
                 {String(Math.round(progress * 100)).padStart(3, '0')} / 100
               </span>
@@ -286,39 +325,83 @@ export default function LoadingIntro({ onComplete }: Props) {
             <p className="text-white/25">[ CHANNEL 01 ]</p>
             <p className="text-[#5CE1FF]/60 mt-1">{phase.toUpperCase()}</p>
           </div>
+
+          {/* ── SYSTEM ONLINE strobe flash ─────────────── */}
+          {phase === 'online-flash' && (
+            <motion.div
+              key="online-flash"
+              className="absolute inset-0 z-40 flex items-center justify-center pointer-events-none"
+              initial={{ opacity: 0 }}
+              animate={{ opacity: [0, 1, 1, 0.6, 1, 0.8] }}
+              transition={{ duration: FLASH_DURATION / 1000, ease: 'linear' }}
+            >
+              {/* Full-screen white flash burst */}
+              <motion.div
+                aria-hidden
+                className="absolute inset-0 bg-[#5CE1FF]"
+                initial={{ opacity: 0 }}
+                animate={{ opacity: [0, 0.22, 0, 0.1, 0] }}
+                transition={{
+                  duration: FLASH_DURATION / 1000,
+                  ease:     'linear',
+                  times:    [0, 0.12, 0.3, 0.5, 1],
+                }}
+                style={{ mixBlendMode: 'screen' }}
+              />
+              {/* SYSTEM ONLINE text */}
+              <motion.div
+                className="relative text-center"
+                initial={{ scale: 0.94, opacity: 0 }}
+                animate={{ scale: [0.94, 1.04, 1, 1], opacity: [0, 1, 1, 1] }}
+                transition={{
+                  duration: FLASH_DURATION / 1000,
+                  ease:     [0.22, 1, 0.36, 1],
+                  times:    [0, 0.25, 0.5, 1],
+                }}
+              >
+                <p
+                  className="text-[#5CE1FF]"
+                  style={{
+                    fontFamily:    'var(--font-mono), monospace',
+                    fontSize:      'clamp(1.2rem, 2.4vw, 2.2rem)',
+                    letterSpacing: '0.32em',
+                    textShadow:
+                      '0 0 28px rgba(92,225,255,1), 0 0 8px rgba(92,225,255,1), 0 0 60px rgba(92,225,255,0.65)',
+                  }}
+                >
+                  [ SYSTEM ONLINE ]
+                </p>
+                <p
+                  className="mt-3 text-white/80 font-label text-[0.6875rem] tracking-[0.28em]"
+                  style={{ textShadow: '0 0 8px rgba(92,225,255,0.4)' }}
+                >
+                  SIGNAL LOCKED · HANDOFF COMPLETE
+                </p>
+              </motion.div>
+            </motion.div>
+          )}
         </motion.div>
       )}
     </AnimatePresence>
   );
 }
 
-// ── Boot log line with glitch-decode reveal ─────────────
+// ── Boot log line with typewriter reveal ───────────────
 function BootLine({ text, active }: { text: string; active: boolean }) {
-  const [display, setDisplay] = useState(text);
+  const [display, setDisplay] = useState('');
   const done = useRef(false);
 
   useEffect(() => {
     if (done.current) return;
-    const chars = '!<>-_\\/[]{}—=+*^?#$%&';
-    let step = 0;
-    const total = Math.min(text.length, 20);
+    let idx = 0;
     const id = setInterval(() => {
-      step += 1;
-      const out = text
-        .split('')
-        .map((ch, idx) => {
-          if (ch === ' ') return ' ';
-          if (idx < step) return ch;
-          return chars[Math.floor(Math.random() * chars.length)];
-        })
-        .join('');
-      setDisplay(out);
-      if (step >= total) {
+      idx += 1;
+      setDisplay(text.slice(0, idx));
+      if (idx >= text.length) {
         clearInterval(id);
-        setDisplay(text);
         done.current = true;
       }
-    }, 22);
+    }, 24);
     return () => clearInterval(id);
   }, [text]);
 

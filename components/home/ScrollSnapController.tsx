@@ -109,12 +109,32 @@ export default function ScrollSnapController() {
       const scrollable = target?.closest?.('[data-allow-scroll="true"]');
       if (scrollable) return;
 
+      const sections = getSections();
+      if (sections.length === 0) return;
+      const idx = currentIdx(sections);
+      const direction: 1 | -1 = e.deltaY > 0 ? 1 : -1;
+
+      // At the very bottom of the last section and scrolling down → let
+      // native scroll handle the footer area so it's reachable + smooth.
+      if (idx === sections.length - 1 && direction === 1) {
+        const last = sections[sections.length - 1];
+        const lastBottom = last.offsetTop + last.offsetHeight;
+        if (window.scrollY + window.innerHeight >= lastBottom - 40) {
+          return; // don't preventDefault — native scroll into footer
+        }
+      }
+
+      // At the very top scrolling up → no hijack, allow overscroll
+      if (idx === 0 && direction === -1 && window.scrollY < 20) {
+        return;
+      }
+
       if (isScrolling || Date.now() < cooldown) {
         e.preventDefault();
         return;
       }
       e.preventDefault();
-      step(e.deltaY > 0 ? 1 : -1);
+      step(direction);
     }
 
     function onKey(e: KeyboardEvent) {
