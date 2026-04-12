@@ -66,10 +66,10 @@ export default function HyperspaceField() {
 
     function resize() {
       const dpr = Math.min(window.devicePixelRatio || 1, 2);
-      width = canvas.clientWidth;
-      height = canvas.clientHeight;
-      canvas.width = Math.floor(width * dpr);
-      canvas.height = Math.floor(height * dpr);
+      width = canvas!.clientWidth;
+      height = canvas!.clientHeight;
+      canvas!.width = Math.floor(width * dpr);
+      canvas!.height = Math.floor(height * dpr);
       ctx!.setTransform(dpr, 0, 0, dpr, 0, 0);
       cx = width / 2;
       cy = height / 2;
