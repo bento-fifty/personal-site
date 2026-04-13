@@ -24,7 +24,6 @@ export default function Nav() {
   const text   = isDark ? 'text-[#EAEAE8]' : 'text-[#141413]';
   const textDim = isDark ? 'text-[#EAEAE8]/50' : 'text-[#6B6B67]';
 
-  // Homepage: hide nav entirely (immersive experience)
   const navRef = useRef<HTMLElement>(null);
   const isHome = pathname === '/' || pathname === '';
 

@@ -123,12 +123,16 @@ export default function UniverseCanvas({ phase }: Props) {
       mouseRef.current = { x: e.clientX, y: e.clientY };
     }
 
+    // Find the scrollable parent (snap container) instead of window
+    const scrollContainer = canvas.closest('.overflow-y-auto') as HTMLElement | null;
+
     function onScroll() {
-      scrollRef.current = window.scrollY;
+      scrollRef.current = scrollContainer ? scrollContainer.scrollTop : window.scrollY;
     }
 
     window.addEventListener('mousemove', onMouseMove);
-    window.addEventListener('scroll', onScroll, { passive: true });
+    const scrollTarget = scrollContainer || window;
+    scrollTarget.addEventListener('scroll', onScroll, { passive: true });
 
     resize();
     for (let i = 0; i < DUST_COUNT; i++) particles.push(spawnDust(i));
@@ -223,7 +227,7 @@ export default function UniverseCanvas({ phase }: Props) {
         const mx = mouseRef.current.x;
         const my = mouseRef.current.y;
         const scroll = scrollRef.current;
-        const scrollFade = Math.max(0, 1 - scroll / (H * 1.5));
+        const scrollFade = Math.max(0.1, 1 - scroll / (H * 3));
 
         // ── Nebula: redraw to offscreen every N frames or on cursor move ──
         if (scrollFade > 0.01) {
@@ -300,7 +304,7 @@ export default function UniverseCanvas({ phase }: Props) {
       cancelAnimationFrame(rafId);
       ro.disconnect();
       window.removeEventListener('mousemove', onMouseMove);
-      window.removeEventListener('scroll', onScroll);
+      scrollTarget.removeEventListener('scroll', onScroll);
       document.removeEventListener('visibilitychange', onVis);
     };
   }, []);

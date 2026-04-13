@@ -7,30 +7,36 @@ interface Props {
   onEnter: () => void;
 }
 
-export default function HookScreen({ onEnter }: Props) {
-  const [exiting, setExiting] = useState(false);
-  const [mounted, setMounted] = useState(false);
-
-  useEffect(() => {
-    requestAnimationFrame(() => setMounted(true));
-  }, []);
-
-  const handleEnter = useCallback(() => {
-    if (exiting) return;
-    setExiting(true);
-    setTimeout(() => onEnter(), 1000);
-  }, [onEnter, exiting]);
-
+function HookContent({ mounted }: { mounted: boolean }) {
   return (
-    <div
-      className="fixed inset-0 z-[100] cursor-pointer select-none overflow-hidden"
-      onClick={handleEnter}
-      style={{
-        background: '#0A0A0C',
-        clipPath: exiting ? 'circle(0% at 50% 50%)' : 'circle(150% at 50% 50%)',
-        transition: exiting ? 'clip-path 0.95s cubic-bezier(0.65, 0, 0.35, 1)' : 'none',
-      }}
-    >
+    <>
+      {/* Solid background */}
+      <div className="absolute inset-0" style={{ background: '#0A0A0C' }} />
+
+      {/* Grid lines */}
+      <div
+        className="absolute inset-0 pointer-events-none"
+        style={{
+          backgroundImage: `
+            repeating-linear-gradient(0deg, rgba(250,250,248,0.035) 0px, rgba(250,250,248,0.035) 1px, transparent 1px, transparent 60px),
+            repeating-linear-gradient(90deg, rgba(250,250,248,0.035) 0px, rgba(250,250,248,0.035) 1px, transparent 1px, transparent 60px)
+          `,
+        }}
+      />
+
+      {/* Grid center brightening — radial mask amplifies grid near 等級 */}
+      <div
+        className="absolute inset-0 pointer-events-none"
+        style={{
+          backgroundImage: `
+            repeating-linear-gradient(0deg, rgba(250,250,248,0.06) 0px, rgba(250,250,248,0.06) 1px, transparent 1px, transparent 60px),
+            repeating-linear-gradient(90deg, rgba(250,250,248,0.06) 0px, rgba(250,250,248,0.06) 1px, transparent 1px, transparent 60px)
+          `,
+          maskImage: 'radial-gradient(ellipse 35% 40% at 50% 50%, black 0%, transparent 100%)',
+          WebkitMaskImage: 'radial-gradient(ellipse 35% 40% at 50% 50%, black 0%, transparent 100%)',
+        }}
+      />
+
       {/* Grain */}
       <div
         className="absolute inset-0 opacity-[0.04] pointer-events-none"
@@ -41,9 +47,12 @@ export default function HookScreen({ onEnter }: Props) {
       />
 
       {/* Vignette */}
-      <div className="absolute inset-0 pointer-events-none" style={{ background: 'radial-gradient(ellipse 55% 55% at 50% 50%, transparent 0%, rgba(0,0,0,0.6) 100%)' }} />
+      <div
+        className="absolute inset-0 pointer-events-none"
+        style={{ background: 'radial-gradient(ellipse 55% 55% at 50% 50%, transparent 0%, rgba(0,0,0,0.6) 100%)' }}
+      />
 
-      {/* ── 等級 — monumental center ── */}
+      {/* 等級 — stroke outline */}
       <motion.div
         className="absolute inset-0 flex items-center justify-center pointer-events-none"
         initial={{ opacity: 0, scale: 0.92 }}
@@ -54,8 +63,9 @@ export default function HookScreen({ onEnter }: Props) {
           style={{
             fontFamily: 'var(--font-noto-serif-tc), serif',
             fontSize: 'clamp(120px, 28vw, 420px)',
-            fontWeight: 900,
-            color: '#C23B22',
+            fontWeight: 700,
+            color: 'transparent',
+            WebkitTextStroke: '2px #C23B22',
             lineHeight: 0.9,
             letterSpacing: '-0.03em',
             textAlign: 'center',
@@ -65,8 +75,11 @@ export default function HookScreen({ onEnter }: Props) {
         </h1>
       </motion.div>
 
-      {/* ── Scattered text — Utopia-style ── */}
-      <div className="absolute inset-0 pointer-events-none" style={{ fontFamily: 'var(--font-mono), monospace', fontSize: '9px', letterSpacing: '0.25em', color: 'rgba(250,250,248,0.2)', textTransform: 'uppercase' }}>
+      {/* Scattered text */}
+      <div
+        className="absolute inset-0 pointer-events-none"
+        style={{ fontFamily: 'var(--font-mono), monospace', fontSize: '9px', letterSpacing: '0.25em', color: 'rgba(250,250,248,0.2)', textTransform: 'uppercase' }}
+      >
         <motion.span className="absolute" style={{ top: '22%', left: '8%' }} initial={{ opacity: 0 }} animate={{ opacity: mounted ? 1 : 0 }} transition={{ delay: 0.6, duration: 1 }}>
           Events
         </motion.span>
@@ -93,7 +106,7 @@ export default function HookScreen({ onEnter }: Props) {
         </motion.span>
       </div>
 
-      {/* ── Top bar ── */}
+      {/* Top bar */}
       <motion.div
         className="absolute top-0 left-0 right-0 flex justify-between items-center px-8 py-6"
         initial={{ opacity: 0 }}
@@ -108,7 +121,7 @@ export default function HookScreen({ onEnter }: Props) {
         </p>
       </motion.div>
 
-      {/* ── ENTER — bottom center ── */}
+      {/* ENTER — bottom center */}
       <motion.div
         className="absolute bottom-12 left-1/2 -translate-x-1/2 flex flex-col items-center gap-4"
         initial={{ opacity: 0 }}
@@ -118,36 +131,37 @@ export default function HookScreen({ onEnter }: Props) {
         <motion.span
           style={{
             fontFamily: 'var(--font-mono), monospace',
-            fontSize: '11px',
+            fontSize: '13px',
             letterSpacing: '0.5em',
-            color: 'rgba(250,250,248,0.5)',
+            color: 'rgba(250,250,248,0.6)',
             textTransform: 'uppercase',
           }}
-          animate={{ opacity: [0.4, 0.7, 0.4] }}
+          animate={{ opacity: [0.6, 0.9, 0.6] }}
           transition={{ duration: 2.5, repeat: Infinity, ease: 'easeInOut' }}
         >
           Enter
         </motion.span>
         <motion.div
-          className="w-px bg-[rgba(250,250,248,0.15)]"
+          className="bg-[rgba(250,250,248,0.2)]"
+          style={{ width: '2px' }}
           animate={{ height: ['16px', '28px', '16px'] }}
           transition={{ duration: 2.5, repeat: Infinity, ease: 'easeInOut' }}
         />
         <motion.div
-          className="w-1.5 h-1.5 rounded-full"
+          className="w-2 h-2 rounded-full"
           style={{ background: '#C23B22' }}
           animate={{
             scale: [1, 1.5, 1],
-            opacity: [0.5, 1, 0.5],
-            boxShadow: ['0 0 0px rgba(194,59,34,0)', '0 0 16px rgba(194,59,34,0.4)', '0 0 0px rgba(194,59,34,0)'],
+            opacity: [0.6, 1, 0.6],
+            boxShadow: ['0 0 0px rgba(194,59,34,0)', '0 0 24px rgba(194,59,34,0.5)', '0 0 0px rgba(194,59,34,0)'],
           }}
           transition={{ duration: 2.5, repeat: Infinity, ease: 'easeInOut' }}
         />
       </motion.div>
 
-      {/* ── Bottom marquee — Utopia style ── */}
+      {/* Bottom marquee */}
       <motion.div
-        className="absolute bottom-0 left-0 right-0 overflow-hidden border-t border-[rgba(250,250,248,0.06)] py-2"
+        className="absolute bottom-0 left-0 right-0 overflow-hidden border-t border-[rgba(250,250,248,0.12)] py-2"
         initial={{ opacity: 0 }}
         animate={{ opacity: mounted ? 1 : 0 }}
         transition={{ delay: 1.4, duration: 0.8 }}
@@ -159,9 +173,9 @@ export default function HookScreen({ onEnter }: Props) {
               className="inline-block"
               style={{
                 fontFamily: 'var(--font-mono), monospace',
-                fontSize: '8px',
+                fontSize: '10px',
                 letterSpacing: '0.2em',
-                color: 'rgba(250,250,248,0.12)',
+                color: 'rgba(250,250,248,0.25)',
                 textTransform: 'uppercase',
                 paddingRight: '3rem',
               }}
@@ -172,24 +186,54 @@ export default function HookScreen({ onEnter }: Props) {
         </div>
       </motion.div>
 
-      {/* ── Corner: 等級 small — like Utopia's 東京 corner ── */}
-      <motion.div
-        className="absolute bottom-8 right-8"
-        initial={{ opacity: 0 }}
-        animate={{ opacity: mounted ? 1 : 0 }}
-        transition={{ delay: 1.0, duration: 1 }}
+    </>
+  );
+}
+
+export default function HookScreen({ onEnter }: Props) {
+  const [exiting, setExiting] = useState(false);
+  const [mounted, setMounted] = useState(false);
+
+  useEffect(() => {
+    requestAnimationFrame(() => setMounted(true));
+  }, []);
+
+  const handleEnter = useCallback(() => {
+    if (exiting) return;
+    setExiting(true);
+    setTimeout(() => onEnter(), 1150);
+  }, [onEnter, exiting]);
+
+  return (
+    <div
+      className="fixed inset-0 z-[100] cursor-pointer select-none overflow-hidden"
+      onClick={handleEnter}
+    >
+      {/* Left tear panel */}
+      <div
+        className="absolute inset-0 overflow-hidden"
+        style={{
+          clipPath: 'inset(0 50% 0 0)',
+          transform: exiting ? 'translateX(-105%) rotate(-2deg)' : 'none',
+          transition: exiting ? 'transform 1.1s cubic-bezier(0.76, 0, 0.24, 1)' : 'none',
+        }}
       >
-        <span
-          style={{
-            fontFamily: 'var(--font-noto-serif-tc), serif',
-            fontSize: '16px',
-            fontWeight: 700,
-            color: '#C23B22',
-          }}
-        >
-          等級
-        </span>
-      </motion.div>
+        <HookContent mounted={mounted} />
+      </div>
+
+      {/* Right tear panel */}
+      <div
+        className="absolute inset-0 overflow-hidden"
+        style={{
+          clipPath: 'inset(0 0 0 50%)',
+          transform: exiting ? 'translateX(105%) rotate(2deg)' : 'none',
+          transition: exiting ? 'transform 1.1s cubic-bezier(0.76, 0, 0.24, 1)' : 'none',
+        }}
+      >
+        <HookContent mounted={mounted} />
+      </div>
+
+      {/* No center line — tear effect is clear without it */}
     </div>
   );
 }

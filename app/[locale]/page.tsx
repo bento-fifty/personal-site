@@ -6,6 +6,9 @@ import HookScreen from '@/components/home/HookScreen';
 import Hero from '@/components/home/Hero';
 import ActiveSystemsToolbelt from '@/components/home/ActiveSystemsToolbelt';
 import CaseShowcase3D from '@/components/home/CaseShowcase3D';
+import CaseWall from '@/components/home/CaseWall';
+import HomeMenuButton from '@/components/home/HomeMenuButton';
+import FooterCard from '@/components/home/FooterCard';
 
 export default function HomePage() {
   const [entered, setEntered] = useState(false);
@@ -50,31 +53,30 @@ export default function HomePage() {
             }}
           />
 
-          {/* Section 1: Hero */}
-          <section className="min-h-screen relative" style={{ scrollSnapAlign: 'start' }}>
+          {/* Section 1: Hero + bottom marquee */}
+          <section className="relative overflow-hidden" style={{ scrollSnapAlign: 'start', height: '100dvh' }}>
             <Hero />
-          </section>
-
-          {/* Marquee divider */}
-          <div className="bg-[#0A0A0C] py-4 overflow-hidden" style={{ scrollSnapAlign: 'none' }}>
-            <div className="flex whitespace-nowrap" style={{ animation: 'marquee 20s linear infinite' }}>
-              {Array.from({ length: 8 }).map((_, i) => (
-                <span
-                  key={i}
-                  className="inline-block px-8"
-                  style={{
-                    fontFamily: 'var(--font-heading), Georgia, serif',
-                    fontSize: 'clamp(16px, 2vw, 24px)',
-                    fontWeight: 600,
-                    color: '#FAFAF8',
-                    letterSpacing: '0.15em',
-                  }}
-                >
-                  THE LEVEL STUDIO ·
-                </span>
-              ))}
+            {/* Marquee pinned to bottom of hero */}
+            <div className="absolute bottom-0 left-0 right-0 overflow-hidden" style={{ background: '#0A0A0C', padding: '6px 0', zIndex: 2 }}>
+              <div className="flex whitespace-nowrap" style={{ animation: 'marquee 25s linear infinite', width: 'max-content' }}>
+                {Array.from({ length: 8 }).map((_, i) => (
+                  <span
+                    key={i}
+                    className="inline-block px-6"
+                    style={{
+                      fontFamily: 'var(--font-heading), Georgia, serif',
+                      fontSize: 'clamp(14px, 1.8vw, 20px)',
+                      fontWeight: 600,
+                      color: '#FAFAF8',
+                      letterSpacing: '0.15em',
+                    }}
+                  >
+                    THE LEVEL STUDIO ·
+                  </span>
+                ))}
+              </div>
             </div>
-          </div>
+          </section>
 
           {/* Section 2: Active Systems */}
           <section className="min-h-screen" style={{ scrollSnapAlign: 'start', background: 'transparent' }}>
@@ -86,42 +88,33 @@ export default function HomePage() {
             <CaseShowcase3D />
           </section>
 
-          {/* Section 4: Case Wall — placeholder */}
+          {/* Section 4: Case Wall — gradient color shift */}
           <section
-            className="min-h-screen flex items-center justify-center"
-            style={{ scrollSnapAlign: 'start', background: 'transparent' }}
+            className="min-h-screen flex items-center relative"
+            style={{ scrollSnapAlign: 'start' }}
           >
-            <p style={{ fontFamily: 'var(--font-mono), monospace', fontSize: '12px', color: 'rgba(20,20,19,0.3)', letterSpacing: '0.2em' }}>
-              [ CASE WALL — COMING NEXT ]
-            </p>
-          </section>
-
-          {/* Section 5: Consult — textured bg */}
-          <section
-            className="min-h-screen flex items-center justify-center relative"
-            style={{ scrollSnapAlign: 'start', background: '#0A0A0C' }}
-          >
-            {/* Grain texture */}
             <div
-              className="absolute inset-0 opacity-[0.06] pointer-events-none"
+              className="absolute inset-0 pointer-events-none"
               style={{
-                backgroundImage: `url("data:image/svg+xml,%3Csvg viewBox='0 0 256 256' xmlns='http://www.w3.org/2000/svg'%3E%3Cfilter id='n'%3E%3CfeTurbulence type='fractalNoise' baseFrequency='0.9' numOctaves='4' stitchTiles='stitch'/%3E%3C/filter%3E%3Crect width='100%25' height='100%25' filter='url(%23n)'/%3E%3C/svg%3E")`,
-                backgroundSize: '128px 128px',
+                background: 'linear-gradient(180deg, transparent 0%, rgba(10,10,12,0.5) 25%, rgba(10,10,12,0.85) 60%, #0A0A0C 100%)',
               }}
             />
-            <div className="relative z-10 text-center px-8 max-w-[600px]">
-              <p style={{ fontFamily: 'var(--font-mono), monospace', fontSize: '9px', letterSpacing: '0.3em', color: 'rgba(250,250,248,0.3)', textTransform: 'uppercase', marginBottom: 24 }}>
-                [ Contact ]
-              </p>
-              <h2 style={{ fontFamily: 'var(--font-heading), Georgia, serif', fontSize: 'clamp(28px, 4vw, 48px)', fontWeight: 400, color: '#FAFAF8', lineHeight: 1.3 }}>
-                Have a project worth remembering?
-              </h2>
-              <p style={{ fontFamily: 'var(--font-mono), monospace', fontSize: '11px', color: 'rgba(250,250,248,0.4)', marginTop: 20, letterSpacing: '0.1em' }}>
-                evanchang818@gmail.com
-              </p>
+            <div className="relative z-10 w-full">
+              <CaseWall />
             </div>
           </section>
+
+          {/* Section 5: Footer card — Utopia-style pop-up */}
+          <section
+            className="min-h-screen flex items-end relative"
+            style={{ scrollSnapAlign: 'start', background: '#0A0A0C' }}
+          >
+            <FooterCard />
+          </section>
         </div>
+
+      {/* Glass hamburger menu — only after entering */}
+      {entered && <HomeMenuButton />}
 
       {/* Hook screen overlay — on top of everything */}
       {!entered && <HookScreen onEnter={handleEnter} />}

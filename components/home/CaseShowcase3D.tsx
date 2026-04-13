@@ -61,26 +61,33 @@ export default function CaseShowcase3D() {
             whileInView={{ opacity: 1, y: 0 }}
             viewport={{ once: true, amount: 0.6 }}
             transition={{ duration: 0.7, ease: 'easeOut' }}
-            className="font-label text-[11px] text-[#5CE1FF]/80 mb-5 tracking-[0.28em]"
-            style={{ textShadow: '0 0 12px rgba(92,225,255,0.5)' }}
+            style={{
+              fontFamily: 'var(--font-mono), monospace',
+              fontSize: '9px',
+              letterSpacing: '0.3em',
+              color: 'rgba(194,59,34,0.5)',
+              textTransform: 'uppercase',
+              marginBottom: 20,
+            }}
           >
-            {'// 05 // CASE SHOWCASE'}
+            [ 02 ] Case Showcase
           </motion.p>
           <motion.h2
             initial={{ opacity: 0, y: 18 }}
             whileInView={{ opacity: 1, y: 0 }}
             viewport={{ once: true, amount: 0.5 }}
             transition={{ duration: 0.9, ease: [0.22, 1, 0.36, 1] }}
-            className="text-white text-[33px] md:text-[44px] lg:text-[55px] leading-[1.05] max-w-3xl mx-auto"
             style={{
-              fontFamily:          'var(--font-geist), "Chiron Sung HK WS", sans-serif',
-              fontWeight:          500,
-              letterSpacing:       '-0.015em',
-              WebkitFontSmoothing: 'antialiased',
-              textShadow:          '0 0 22px rgba(5,5,5,0.9)',
+              fontFamily: 'var(--font-heading), Georgia, serif',
+              fontSize: 'clamp(28px, 5vw, 55px)',
+              fontWeight: 400,
+              color: '#FAFAF8',
+              lineHeight: 1.1,
+              letterSpacing: '-0.015em',
+              textAlign: 'center',
             }}
           >
-            Holographic archive.
+            Selected work.
           </motion.h2>
           <p className="mt-4 font-label text-[10px] text-white/35 tracking-[0.22em]">
             [ CLICK CENTER CARD TO OPEN DETAIL ]
@@ -123,6 +130,12 @@ export default function CaseShowcase3D() {
                     scale:      anim.scale,
                     opacity:    anim.opacity,
                   }}
+                  whileHover={!isCenter ? {
+                    x: pos === 'left' ? anim.x + 40 : anim.x - 40,
+                    opacity: 0.75,
+                    scale: 0.84,
+                    rotateY: pos === 'left' ? 28 : -28,
+                  } : undefined}
                   transition={{ type: 'spring', stiffness: 180, damping: 26 }}
                   style={{
                     width:          '480px',
@@ -135,7 +148,7 @@ export default function CaseShowcase3D() {
                     pointerEvents:  'auto',
                   }}
                 >
-                  <CaseCard c={c} isCenter={isCenter} />
+                  <CaseCard c={c} isCenter={isCenter} position={pos} />
                 </motion.button>
               );
             })}
@@ -149,7 +162,7 @@ export default function CaseShowcase3D() {
             type="button"
             onClick={() => go(-1)}
             aria-label="Previous case"
-            className="font-label text-[11px] text-white/55 hover:text-[#5CE1FF] tracking-[0.22em] transition-colors flex items-center gap-2"
+            className="font-label text-[11px] text-white/55 hover:text-[#C23B22] tracking-[0.22em] transition-colors flex items-center gap-2"
           >
             <span>◁</span>
             <span>PREV</span>
@@ -168,10 +181,10 @@ export default function CaseShowcase3D() {
                   style={{
                     width:      i === active ? '10px' : '5px',
                     height:     i === active ? '10px' : '5px',
-                    background: i === active ? '#5CE1FF' : 'rgba(255,255,255,0.3)',
+                    background: i === active ? '#C23B22' : 'rgba(255,255,255,0.3)',
                     boxShadow:
                       i === active
-                        ? '0 0 10px rgba(92,225,255,0.9), 0 0 2px rgba(92,225,255,1)'
+                        ? '0 0 10px rgba(194,59,34,0.9), 0 0 2px rgba(194,59,34,1)'
                         : 'none',
                   }}
                 />
@@ -182,7 +195,7 @@ export default function CaseShowcase3D() {
             type="button"
             onClick={() => go(1)}
             aria-label="Next case"
-            className="font-label text-[11px] text-white/55 hover:text-[#5CE1FF] tracking-[0.22em] transition-colors flex items-center gap-2"
+            className="font-label text-[11px] text-white/55 hover:text-[#C23B22] tracking-[0.22em] transition-colors flex items-center gap-2"
           >
             <span>NEXT</span>
             <span>▷</span>
@@ -212,10 +225,10 @@ export default function CaseShowcase3D() {
               exit={{    opacity: 0, y: 24, scale: 0.96 }}
               transition={{ duration: 0.45, ease: [0.22, 1, 0.36, 1] }}
               onClick={(e) => e.stopPropagation()}
-              className="relative w-full max-w-2xl border border-[#5CE1FF]/30 bg-[#050505]/95 p-7 md:p-10 max-h-[85vh] overflow-y-auto"
+              className="relative w-full max-w-2xl border border-[#C23B22]/30 bg-[#050505]/95 p-7 md:p-10 max-h-[85vh] overflow-y-auto"
               data-allow-scroll="true"
               style={{
-                boxShadow: '0 40px 120px rgba(0,0,0,0.7), 0 0 60px rgba(92,225,255,0.08)',
+                boxShadow: '0 40px 120px rgba(0,0,0,0.7), 0 0 60px rgba(194,59,34,0.08)',
               }}
             >
               {/* Close */}
@@ -223,14 +236,14 @@ export default function CaseShowcase3D() {
                 type="button"
                 onClick={() => setModalOpen(false)}
                 aria-label="Close detail"
-                className="absolute top-4 right-4 font-label text-[11px] text-white/40 hover:text-[#5CE1FF] tracking-[0.22em] transition-colors"
+                className="absolute top-4 right-4 font-label text-[11px] text-white/40 hover:text-[#C23B22] tracking-[0.22em] transition-colors"
               >
                 [ ESC · CLOSE ]
               </button>
 
               <p
-                className="font-label text-[11px] text-[#5CE1FF] tracking-[0.22em] mb-6"
-                style={{ textShadow: '0 0 10px rgba(92,225,255,0.55)' }}
+                className="font-label text-[11px] text-[#C23B22] tracking-[0.22em] mb-6"
+                style={{ textShadow: '0 0 10px rgba(194,59,34,0.55)' }}
               >
                 [ CASE FILE // {activeCase.id} / {activeCase.type} ]
               </p>
@@ -267,7 +280,7 @@ export default function CaseShowcase3D() {
                       [ 0{i + 1} ]
                     </p>
                     <p
-                      className="text-[#5CE1FF] text-[26px] md:text-[36px] leading-none mb-2 tabular-nums"
+                      className="text-[#C23B22] text-[26px] md:text-[36px] leading-none mb-2 tabular-nums"
                       style={{
                         fontFamily:
                           'var(--font-geist), "Chiron Sung HK WS", sans-serif',
@@ -299,8 +312,8 @@ export default function CaseShowcase3D() {
               {/* CTA */}
               <Link
                 href={`/work/${activeCase.slug}`}
-                className="group inline-flex items-center gap-4 px-6 py-3 border border-[#5CE1FF]/50 text-white hover:text-[#5CE1FF] hover:border-[#5CE1FF] transition-colors font-label text-[11px] tracking-[0.28em]"
-                style={{ textShadow: '0 0 12px rgba(92,225,255,0.4)' }}
+                className="group inline-flex items-center gap-4 px-6 py-3 border border-[#C23B22]/50 text-white hover:text-[#C23B22] hover:border-[#C23B22] transition-colors font-label text-[11px] tracking-[0.28em]"
+                style={{ textShadow: '0 0 12px rgba(194,59,34,0.4)' }}
               >
                 <span>OPEN FULL CASE FILE</span>
                 <span className="inline-block transition-transform group-hover:translate-x-1">
@@ -318,66 +331,48 @@ export default function CaseShowcase3D() {
 function CaseCard({
   c,
   isCenter,
+  position,
 }: {
   c:        (typeof CASES)[number];
   isCenter: boolean;
+  position: 'center' | 'left' | 'right';
 }) {
   return (
     <div
       className={
-        'relative w-full h-full overflow-hidden transition-colors ' +
+        'relative w-full h-full overflow-hidden transition-all duration-300 ' +
         (isCenter
           ? 'border border-white/[0.12] bg-[#050505]/85'
-          : 'border-2 border-dashed border-[#5CE1FF]/40 bg-[#050505]/70 hover:border-[#5CE1FF]/75 hover:bg-[#5CE1FF]/[0.03]')
+          : 'border border-white/[0.06] bg-[#050505]/70 hover:border-[rgba(194,59,34,0.3)]')
       }
       style={{
         backdropFilter: 'blur(4px)',
         boxShadow: isCenter
-          ? '0 30px 80px rgba(0,0,0,0.6), 0 0 60px rgba(92,225,255,0.07)'
-          : '0 15px 40px rgba(0,0,0,0.5), 0 0 24px rgba(92,225,255,0.12)',
+          ? '0 30px 80px rgba(0,0,0,0.6), 0 0 60px rgba(194,59,34,0.07)'
+          : '0 15px 40px rgba(0,0,0,0.5)',
       }}
     >
-      {/* Side-card select overlay — visible only when not the active card */}
+      {/* Direction arrow — only on side cards, visible on hover */}
       {!isCenter && (
-        <>
-          {(['tl', 'tr', 'bl', 'br'] as const).map((cr) => {
-            const style: React.CSSProperties = {
-              position: 'absolute',
-              width:    '14px',
-              height:   '14px',
-              zIndex:   5,
-            };
-            if (cr.includes('t')) {
-              style.top = '-3px';
-              style.borderTop = '2px solid #5CE1FF';
-            } else {
-              style.bottom = '-3px';
-              style.borderBottom = '2px solid #5CE1FF';
-            }
-            if (cr.includes('l')) {
-              style.left = '-3px';
-              style.borderLeft = '2px solid #5CE1FF';
-            } else {
-              style.right = '-3px';
-              style.borderRight = '2px solid #5CE1FF';
-            }
-            return <span key={cr} aria-hidden style={style} />;
-          })}
-          <div
-            aria-hidden
-            className="absolute top-3 left-1/2 -translate-x-1/2 z-10 font-label text-[9px] text-[#5CE1FF] tracking-[0.28em] whitespace-nowrap px-2 py-1 border border-[#5CE1FF]/40 bg-[#050505]/80"
-            style={{ textShadow: '0 0 8px rgba(92,225,255,0.6)' }}
-          >
-            [ SELECT ]
-          </div>
-        </>
+        <div
+          className="absolute top-1/2 -translate-y-1/2 z-20 opacity-0 group-hover:opacity-100 transition-all duration-200 group-hover:translate-x-0"
+          style={{
+            ...(position === 'left' ? { right: '12px', transform: 'translateY(-50%) translateX(8px)' } : { left: '12px', transform: 'translateY(-50%) translateX(-8px)' }),
+            fontFamily: 'var(--font-departure-mono), monospace',
+            fontSize: '16px',
+            color: '#C23B22',
+            textShadow: '0 0 12px rgba(194,59,34,0.6)',
+          }}
+        >
+          {position === 'left' ? '→' : '←'}
+        </div>
       )}
       {/* Cover mock — top 55% */}
       <div
         className="absolute top-0 left-0 right-0 h-[55%] overflow-hidden"
         style={{
           background:
-            'linear-gradient(135deg, rgba(92,225,255,0.05) 0%, rgba(5,5,5,0.92) 70%), #0a0a0a',
+            'linear-gradient(135deg, rgba(194,59,34,0.05) 0%, rgba(5,5,5,0.92) 70%), #0a0a0a',
         }}
       >
         <div
@@ -385,7 +380,7 @@ function CaseCard({
           className="absolute inset-0 opacity-25"
           style={{
             backgroundImage:
-              'linear-gradient(rgba(92,225,255,0.15) 1px, transparent 1px), linear-gradient(90deg, rgba(92,225,255,0.15) 1px, transparent 1px)',
+              'linear-gradient(rgba(194,59,34,0.15) 1px, transparent 1px), linear-gradient(90deg, rgba(194,59,34,0.15) 1px, transparent 1px)',
             backgroundSize: '40px 40px',
           }}
         />
@@ -395,13 +390,13 @@ function CaseCard({
               [ COVER ]
             </div>
             <div
-              className="text-[#5CE1FF]/55 text-[42px] md:text-[66px] leading-none tabular-nums"
+              className="text-[#C23B22]/55 text-[42px] md:text-[66px] leading-none tabular-nums"
               style={{
                 fontFamily:
                   'var(--font-geist), "Chiron Sung HK WS", sans-serif',
                 fontWeight:          500,
                 WebkitFontSmoothing: 'antialiased',
-                textShadow:          '0 0 24px rgba(92,225,255,0.3)',
+                textShadow:          '0 0 24px rgba(194,59,34,0.3)',
               }}
             >
               {c.id}
@@ -416,17 +411,17 @@ function CaseCard({
           };
           if (cr.includes('t')) {
             style.top = '10px';
-            style.borderTop = '1px solid rgba(92,225,255,0.5)';
+            style.borderTop = '1px solid rgba(194,59,34,0.5)';
           } else {
             style.bottom = '10px';
-            style.borderBottom = '1px solid rgba(92,225,255,0.5)';
+            style.borderBottom = '1px solid rgba(194,59,34,0.5)';
           }
           if (cr.includes('l')) {
             style.left = '10px';
-            style.borderLeft = '1px solid rgba(92,225,255,0.5)';
+            style.borderLeft = '1px solid rgba(194,59,34,0.5)';
           } else {
             style.right = '10px';
-            style.borderRight = '1px solid rgba(92,225,255,0.5)';
+            style.borderRight = '1px solid rgba(194,59,34,0.5)';
           }
           return <span key={cr} aria-hidden style={style} />;
         })}
@@ -437,8 +432,8 @@ function CaseCard({
         <div>
           <div className="flex items-center gap-3 mb-3">
             <span
-              className="font-label text-[10px] text-[#5CE1FF] tracking-[0.22em]"
-              style={{ textShadow: '0 0 8px rgba(92,225,255,0.5)' }}
+              className="font-label text-[10px] text-[#C23B22] tracking-[0.22em]"
+              style={{ textShadow: '0 0 8px rgba(194,59,34,0.5)' }}
             >
               [ {c.type} ]
             </span>
@@ -463,7 +458,7 @@ function CaseCard({
           </p>
         </div>
         {isCenter && (
-          <span className="self-start inline-flex items-center gap-2 font-label text-[10px] text-[#5CE1FF]/80 tracking-[0.22em]">
+          <span className="self-start inline-flex items-center gap-2 font-label text-[10px] text-[#C23B22]/80 tracking-[0.22em]">
             <span>[ CLICK TO OPEN ]</span>
           </span>
         )}
