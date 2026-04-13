@@ -128,6 +128,15 @@ body::before {
   background-size: 256px 256px;
 }
 
+/* ── Marquee animation ────────────────────────────── */
+@keyframes marquee {
+  from { transform: translateX(0); }
+  to { transform: translateX(-50%); }
+}
+.animate-marquee {
+  animation: marquee 25s linear infinite;
+}
+
 /* ── HUD grid (restored for v2 components) ────────── */
 .hud-grid {
   display: grid;
