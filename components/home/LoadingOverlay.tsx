@@ -306,9 +306,9 @@ export default function LoadingOverlay({ onPhaseChange, onComplete }: Props) {
     onPhaseChange('loading');
     const timers = [
       setTimeout(() => setPhase('ready'), 3600),
-      setTimeout(() => setExploding(true), 4000),     // text explodes
-      setTimeout(() => { setPhase('warp'); onPhaseChange('warp'); }, 4600), // warp after explosion
-      setTimeout(() => { setPhase('done'); setVisible(false); onPhaseChange('ambient'); onComplete(); }, 6200),
+      setTimeout(() => setExploding(true), 5800),     // text explodes (after ENTER GALAXY visible ~1.5s)
+      setTimeout(() => { setPhase('warp'); onPhaseChange('warp'); }, 6400), // warp after explosion
+      setTimeout(() => { setPhase('done'); setVisible(false); onPhaseChange('ambient'); onComplete(); }, 8000),
     ];
     return () => timers.forEach(clearTimeout);
   }, [onPhaseChange, onComplete]);
@@ -365,13 +365,24 @@ export default function LoadingOverlay({ onPhaseChange, onComplete }: Props) {
               >
                 <div className="flex-1 border rounded-sm p-3 flex flex-col items-center justify-center" style={{ borderColor: C.border, background: C.panelBg }}>
                   <GaugeCircle value={progress / 100 * 0.78} />
-                  <p style={{ fontFamily: mono, fontSize: '7px', color: `${C.accent}0.6)`, marginTop: 4, letterSpacing: '0.15em' }}>NAV</p>
-                  <p style={{ fontFamily: mono, fontSize: '6px', color: `${C.text}0.3)`, marginTop: 2 }}>DEST: WHITE GALAXY</p>
+                  <p style={{ fontFamily: mono, fontSize: '8px', color: `${C.accent}0.6)`, marginTop: 4, letterSpacing: '0.15em' }}>NAV</p>
+                  <p style={{ fontFamily: mono, fontSize: '7px', color: `${C.text}0.3)`, marginTop: 2 }}>DEST: WHITE GALAXY</p>
                 </div>
-                <div className="flex-1 border rounded-sm p-3 flex flex-col items-center justify-center" style={{ borderColor: C.border, background: C.panelBg }}>
-                  <GaugeCircle value={progress / 100 * 0.65} size="sm" />
-                  <p style={{ fontFamily: mono, fontSize: '7px', color: `${C.accent}0.6)`, marginTop: 4, letterSpacing: '0.15em' }}>SIG</p>
-                  <p style={{ fontFamily: mono, fontSize: '6px', color: `${C.text}0.3)`, marginTop: 2 }}>PORTFOLIO SYNC</p>
+                <div className="border rounded-sm p-3 flex flex-col gap-2" style={{ borderColor: C.border, background: C.panelBg }}>
+                  <div>
+                    <p style={{ fontFamily: mono, fontSize: '7px', color: `${C.text}0.3)`, letterSpacing: '0.15em' }}>VELOCITY</p>
+                    <p style={{ fontFamily: mono, fontSize: '14px', color: `${C.accent}0.7)`, fontVariantNumeric: 'tabular-nums', fontWeight: 'bold' }}>
+                      {Math.round(progress * 34).toLocaleString()} <span style={{ fontSize: '8px', fontWeight: 'normal' }}>m/s</span>
+                    </p>
+                  </div>
+                  <div>
+                    <p style={{ fontFamily: mono, fontSize: '7px', color: `${C.text}0.3)`, letterSpacing: '0.15em' }}>COORD</p>
+                    <p style={{ fontFamily: mono, fontSize: '9px', color: `${C.accent}0.5)`, fontVariantNumeric: 'tabular-nums' }}>25.03°N</p>
+                    <p style={{ fontFamily: mono, fontSize: '9px', color: `${C.accent}0.5)`, fontVariantNumeric: 'tabular-nums' }}>121.57°E</p>
+                  </div>
+                </div>
+                <div className="border rounded-sm p-3 flex flex-col items-center justify-center" style={{ borderColor: C.border, background: C.panelBg }}>
+                  <LiveClock mono={mono} accent={C.accent} />
                 </div>
               </motion.div>
 
@@ -458,7 +469,8 @@ export default function LoadingOverlay({ onPhaseChange, onComplete }: Props) {
                 animate={isWarp ? { x: '100%', opacity: 0 } : { x: 0, opacity: 1 }}
                 transition={{ duration: 0.5, ease: [0.22, 1, 0.36, 1] }}
               >
-                <div className="flex-1 border rounded-sm p-3" style={{ borderColor: C.border, background: C.panelBg }}>
+                {/* MODULES */}
+                <div className="border rounded-sm p-3" style={{ borderColor: C.border, background: C.panelBg }}>
                   <p style={{ fontFamily: mono, fontSize: '9px', color: `${C.text}0.35)`, marginBottom: 8, letterSpacing: '0.15em' }}>MODULES</p>
                   {MODULES.map((mod, i) => {
                     const active = progress > (i + 1) * 16;
@@ -476,6 +488,22 @@ export default function LoadingOverlay({ onPhaseChange, onComplete }: Props) {
                     );
                   })}
                 </div>
+                {/* MISSION BRIEF */}
+                <div className="border rounded-sm p-3" style={{ borderColor: C.border, background: C.panelBg }}>
+                  <p style={{ fontFamily: mono, fontSize: '8px', color: `${C.text}0.3)`, marginBottom: 6, letterSpacing: '0.15em' }}>MISSION BRIEF</p>
+                  <p style={{ fontFamily: mono, fontSize: '8px', color: `${C.accent}0.5)`, lineHeight: 1.6 }}>
+                    Event Planning<br/>& Production
+                  </p>
+                  <p style={{ fontFamily: mono, fontSize: '7px', color: `${C.text}0.2)`, marginTop: 4 }}>
+                    Brand Experience
+                  </p>
+                </div>
+                {/* PILOT */}
+                <div className="border rounded-sm p-3" style={{ borderColor: C.border, background: C.panelBg }}>
+                  <p style={{ fontFamily: mono, fontSize: '8px', color: `${C.text}0.3)`, marginBottom: 4, letterSpacing: '0.15em' }}>PILOT</p>
+                  <p style={{ fontFamily: mono, fontSize: '10px', color: `${C.accent}0.7)`, fontWeight: 'bold' }}>Evan Chang</p>
+                  <p style={{ fontFamily: mono, fontSize: '7px', color: `${C.text}0.25)`, marginTop: 2 }}>Taipei, Taiwan</p>
+                </div>
               </motion.div>
             </div>
 
@@ -490,21 +518,20 @@ export default function LoadingOverlay({ onPhaseChange, onComplete }: Props) {
   );
 }
 
-// ── LOGIN with scramble + floating idle + ENTER GALAXY typewriter + explosion ──
+// ── LOGIN → ENTER GALAXY (in-place morph, no disappearing) ──
 function LoginText({ progress, exploding, mono, accent }: { progress: number; exploding: boolean; mono: string; accent: string }) {
   const chars = 'ABCDEFGHIJKLMNOPQRSTUVWXYZ0123456789@#$%&';
-  const [loginText, setLoginText] = useState(() =>
+  const [display, setDisplay] = useState(() =>
     'LOGIN'.split('').map(() => chars[Math.floor(Math.random() * chars.length)]).join('')
   );
-  const [showEnter, setShowEnter] = useState(false);
-  const [enterReveal, setEnterReveal] = useState(0); // how many chars of ENTER GALAXY revealed
+  const targetRef = useRef('LOGIN');
   const intervalRef = useRef<ReturnType<typeof setInterval> | undefined>(undefined);
 
   // Phase 1: scramble-in to "LOGIN"
   useEffect(() => {
     let iter = 0;
     intervalRef.current = setInterval(() => {
-      setLoginText(
+      setDisplay(
         'LOGIN'.split('').map((ch, i) => i < iter ? ch : chars[Math.floor(Math.random() * chars.length)]).join('')
       );
       iter += 0.4;
@@ -513,92 +540,62 @@ function LoginText({ progress, exploding, mono, accent }: { progress: number; ex
     return () => clearInterval(intervalRef.current);
   }, []);
 
-  // Phase 2: when progress=100, fade LOGIN → show ENTER GALAXY typewriter
+  // Phase 2: in-place morph LOGIN → ENTER GALAXY (scramble transition)
   useEffect(() => {
-    if (progress < 100 || showEnter) return;
-    setShowEnter(true);
-    let charIdx = 0;
-    const enterText = 'ENTER GALAXY';
-    const timer = setInterval(() => {
-      charIdx++;
-      setEnterReveal(charIdx);
-      if (charIdx >= enterText.length) clearInterval(timer);
-    }, 80); // slow typewriter
-    return () => clearInterval(timer);
-  }, [progress >= 100, showEnter]);
+    if (progress < 100) return;
+    const target = 'ENTER GALAXY';
+    if (targetRef.current === target) return;
+    targetRef.current = target;
+    let iter = 0;
+    clearInterval(intervalRef.current);
+    intervalRef.current = setInterval(() => {
+      setDisplay(
+        target.split('').map((ch, i) =>
+          ch === ' ' ? ' ' : (i < iter ? ch : chars[Math.floor(Math.random() * chars.length)])
+        ).join('')
+      );
+      iter += 0.3; // slow decode
+      if (iter >= target.length) clearInterval(intervalRef.current);
+    }, 60);
+    return () => clearInterval(intervalRef.current);
+  }, [progress >= 100]);
 
   const isReady = progress >= 100;
-  const enterText = 'ENTER GALAXY';
+  const displayChars = display.split('');
 
   return (
-    <div className="flex flex-col items-center gap-4">
-      {/* LOGIN — with floating idle animation per letter */}
-      {!showEnter && (
-        <div className="flex justify-center" style={{ gap: '0.05em' }}>
-          {loginText.split('').map((ch, i) => (
-            <motion.span
-              key={i}
-              style={{
-                fontFamily: mono,
-                fontSize: 'clamp(40px, 7vw, 90px)',
-                fontWeight: 'bold',
-                letterSpacing: '0.35em',
-                color: `${accent}0.3)`,
-                display: 'inline-block',
-              }}
-              animate={{
-                y: [0, -4, 0, 3, 0],
-                opacity: [0.25, 0.35, 0.25],
-              }}
-              transition={{
-                y: { duration: 3 + i * 0.3, repeat: Infinity, ease: 'easeInOut' },
-                opacity: { duration: 2 + i * 0.2, repeat: Infinity, ease: 'easeInOut' },
-              }}
-            >
-              {ch}
-            </motion.span>
-          ))}
-        </div>
-      )}
-
-      {/* ENTER GALAXY — typewriter reveal + explosion */}
-      {showEnter && (
-        <div className="flex justify-center" style={{ gap: '0.05em' }}>
-          {enterText.split('').map((ch, i) => (
-            <motion.span
-              key={i}
-              style={{
-                fontFamily: mono,
-                fontSize: 'clamp(32px, 5vw, 70px)',
-                fontWeight: 'bold',
-                letterSpacing: '0.25em',
-                color: `${accent}1)`,
-                display: 'inline-block',
-              }}
-              initial={{ opacity: 0, y: 10 }}
-              animate={exploding ? {
-                x: (i - enterText.length / 2) * 50 + (Math.random() - 0.5) * 400,
-                y: (Math.random() - 0.5) * 600,
-                opacity: 0,
-                scale: 0.1,
-                rotate: (Math.random() - 0.5) * 360,
-              } : i < enterReveal ? {
-                opacity: 1,
-                y: 0,
-              } : { opacity: 0, y: 10 }}
-              transition={exploding
-                ? { duration: 0.6, delay: i * 0.02, ease: 'easeIn' }
-                : { duration: 0.3, ease: [0.22, 1, 0.36, 1] }
-              }
-            >
-              {ch === ' ' ? '\u00A0' : ch}
-            </motion.span>
-          ))}
-        </div>
-      )}
-
-      {/* Underline when ENTER GALAXY fully revealed */}
-      {showEnter && enterReveal >= enterText.length && !exploding && (
+    <div className="flex flex-col items-center gap-3">
+      <div className="flex justify-center flex-wrap" style={{ gap: '0.02em' }}>
+        {displayChars.map((ch, i) => (
+          <motion.span
+            key={`${i}-${displayChars.length}`}
+            style={{
+              fontFamily: mono,
+              fontSize: 'clamp(36px, 6vw, 80px)',
+              fontWeight: 'bold',
+              letterSpacing: '0.2em',
+              color: isReady ? `${accent}1)` : `${accent}0.6)`,
+              display: 'inline-block',
+            }}
+            animate={exploding ? {
+              x: (i - displayChars.length / 2) * 50 + (Math.random() - 0.5) * 400,
+              y: (Math.random() - 0.5) * 600,
+              opacity: 0,
+              scale: 0.1,
+              rotate: (Math.random() - 0.5) * 360,
+            } : {
+              y: isReady ? 0 : [0, -3, 0, 2, 0],
+            }}
+            transition={exploding
+              ? { duration: 0.6, delay: i * 0.02, ease: 'easeIn' }
+              : { y: { duration: 2.5 + i * 0.2, repeat: isReady ? 0 : Infinity, ease: 'easeInOut' } }
+            }
+          >
+            {ch === ' ' ? '\u00A0' : ch}
+          </motion.span>
+        ))}
+      </div>
+      {isReady && !exploding && (
         <motion.div
           initial={{ scaleX: 0 }}
           animate={{ scaleX: 1 }}
@@ -637,6 +634,26 @@ function CornerBrackets() {
     <div style={{ ...s, bottom: 4, left: 4, borderBottomWidth: 1, borderLeftWidth: 1 }} />
     <div style={{ ...s, bottom: 4, right: 4, borderBottomWidth: 1, borderRightWidth: 1 }} />
   </>);
+}
+
+// ── Live clock ──
+function LiveClock({ mono, accent }: { mono: string; accent: string }) {
+  const [time, setTime] = useState('');
+  useEffect(() => {
+    function tick() {
+      const now = new Date();
+      setTime(now.toLocaleTimeString('en-US', { hour12: false, hour: '2-digit', minute: '2-digit', second: '2-digit' }));
+    }
+    tick();
+    const timer = setInterval(tick, 1000);
+    return () => clearInterval(timer);
+  }, []);
+  return (
+    <div className="text-center">
+      <p style={{ fontFamily: mono, fontSize: '7px', color: `rgba(30,30,40,0.3)`, letterSpacing: '0.15em', marginBottom: 2 }}>LOCAL TIME</p>
+      <p style={{ fontFamily: mono, fontSize: '16px', color: `${accent}0.6)`, fontVariantNumeric: 'tabular-nums', fontWeight: 'bold' }}>{time}</p>
+    </div>
+  );
 }
 
 function GaugeCircle({ value, size = 'md' }: { value: number; size?: 'sm' | 'md' }) {
