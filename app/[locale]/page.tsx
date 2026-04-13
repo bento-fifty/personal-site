@@ -18,7 +18,7 @@ export default function HomePage() {
   // Snap scroll on homepage after entering
   useEffect(() => {
     if (!entered || !containerRef.current) return;
-    containerRef.current.style.scrollSnapType = 'y mandatory';
+    containerRef.current.style.scrollSnapType = 'y proximity';
     return () => {
       if (containerRef.current) containerRef.current.style.scrollSnapType = '';
     };
@@ -26,14 +26,29 @@ export default function HomePage() {
 
   return (
     <>
+      {/* Inject marquee keyframes directly to avoid Tailwind purge issues */}
+      <style>{`@keyframes marquee{from{transform:translateX(0)}to{transform:translateX(-50%)}}`}</style>
+
       {/* Main content — always mounted so clip-path reveals it */}
       <div
         ref={containerRef}
         className="fixed inset-0 overflow-y-auto overflow-x-hidden"
-        style={{ scrollSnapType: entered ? 'y mandatory' : 'none', zIndex: 1 }}
+        style={{ scrollSnapType: entered ? 'y proximity' : 'none', zIndex: 1 }}
       >
           {/* UniverseCanvas INSIDE snap container so it's visible */}
           <UniverseCanvas phase="ambient" />
+
+          {/* Star dust texture — fixed overlay inside snap container */}
+          <div
+            className="fixed inset-0 pointer-events-none"
+            style={{
+              zIndex: 0,
+              opacity: 0.35,
+              backgroundImage: `url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='300' height='300'%3E%3Cdefs%3E%3Cfilter id='s'%3E%3CfeTurbulence type='fractalNoise' baseFrequency='1.2' numOctaves='2' seed='42' stitchTiles='stitch'/%3E%3CfeComponentTransfer%3E%3CfeFuncA type='discrete' tableValues='0 0 0 0 0 0 1'/%3E%3C/feComponentTransfer%3E%3C/filter%3E%3C/defs%3E%3Crect width='300' height='300' filter='url(%23s)' opacity='0.3'/%3E%3C/svg%3E")`,
+              backgroundSize: '300px 300px',
+              backgroundRepeat: 'repeat',
+            }}
+          />
 
           {/* Section 1: Hero */}
           <section className="min-h-screen relative" style={{ scrollSnapAlign: 'start' }}>
