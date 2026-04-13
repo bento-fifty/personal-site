@@ -26,27 +26,24 @@ export default function HomePage() {
 
   return (
     <>
-      <UniverseCanvas phase="ambient" />
+      {/* Main content — always mounted so clip-path reveals it */}
+      <div
+        ref={containerRef}
+        className="fixed inset-0 overflow-y-auto overflow-x-hidden"
+        style={{ scrollSnapType: entered ? 'y mandatory' : 'none', zIndex: 1 }}
+      >
+          {/* UniverseCanvas INSIDE snap container so it's visible */}
+          <UniverseCanvas phase="ambient" />
 
-      {/* Hook screen overlay */}
-      {!entered && <HookScreen onEnter={handleEnter} />}
-
-      {/* Main content with snap scroll */}
-      {entered && (
-        <div
-          ref={containerRef}
-          className="fixed inset-0 overflow-y-auto overflow-x-hidden"
-          style={{ scrollSnapType: 'y mandatory', zIndex: 1 }}
-        >
           {/* Section 1: Hero */}
-          <section className="min-h-screen" style={{ scrollSnapAlign: 'start' }}>
+          <section className="min-h-screen relative" style={{ scrollSnapAlign: 'start' }}>
             <Hero />
           </section>
 
           {/* Marquee divider */}
           <div className="bg-[#0A0A0C] py-4 overflow-hidden" style={{ scrollSnapAlign: 'none' }}>
-            <div className="flex whitespace-nowrap animate-marquee">
-              {Array.from({ length: 6 }).map((_, i) => (
+            <div className="flex whitespace-nowrap" style={{ animation: 'marquee 20s linear infinite' }}>
+              {Array.from({ length: 8 }).map((_, i) => (
                 <span
                   key={i}
                   className="inline-block px-8"
@@ -110,7 +107,9 @@ export default function HomePage() {
             </div>
           </section>
         </div>
-      )}
+
+      {/* Hook screen overlay — on top of everything */}
+      {!entered && <HookScreen onEnter={handleEnter} />}
     </>
   );
 }

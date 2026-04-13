@@ -152,7 +152,7 @@ export default function HookScreen({ onEnter }: Props) {
         animate={{ opacity: mounted ? 1 : 0 }}
         transition={{ delay: 1.4, duration: 0.8 }}
       >
-        <div className="flex whitespace-nowrap animate-marquee">
+        <div className="flex whitespace-nowrap" style={{ animation: 'marquee 25s linear infinite' }}>
           {Array.from({ length: 4 }).map((_, i) => (
             <span
               key={i}
