@@ -75,8 +75,6 @@ export default function UniverseCanvas({ phase }: Props) {
   const phaseRef = useRef<UniversePhase>(phase);
   const mouseRef = useRef({ x: -9999, y: -9999 });
   const scrollRef = useRef(0);
-  // Cursor trail
-  const trailRef = useRef<{ x: number; y: number }[]>([]);
   phaseRef.current = phase;
 
   useEffect(() => {
@@ -93,7 +91,6 @@ export default function UniverseCanvas({ phase }: Props) {
     const particles: Dust[] = [];
     const CURSOR_RADIUS = 140;
     const CURSOR_FORCE = 50;
-    const TRAIL_LENGTH = 25;
 
     function spawnDust(i: number): Dust {
       const roll = seededRand(i * 7 + 31);
@@ -124,9 +121,6 @@ export default function UniverseCanvas({ phase }: Props) {
 
     function onMouseMove(e: MouseEvent) {
       mouseRef.current = { x: e.clientX, y: e.clientY };
-      const trail = trailRef.current;
-      trail.push({ x: e.clientX, y: e.clientY });
-      if (trail.length > TRAIL_LENGTH) trail.shift();
     }
 
     function onScroll() {
@@ -139,11 +133,83 @@ export default function UniverseCanvas({ phase }: Props) {
     resize();
     for (let i = 0; i < DUST_COUNT; i++) particles.push(spawnDust(i));
 
-    // Nebula noise grid settings — coarse grid + large overlap for smooth blending
+    // Nebula settings
     const NOISE_COLS = 18;
     const NOISE_SCALE = 0.04;
-    const NEBULA_THRESHOLD = 0.48;
+    const NEBULA_THRESHOLD = 0.58;
     const NEBULA_CURSOR_RADIUS = 180;
+    const NEBULA_REDRAW_INTERVAL = 4; // redraw nebula every N frames
+
+    // Pre-compute nebula color LUT (avoid atan2 per cell per frame)
+    const COLOR_LUT: [number, number, number][] = [];
+    for (let i = 0; i < NOISE_COLS * NOISE_COLS; i++) {
+      const gx = i % NOISE_COLS;
+      const gy = Math.floor(i / NOISE_COLS);
+      COLOR_LUT.push(getNebulaColor(gx / NOISE_COLS, gy / NOISE_COLS));
+    }
+
+    // Offscreen canvas for nebula (redrawn every N frames, composited each frame)
+    const nebulaCanvas = document.createElement('canvas');
+    const nebulaCtx = nebulaCanvas.getContext('2d')!;
+    let nebulaFrame = 0;
+    let lastNebulaMx = -9999, lastNebulaMy = -9999;
+
+    function resizeNebula() {
+      nebulaCanvas.width = Math.floor(W * dpr);
+      nebulaCanvas.height = Math.floor(H * dpr);
+      nebulaCtx.setTransform(dpr, 0, 0, dpr, 0, 0);
+      nebulaFrame = 0;
+    }
+    resizeNebula(); // initial sizing
+
+    function drawNebula(mx: number, my: number, scrollFade: number) {
+      nebulaCtx.clearRect(0, 0, W, H);
+      noiseOffX += 0.0004 * NEBULA_REDRAW_INTERVAL;
+      noiseOffY += 0.0003 * NEBULA_REDRAW_INTERVAL;
+
+      const noiseRows = Math.ceil(NOISE_COLS * (H / W));
+      const cellW = W / NOISE_COLS;
+      const cellH = H / noiseRows;
+
+      for (let gy = 0; gy < noiseRows; gy++) {
+        for (let gx = 0; gx < NOISE_COLS; gx++) {
+          const nx = gx * NOISE_SCALE + noiseOffX;
+          const ny = gy * NOISE_SCALE + noiseOffY;
+          const v1 = noise2D(nx, ny);
+          const v2 = noise2D(nx * 2.1 + 5.3, ny * 2.1 + 3.7) * 0.5;
+          const density = ((v1 + v2) / 1.5 + 1) * 0.5;
+
+          if (density < NEBULA_THRESHOLD) continue;
+
+          const pcx = gx * cellW + cellW / 2;
+          const pcy = gy * cellH + cellH / 2;
+
+          // Cursor repulsion
+          const cdx = pcx - mx, cdy = pcy - my;
+          const cdistSq = cdx * cdx + cdy * cdy; // avoid sqrt
+          const radiusSq = NEBULA_CURSOR_RADIUS * NEBULA_CURSOR_RADIUS;
+          if (cdistSq < radiusSq) {
+            const cdist = Math.sqrt(cdistSq);
+            const raisedThreshold = NEBULA_THRESHOLD + (1 - cdist / NEBULA_CURSOR_RADIUS) * 0.4;
+            if (density < raisedThreshold) continue;
+          }
+
+          const intensity = Math.min(1, (density - NEBULA_THRESHOLD) / 0.25);
+          const lutIdx = (gy % NOISE_COLS) * NOISE_COLS + gx;
+          const [r, g, b] = COLOR_LUT[lutIdx] || [79, 70, 229];
+          const alpha = intensity * 0.25 * scrollFade;
+
+          const radius = cellW * 3;
+          const grad = nebulaCtx.createRadialGradient(pcx, pcy, 0, pcx, pcy, radius);
+          grad.addColorStop(0, `rgba(${r},${g},${b},${alpha})`);
+          grad.addColorStop(0.3, `rgba(${r},${g},${b},${alpha * 0.7})`);
+          grad.addColorStop(0.6, `rgba(${r},${g},${b},${alpha * 0.3})`);
+          grad.addColorStop(1, 'transparent');
+          nebulaCtx.fillStyle = grad;
+          nebulaCtx.fillRect(pcx - radius, pcy - radius, radius * 2, radius * 2);
+        }
+      }
+    }
 
     function draw() {
       if (!running) return;
@@ -157,59 +223,20 @@ export default function UniverseCanvas({ phase }: Props) {
         const mx = mouseRef.current.x;
         const my = mouseRef.current.y;
         const scroll = scrollRef.current;
+        const scrollFade = Math.max(0, 1 - scroll / (H * 1.5));
 
-        // Scroll-based fade: full at 0, fades after 1vh
-        const scrollFade = Math.max(0, 1 - scroll / (H * 1.2));
-
-        // ── Perlin noise nebula field ──
+        // ── Nebula: redraw to offscreen every N frames or on cursor move ──
         if (scrollFade > 0.01) {
-          noiseOffX += 0.0004;
-          noiseOffY += 0.0003;
-
-          const noiseRows = Math.ceil(NOISE_COLS * (H / W));
-          const cellW = W / NOISE_COLS;
-          const cellH = H / noiseRows;
-
-          for (let gy = 0; gy < noiseRows; gy++) {
-            for (let gx = 0; gx < NOISE_COLS; gx++) {
-              const nx = gx * NOISE_SCALE + noiseOffX;
-              const ny = gy * NOISE_SCALE + noiseOffY;
-
-              // Multi-octave noise for more organic shapes
-              const v1 = noise2D(nx, ny);
-              const v2 = noise2D(nx * 2.1 + 5.3, ny * 2.1 + 3.7) * 0.5;
-              const val = (v1 + v2) / 1.5; // -1 to 1
-              const density = (val + 1) * 0.5; // 0 to 1
-
-              if (density < NEBULA_THRESHOLD) continue;
-
-              const pcx = gx * cellW + cellW / 2;
-              const pcy = gy * cellH + cellH / 2;
-
-              // Cursor repulsion: raise threshold near cursor (push clouds away)
-              const cdx = pcx - mx;
-              const cdy = pcy - my;
-              const cdist = Math.sqrt(cdx * cdx + cdy * cdy);
-              if (cdist < NEBULA_CURSOR_RADIUS) {
-                const pushFactor = (1 - cdist / NEBULA_CURSOR_RADIUS);
-                const raisedThreshold = NEBULA_THRESHOLD + pushFactor * 0.4;
-                if (density < raisedThreshold) continue;
-              }
-
-              const intensity = Math.min(1, (density - NEBULA_THRESHOLD) / 0.25);
-              const [r, g, b] = getNebulaColor(gx / NOISE_COLS, gy / noiseRows);
-              const alpha = intensity * 0.25 * scrollFade;
-
-              const radius = cellW * 3; // large overlap for smooth blending
-              const grad = ctx!.createRadialGradient(pcx, pcy, 0, pcx, pcy, radius);
-              grad.addColorStop(0, `rgba(${r},${g},${b},${alpha})`);
-              grad.addColorStop(0.3, `rgba(${r},${g},${b},${alpha * 0.7})`);
-              grad.addColorStop(0.6, `rgba(${r},${g},${b},${alpha * 0.3})`);
-              grad.addColorStop(1, 'transparent');
-              ctx!.fillStyle = grad;
-              ctx!.fillRect(pcx - radius, pcy - radius, radius * 2, radius * 2);
-            }
+          nebulaFrame++;
+          const cursorMoved = Math.abs(mx - lastNebulaMx) > 20 || Math.abs(my - lastNebulaMy) > 20;
+          if (nebulaFrame >= NEBULA_REDRAW_INTERVAL || cursorMoved) {
+            drawNebula(mx, my, scrollFade);
+            nebulaFrame = 0;
+            lastNebulaMx = mx;
+            lastNebulaMy = my;
           }
+          // Composite cached nebula onto main canvas
+          ctx!.drawImage(nebulaCanvas, 0, 0, W, H);
         }
 
         // ── Star dust particles ──
@@ -237,47 +264,29 @@ export default function UniverseCanvas({ phase }: Props) {
 
           const finalX = pt.homeX * W + pt.pushX;
           const finalY = pt.homeY * H + pt.pushY;
-          const alpha = pt.opacity * scrollFade;
+          const alpha = pt.opacity; // no scroll fade — stars visible everywhere
           if (alpha < 0.003) continue;
+
+          // Color adapts: dark particles on white bg, light particles on dark bg
+          const darkZoneStart = H * 2; // approx where dark section starts
+          const scrolledY = finalY + scroll;
+          const inDarkZone = scrolledY > darkZoneStart;
 
           ctx!.beginPath();
           ctx!.arc(finalX, finalY, Math.max(0.3, pt.size), 0, Math.PI * 2);
-          ctx!.fillStyle = `rgba(20,20,25,${alpha})`;
+          ctx!.fillStyle = inDarkZone
+            ? `rgba(255,255,255,${Math.min(1, alpha * 2.5)})`
+            : `rgba(20,20,25,${alpha})`;
           ctx!.fill();
         }
 
-        // ── Cursor trail (light line) ──
-        const trail = trailRef.current;
-        if (trail.length > 2) {
-          ctx!.beginPath();
-          ctx!.moveTo(trail[0].x, trail[0].y);
-          for (let i = 1; i < trail.length; i++) {
-            ctx!.lineTo(trail[i].x, trail[i].y);
-          }
-          ctx!.strokeStyle = 'rgba(79,70,229,0.12)';
-          ctx!.lineWidth = 1.5;
-          ctx!.lineCap = 'round';
-          ctx!.lineJoin = 'round';
-          ctx!.stroke();
-
-          // Gradient fade: draw again with decreasing opacity segments
-          for (let i = 1; i < trail.length; i++) {
-            const t = i / trail.length;
-            ctx!.beginPath();
-            ctx!.moveTo(trail[i - 1].x, trail[i - 1].y);
-            ctx!.lineTo(trail[i].x, trail[i].y);
-            ctx!.strokeStyle = `rgba(79,70,229,${t * 0.15})`;
-            ctx!.lineWidth = 1 + t * 1;
-            ctx!.stroke();
-          }
-        }
       }
 
       rafId = requestAnimationFrame(draw);
     }
 
     rafId = requestAnimationFrame(draw);
-    const ro = new ResizeObserver(() => resize());
+    const ro = new ResizeObserver(() => { resize(); resizeNebula(); });
     ro.observe(canvas);
 
     const onVis = () => {

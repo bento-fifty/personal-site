@@ -31,7 +31,12 @@ export default function Hero() {
 
     const CURSOR_RADIUS = 80;
     const CURSOR_FORCE = 25;
-    const GAP = 2; // relaxed — particles only shown near cursor
+    // Adaptive GAP: cap particle count for large screens
+    let GAP = 2;
+
+    // Cached erase gradient (avoid recreating every frame)
+    let cachedEraseGrad: CanvasGradient | null = null;
+    let lastGradX = -9999, lastGradY = -9999;
 
     function resize() {
       dpr = Math.min(window.devicePixelRatio || 1, 2);
@@ -43,6 +48,9 @@ export default function Hero() {
     }
 
     function sampleText() {
+      // Adaptive GAP: keep particle count under ~150k
+      GAP = Math.max(2, Math.ceil(Math.sqrt((W * H) / 150000)));
+
       // Compute text layout
       mainSize = Math.min(100, Math.max(40, W * 0.07));
       mainY = H * 0.44;
@@ -129,15 +137,19 @@ export default function Hero() {
       // ── Pass 1: solid text ──
       drawSolidText();
 
-      // ── Pass 2: erase circular zone around cursor ──
+      // ── Pass 2: erase circular zone around cursor (cached gradient) ──
       const onScreen = mx > -100 && mx < W + 100 && my > -100 && my < H + 100;
       if (onScreen) {
+        // Recreate gradient only when cursor moves >4px
+        if (!cachedEraseGrad || Math.abs(mx - lastGradX) > 4 || Math.abs(my - lastGradY) > 4) {
+          cachedEraseGrad = ctx!.createRadialGradient(mx, my, 0, mx, my, CURSOR_RADIUS);
+          cachedEraseGrad.addColorStop(0, 'rgba(0,0,0,1)');
+          cachedEraseGrad.addColorStop(0.75, 'rgba(0,0,0,1)');
+          cachedEraseGrad.addColorStop(1, 'rgba(0,0,0,0)');
+          lastGradX = mx; lastGradY = my;
+        }
         ctx!.globalCompositeOperation = 'destination-out';
-        const eraseGrad = ctx!.createRadialGradient(mx, my, 0, mx, my, CURSOR_RADIUS);
-        eraseGrad.addColorStop(0, 'rgba(0,0,0,1)');
-        eraseGrad.addColorStop(0.75, 'rgba(0,0,0,1)');
-        eraseGrad.addColorStop(1, 'rgba(0,0,0,0)');
-        ctx!.fillStyle = eraseGrad;
+        ctx!.fillStyle = cachedEraseGrad;
         ctx!.beginPath();
         ctx!.arc(mx, my, CURSOR_RADIUS, 0, Math.PI * 2);
         ctx!.fill();

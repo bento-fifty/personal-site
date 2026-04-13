@@ -14,7 +14,7 @@ export default function DescentTransition() {
   const bgColor = useTransform(
     scrollYProgress,
     [0, 0.15, 0.4, 0.7, 1],
-    ['#FAFAF8', '#B0ACA7', '#6A6662', '#2A2826', '#0C0C0E']
+    ['transparent', 'transparent', 'transparent', 'transparent', 'transparent']
   );
 
   // Readout values
@@ -53,7 +53,7 @@ export default function DescentTransition() {
           style={{
             y: band1Y,
             opacity: bandOpacity,
-            background: 'linear-gradient(90deg, transparent 5%, rgba(255,255,255,0.5) 30%, rgba(255,255,255,0.7) 50%, rgba(255,255,255,0.5) 70%, transparent 95%)',
+            background: 'linear-gradient(90deg, transparent 5%, rgba(79,70,229,0.15) 30%, rgba(79,70,229,0.2) 50%, rgba(79,70,229,0.15) 70%, transparent 95%)',
           }}
           aria-hidden
         />
@@ -62,7 +62,7 @@ export default function DescentTransition() {
           style={{
             y: band2Y,
             opacity: bandOpacity,
-            background: 'linear-gradient(90deg, transparent 10%, rgba(255,255,255,0.35) 40%, rgba(255,255,255,0.5) 50%, rgba(255,255,255,0.35) 60%, transparent 90%)',
+            background: 'linear-gradient(90deg, transparent 10%, rgba(79,70,229,0.1) 40%, rgba(79,70,229,0.15) 50%, rgba(79,70,229,0.1) 60%, transparent 90%)',
           }}
           aria-hidden
         />
@@ -71,7 +71,7 @@ export default function DescentTransition() {
           style={{
             y: band3Y,
             opacity: bandOpacity,
-            background: 'linear-gradient(90deg, transparent 15%, rgba(255,255,255,0.25) 45%, rgba(255,255,255,0.4) 50%, rgba(255,255,255,0.25) 55%, transparent 85%)',
+            background: 'linear-gradient(90deg, transparent 15%, rgba(79,70,229,0.08) 45%, rgba(79,70,229,0.12) 50%, rgba(79,70,229,0.08) 55%, transparent 85%)',
           }}
           aria-hidden
         />
@@ -83,29 +83,29 @@ export default function DescentTransition() {
           aria-hidden
         >
           {/* Left vertical */}
-          <div className="absolute left-8 md:left-14 top-[8%] bottom-[8%] w-px bg-white/30" />
+          <div className="absolute left-8 md:left-14 top-[8%] bottom-[8%] w-px bg-black/10" />
           {/* Right vertical */}
-          <div className="absolute right-8 md:right-14 top-[8%] bottom-[8%] w-px bg-white/30" />
+          <div className="absolute right-8 md:right-14 top-[8%] bottom-[8%] w-px bg-black/10" />
 
           {/* TL corner */}
           <div className="absolute left-8 md:left-14 top-[8%]">
-            <div className="w-8 h-px bg-white/40" />
-            <div className="w-px h-8 bg-white/40" />
+            <div className="w-8 h-px bg-black/15" />
+            <div className="w-px h-8 bg-black/15" />
           </div>
           {/* TR corner */}
           <div className="absolute right-8 md:right-14 top-[8%]">
-            <div className="w-8 h-px bg-white/40 ml-auto" />
-            <div className="w-px h-8 bg-white/40 ml-auto" />
+            <div className="w-8 h-px bg-black/15 ml-auto" />
+            <div className="w-px h-8 bg-black/15 ml-auto" />
           </div>
           {/* BL corner */}
           <div className="absolute left-8 md:left-14 bottom-[8%]">
-            <div className="w-px h-8 bg-white/40" />
-            <div className="w-8 h-px bg-white/40" />
+            <div className="w-px h-8 bg-black/15" />
+            <div className="w-8 h-px bg-black/15" />
           </div>
           {/* BR corner */}
           <div className="absolute right-8 md:right-14 bottom-[8%]">
-            <div className="w-px h-8 bg-white/40 ml-auto" />
-            <div className="w-8 h-px bg-white/40 ml-auto" />
+            <div className="w-px h-8 bg-black/15 ml-auto" />
+            <div className="w-8 h-px bg-black/15 ml-auto" />
           </div>
         </motion.div>
 
@@ -130,7 +130,7 @@ export default function DescentTransition() {
             <span className="absolute bottom-0 right-0 w-6 h-6 border-b border-r border-white/30" />
 
             <div className="flex flex-col gap-3">
-              <p className="text-white/40 text-[11px] mb-2">
+              <p className="text-black/30 text-[11px] mb-2">
                 &gt; Initiating descent sequence
               </p>
 
@@ -138,22 +138,22 @@ export default function DescentTransition() {
               <ReadoutLine label="Velocity" value={velocity} suffix="m/s" />
 
               <p>
-                <span className="text-white/40">&gt; Coord{'    '}</span>
-                <span className="text-white/70 tabular-nums">25.03°N 121.57°E</span>
+                <span className="text-black/30">&gt; Coord{'    '}</span>
+                <span className="text-black/50 tabular-nums">25.03°N 121.57°E</span>
               </p>
               <p>
-                <span className="text-white/40">&gt; Target{'   '}</span>
-                <span className="text-white/70">Taipei, Taiwan</span>
+                <span className="text-black/30">&gt; Target{'   '}</span>
+                <span className="text-black/50">Taipei, Taiwan</span>
               </p>
 
               <div className="mt-3 pt-3 border-t border-white/10 relative">
                 <motion.p style={{ opacity: descendingOpacity }}>
-                  <span className="text-white/40">&gt; Status{'   '}</span>
-                  <span className="text-white/70">Descending...</span>
+                  <span className="text-black/30">&gt; Status{'   '}</span>
+                  <span className="text-black/50">Descending...</span>
                 </motion.p>
                 <motion.p className="absolute top-3 pt-3 left-0" style={{ opacity: landedOpacity }}>
-                  <span className="text-white/40">&gt; Status{'   '}</span>
-                  <span className="text-[#5CE1FF]">Touchdown Confirmed</span>
+                  <span className="text-black/30">&gt; Status{'   '}</span>
+                  <span className="text-[#4F46E5]">Touchdown Confirmed</span>
                 </motion.p>
               </div>
             </div>
@@ -170,10 +170,10 @@ export default function DescentTransition() {
             style={{
               width: '75%',
               height: '1px',
-              background: 'linear-gradient(90deg, transparent 0%, rgba(92,225,255,0.4) 25%, rgba(92,225,255,0.7) 50%, rgba(92,225,255,0.4) 75%, transparent 100%)',
+              background: 'linear-gradient(90deg, transparent 0%, rgba(79,70,229,0.3) 25%, rgba(79,70,229,0.5) 50%, rgba(79,70,229,0.3) 75%, transparent 100%)',
               scaleX: horizonScale,
               transformOrigin: 'center',
-              boxShadow: '0 0 30px rgba(92,225,255,0.4), 0 0 80px rgba(92,225,255,0.15)',
+              boxShadow: '0 0 30px rgba(79,70,229,0.3), 0 0 80px rgba(79,70,229,0.1)',
             }}
           />
         </motion.div>
@@ -198,9 +198,9 @@ function ReadoutLine({
 
   return (
     <p>
-      <span className="text-white/40">&gt; {label.padEnd(9, ' ')}</span>
+      <span className="text-black/30">&gt; {label.padEnd(9, ' ')}</span>
       <span className="text-white/80 tabular-nums">{display}</span>
-      <span className="text-white/40"> {suffix}</span>
+      <span className="text-black/30"> {suffix}</span>
     </p>
   );
 }
