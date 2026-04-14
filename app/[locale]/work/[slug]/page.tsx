@@ -1,7 +1,7 @@
 import type { Metadata } from 'next';
 import type { ReactNode } from 'react';
 import { notFound } from 'next/navigation';
-import { Link } from '@/i18n/navigation';
+import { TransitionLink as Link } from '@/components/shared/RouteTransition';
 import { getCaseBySlug, CASES, type LocalizedText } from '@/lib/work-data';
 
 export function generateStaticParams() {
