@@ -90,9 +90,48 @@ export default function InlineWindowCard({ caseItem: c, locale, onClose }: Props
               {locale === 'zh-TW' ? c.lead.zh : c.lead.en}
             </p>
           )}
+
+          {/* Stats — ice Fraunces (v8 color strategy: ice for data) */}
+          {c.stats && c.stats.length > 0 && (
+            <dl
+              className="grid grid-cols-3 gap-4 mt-2"
+              style={{ borderTop: '1px solid rgba(250,250,248,0.08)', paddingTop: 12 }}
+            >
+              {c.stats.slice(0, 3).map((s, i) => (
+                <div key={i}>
+                  <dt
+                    style={{
+                      fontFamily: 'var(--font-mono), monospace',
+                      fontSize: 9,
+                      letterSpacing: '0.3em',
+                      color: 'rgba(93,211,227,0.55)',
+                      textTransform: 'uppercase',
+                      marginBottom: 4,
+                    }}
+                  >
+                    {s.labelEn}
+                  </dt>
+                  <dd
+                    style={{
+                      fontFamily: 'var(--font-display), serif',
+                      fontVariationSettings: '"opsz" 48, "wght" 700',
+                      fontSize: 'clamp(22px, 2vw, 32px)',
+                      color: '#5DD3E3',
+                      lineHeight: 1,
+                      letterSpacing: '-0.02em',
+                    }}
+                  >
+                    {s.value}
+                  </dd>
+                </div>
+              ))}
+            </dl>
+          )}
+
           <Link
             href={`/${locale}/work/${c.slug}`}
-            data-cursor={`OPEN · ${c.id}`}
+            data-cursor={`▸ OPEN · ${c.id}`}
+            data-cursor-variant="primary"
             className="self-start mt-2"
             style={{
               fontFamily: 'var(--font-mono), monospace',

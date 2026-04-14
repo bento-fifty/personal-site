@@ -4,7 +4,6 @@ import { useMemo, useState } from 'react';
 import { CASES, EventType, countByType } from '@/lib/work-data';
 import FilterChips from '@/components/shared/FilterChips';
 import EventBentoRow from './EventBentoRow';
-import ArchiveMarquee from './ArchiveMarquee';
 
 interface Props {
   locale: 'zh-TW' | 'en-US';
@@ -38,7 +37,7 @@ export default function ArchivePage({ locale }: Props) {
           borderBottom: '4px solid rgba(250,250,248,0.08)',
         }}
       >
-        <div className="max-w-[1280px] mx-auto lg:pr-[240px]">
+        <div className="max-w-[1280px] mx-auto ">
           <p
             style={{
               fontFamily: 'var(--font-mono), monospace',
@@ -79,7 +78,7 @@ export default function ArchivePage({ locale }: Props) {
       </section>
 
       {/* Filter strip */}
-      <div className="lg:pr-[240px]">
+      <div className="">
         <FilterChips
           activeType={activeType}
           activeYear={activeYear}
@@ -95,7 +94,7 @@ export default function ArchivePage({ locale }: Props) {
       </div>
 
       {/* Bento rows */}
-      <main className="lg:pr-[240px]">
+      <main className="">
         {filtered.length === 0 ? (
           <div
             className="max-w-[1280px] mx-auto px-5 md:px-8 py-24 text-center"
@@ -141,8 +140,6 @@ export default function ArchivePage({ locale }: Props) {
           [ END OF ARCHIVE · BACK TO TOP ↑ ]
         </div>
       </main>
-
-      <ArchiveMarquee locale={locale} />
     </>
   );
 }

@@ -3,6 +3,7 @@
 import Link from 'next/link';
 import { motion } from 'framer-motion';
 import { useState } from 'react';
+import FeaturedMarquee from './FeaturedMarquee';
 
 /**
  * IssueCover — v8 home. Single viewport, no scroll.
@@ -26,9 +27,28 @@ export default function IssueCover({ locale }: Props) {
   return (
     <section
       className="relative w-full overflow-hidden"
-      style={{ height: 'calc(100dvh - 32px)', background: '#0A0A0C' }}
+      style={{ height: 'calc(100dvh - 44px)', background: '#0A0A0C' }}
       aria-label="Issue Cover"
     >
+      {/* Perspective grid background — Ichiki-lite wireframe floor */}
+      <div
+        aria-hidden
+        className="hidden md:block absolute inset-x-0 bottom-0 pointer-events-none"
+        style={{
+          height: '55%',
+          backgroundImage: `
+            linear-gradient(rgba(250,250,248,0.06) 1px, transparent 1px),
+            linear-gradient(90deg, rgba(250,250,248,0.06) 1px, transparent 1px)
+          `,
+          backgroundSize: '60px 60px',
+          transform: 'perspective(600px) rotateX(62deg)',
+          transformOrigin: 'bottom center',
+          maskImage: 'linear-gradient(to top, black 0%, transparent 90%)',
+          WebkitMaskImage: 'linear-gradient(to top, black 0%, transparent 90%)',
+          zIndex: 0,
+        }}
+      />
+
       {/* Top-right issue meta */}
       <motion.div
         className="absolute top-6 right-5 md:top-10 md:right-10 text-right"
@@ -139,6 +159,8 @@ export default function IssueCover({ locale }: Props) {
       >
         <Link
           href={`/${locale}/work`}
+          data-cursor="▸ ENTER"
+          data-cursor-variant="primary"
           className="inline-block transition-colors duration-200"
           style={{
             fontFamily: 'var(--font-mono), monospace',
@@ -177,6 +199,9 @@ export default function IssueCover({ locale }: Props) {
       >
         01 / 01
       </motion.div>
+
+      {/* Featured rail (desktop only) */}
+      <FeaturedMarquee locale={locale} />
     </section>
   );
 }

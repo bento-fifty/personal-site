@@ -63,18 +63,25 @@ export default function EditorialMasthead() {
   const localePrefix = pathname?.startsWith('/en-US') ? '/en-US' : '/zh-TW';
 
   const NAV = [
-    { label: 'ARCHIVE', href: `${localePrefix}/work` },
-    { label: 'ABOUT', href: `${localePrefix}/about` },
-    { label: 'SERVICES', href: `${localePrefix}/services` },
+    { label: 'HOME', href: `${localePrefix}/` },
+    { label: 'WORKS', href: `${localePrefix}/work` },
+    { label: 'PROFILE', href: `${localePrefix}/about` },
     { label: 'CONTACT', href: `${localePrefix}/contact` },
   ];
+
+  const normalizedPath = (pathname || '/').replace(/^\/(zh-TW|en-US)/, '') || '/';
+  const isActiveRoute = (href: string): boolean => {
+    const relative = href.replace(/^\/(zh-TW|en-US)/, '') || '/';
+    if (relative === '/') return normalizedPath === '/';
+    return normalizedPath === relative || normalizedPath.startsWith(relative + '/');
+  };
 
   return (
     <>
       <header
         className="fixed top-0 left-0 right-0 z-[100]"
         style={{
-          height: 32,
+          height: 44,
           background: scrolled ? 'rgba(10,10,12,0.92)' : 'transparent',
           backdropFilter: scrolled ? 'blur(16px)' : 'none',
           WebkitBackdropFilter: scrolled ? 'blur(16px)' : 'none',
@@ -82,36 +89,63 @@ export default function EditorialMasthead() {
           transition: 'background 200ms ease-out, backdrop-filter 200ms ease-out',
         }}
       >
-        <div className="h-full flex items-center justify-between px-5 md:px-8">
+        <div className="h-full flex items-center justify-between px-5 md:px-8 gap-6">
           {/* Left */}
           <Link
             href={`${localePrefix}/`}
-            className="font-mono text-[10px] tracking-[0.22em] text-[#FAFAF8] hover:text-[#E63E1F] transition-colors"
+            data-cursor="▸ HOME"
+            data-cursor-variant="link"
+            className="font-mono text-[10px] tracking-[0.22em] text-[#FAFAF8] hover:text-[#E63E1F] transition-colors shrink-0"
             style={{ fontFamily: 'var(--font-mono), monospace', textTransform: 'uppercase' }}
           >
             THE LEVEL STUDIO
           </Link>
 
-          {/* Center (hidden on small) */}
-          <span
-            className="hidden md:block font-mono text-[10px] tracking-[0.22em] text-[rgba(250,250,248,0.55)]"
-            style={{ fontFamily: 'var(--font-mono), monospace', textTransform: 'uppercase' }}
-          >
-            {context}
-          </span>
+          {/* Center: inline nav (desktop) */}
+          <nav className="hidden md:flex items-center gap-6 flex-1 justify-center">
+            {NAV.map((item) => {
+              const active = isActiveRoute(item.href);
+              return (
+                <Link
+                  key={item.href}
+                  href={item.href}
+                  data-cursor={`▸ ${item.label}`}
+                  data-cursor-variant="link"
+                  className="font-mono text-[10px] tracking-[0.22em] transition-colors"
+                  style={{
+                    fontFamily: 'var(--font-mono), monospace',
+                    textTransform: 'uppercase',
+                    color: active ? '#FAFAF8' : 'rgba(250,250,248,0.5)',
+                    borderBottom: active ? '1px solid #5DD3E3' : '1px solid transparent',
+                    paddingBottom: 2,
+                  }}
+                >
+                  {item.label}
+                </Link>
+              );
+            })}
+          </nav>
 
           {/* Right */}
-          <div className="flex items-center gap-5">
+          <div className="flex items-center gap-4 shrink-0">
             <span
-              className="hidden md:inline font-mono text-[10px] tracking-[0.22em] text-[rgba(250,250,248,0.35)]"
+              className="hidden lg:inline font-mono text-[9px] tracking-[0.22em] text-[rgba(250,250,248,0.3)]"
               style={{ fontFamily: 'var(--font-mono), monospace' }}
             >
               REF. {ref} · {now} · TPE
             </span>
+            <span
+              className="md:hidden font-mono text-[10px] tracking-[0.22em] text-[rgba(250,250,248,0.55)]"
+              style={{ fontFamily: 'var(--font-mono), monospace', textTransform: 'uppercase' }}
+            >
+              {context}
+            </span>
             <button
               type="button"
               onClick={() => setMenuOpen((v) => !v)}
-              className="font-mono text-[10px] tracking-[0.22em] text-[#FAFAF8] hover:text-[#E63E1F] transition-colors"
+              data-cursor={menuOpen ? '× CLOSE' : '▸ MENU'}
+              data-cursor-variant="action"
+              className="font-mono text-[10px] tracking-[0.22em] text-[#FAFAF8] hover:text-[#E63E1F] transition-colors md:hidden"
               style={{ fontFamily: 'var(--font-mono), monospace', textTransform: 'uppercase' }}
               aria-expanded={menuOpen}
             >

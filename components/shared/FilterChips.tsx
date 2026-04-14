@@ -58,7 +58,8 @@ export default function FilterChips({
               key={t.value}
               type="button"
               onClick={() => onTypeChange(t.value)}
-              data-cursor="FILTER"
+              data-cursor="⊙ FILTER"
+              data-cursor-variant="action"
               style={{
                 fontFamily: 'var(--font-mono), monospace',
                 fontSize: 10,
@@ -98,14 +99,15 @@ export default function FilterChips({
               key={String(y.value)}
               type="button"
               onClick={() => onYearChange(y.value)}
-              data-cursor="FILTER"
+              data-cursor="⊙ FILTER"
+              data-cursor-variant="action"
               style={{
                 fontFamily: 'var(--font-mono), monospace',
                 fontSize: 10,
                 letterSpacing: '0.22em',
                 color: active ? '#0A0A0C' : y.count === 0 ? 'rgba(250,250,248,0.25)' : '#FAFAF8',
-                background: active ? '#E63E1F' : 'transparent',
-                border: active ? '1px solid #E63E1F' : '1px solid rgba(250,250,248,0.15)',
+                background: active ? '#5DD3E3' : 'transparent',
+                border: active ? '1px solid #5DD3E3' : '1px solid rgba(250,250,248,0.15)',
                 padding: '3px 10px',
                 cursor: y.count === 0 ? 'not-allowed' : 'pointer',
                 transition: 'color 0ms, background 0ms, border-color 200ms ease-out',

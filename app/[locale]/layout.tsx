@@ -86,7 +86,7 @@ export default async function LocaleLayout({
       <body className="min-h-full flex flex-col" style={{ background: '#0A0A0C', color: '#FAFAF8' }}>
         <NextIntlClientProvider messages={messages}>
           <EditorialMasthead />
-          <main className="flex-1 pt-8">
+          <main className="flex-1 pt-11">
             {children}
           </main>
           <EditorialFooter />

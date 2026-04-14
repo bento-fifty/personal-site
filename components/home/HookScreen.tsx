@@ -52,34 +52,51 @@ function HookContent({ mounted, igniting }: { mounted: boolean; igniting: boolea
         style={{ background: 'radial-gradient(ellipse 55% 55% at 50% 50%, transparent 0%, rgba(0,0,0,0.6) 100%)' }}
       />
 
-      {/* 等級 — stroke outline */}
+      {/* 等級 + THE LEVEL — bilingual outline, side by side */}
       <motion.div
-        className="absolute inset-0 flex items-center justify-center pointer-events-none"
+        className="absolute inset-0 flex items-center justify-center pointer-events-none gap-[clamp(24px,5vw,96px)] px-[5vw]"
         initial={{ opacity: 0, scale: 0.92 }}
         animate={{ opacity: mounted ? 1 : 0, scale: mounted ? 1 : 0.92 }}
         transition={{ duration: 1.5, ease: [0.22, 1, 0.36, 1] }}
       >
         <h1
+          aria-label="等級 · THE LEVEL"
           style={{
             fontFamily: 'var(--font-noto-serif-tc), serif',
-            fontSize: 'clamp(120px, 28vw, 420px)',
+            fontSize: 'clamp(92px, 22vw, 320px)',
             fontWeight: 700,
             color: igniting ? '#E63E1F' : 'transparent',
-            WebkitTextStroke: igniting ? '2px #E63E1F' : '2px #E63E1F',
+            WebkitTextStroke: '2px #E63E1F',
             lineHeight: 0.9,
             letterSpacing: '-0.03em',
-            textAlign: 'center',
+            margin: 0,
             transition: 'color 150ms ease-out',
           }}
         >
           等級
         </h1>
+        <div
+          aria-hidden
+          style={{
+            fontFamily: 'var(--font-display), serif',
+            fontVariationSettings: '"opsz" 144, "wght" 900',
+            fontSize: 'clamp(64px, 16vw, 220px)',
+            color: igniting ? '#E63E1F' : 'transparent',
+            WebkitTextStroke: '2px #E63E1F',
+            lineHeight: 0.86,
+            letterSpacing: '-0.04em',
+            transition: 'color 150ms ease-out',
+          }}
+        >
+          <div>THE</div>
+          <div>LEVEL</div>
+        </div>
       </motion.div>
 
       {/* Scattered text */}
       <div
         className="absolute inset-0 pointer-events-none"
-        style={{ fontFamily: 'var(--font-mono), monospace', fontSize: '9px', letterSpacing: '0.25em', color: 'rgba(250,250,248,0.2)', textTransform: 'uppercase' }}
+        style={{ fontFamily: 'var(--font-mono), monospace', fontSize: '9px', letterSpacing: '0.25em', color: 'rgba(250,250,248,0.15)', textTransform: 'uppercase' }}
       >
         <motion.span className="absolute" style={{ top: '22%', left: '8%' }} initial={{ opacity: 0 }} animate={{ opacity: mounted ? 1 : 0 }} transition={{ delay: 0.6, duration: 1 }}>
           Events

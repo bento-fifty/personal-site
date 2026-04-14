@@ -4,17 +4,31 @@ import { useEffect, useState } from 'react';
 import { motion, useMotionValue, useSpring, useReducedMotion } from 'framer-motion';
 
 /**
- * CursorChip — v8 contextual cursor follower.
+ * CursorChip — v8 contextual cursor follower, Level 2.
  *
- * Damped lerp follow (no overshoot). Reads data-cursor attribute from hovered
- * element and shows that text as a chip next to the cursor.
+ * Follows cursor with damped lerp (no overshoot). Reads two attributes:
+ * - data-cursor="..." → label text
+ * - data-cursor-variant="primary | link | action" → border color
+ *   - primary → flame (CTA, monogram click zones)
+ *   - link    → ice   (archive tiles, external links, menu nav)
+ *   - action  → paper (toggles: close, expand, peek)
+ *   - default → ice
  *
- * Usage: mount once at root. Any element with data-cursor="VIEW · 042" will
- * trigger the chip on hover (pointer: fine devices only).
+ * Hidden on touch devices (pointer: coarse).
+ * Honors prefers-reduced-motion (instant teleport, no spring).
  */
+
+type Variant = 'primary' | 'link' | 'action';
+
+const BORDER: Record<Variant, string> = {
+  primary: '#E63E1F',
+  link: '#5DD3E3',
+  action: '#FAFAF8',
+};
 
 export default function CursorChip() {
   const [label, setLabel] = useState<string | null>(null);
+  const [variant, setVariant] = useState<Variant>('link');
   const [visible, setVisible] = useState(false);
   const reduce = useReducedMotion();
 
@@ -24,7 +38,6 @@ export default function CursorChip() {
   const y = useSpring(my, reduce ? { duration: 0 } : { stiffness: 150, damping: 40 });
 
   useEffect(() => {
-    // Skip on touch devices
     if (!window.matchMedia('(pointer: fine)').matches) return;
 
     function onMove(e: MouseEvent) {
@@ -36,7 +49,9 @@ export default function CursorChip() {
       const chipTarget = target.closest<HTMLElement>('[data-cursor]');
       if (chipTarget) {
         const text = chipTarget.getAttribute('data-cursor');
+        const v = (chipTarget.getAttribute('data-cursor-variant') as Variant | null) || 'link';
         if (text && text !== label) setLabel(text);
+        if (v !== variant) setVariant(v);
         if (!visible) setVisible(true);
       } else if (visible) {
         setVisible(false);
@@ -53,7 +68,7 @@ export default function CursorChip() {
       window.removeEventListener('mousemove', onMove);
       document.removeEventListener('mouseleave', onLeave);
     };
-  }, [label, mx, my, visible]);
+  }, [label, variant, mx, my, visible]);
 
   return (
     <motion.div
@@ -74,7 +89,7 @@ export default function CursorChip() {
             display: 'inline-block',
             background: 'rgba(10,10,12,0.95)',
             color: '#FAFAF8',
-            border: '1px solid #E63E1F',
+            border: `1px solid ${BORDER[variant]}`,
             padding: '4px 8px',
             fontFamily: 'var(--font-mono), monospace',
             fontSize: 10,

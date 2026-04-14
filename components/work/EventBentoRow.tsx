@@ -76,17 +76,17 @@ export default function EventBentoRow({ caseItem: c, locale, expanded, onToggle 
                 rowGap: 6,
               }}
             >
-              <dt style={{ color: 'rgba(250,250,248,0.35)' }}>CLIENT</dt>
+              <dt style={{ color: 'rgba(93,211,227,0.65)', fontSize: 9, letterSpacing: '0.3em' }}>CLIENT</dt>
               <dd>{c.client}</dd>
-              <dt style={{ color: 'rgba(250,250,248,0.35)' }}>YEAR</dt>
+              <dt style={{ color: 'rgba(93,211,227,0.65)', fontSize: 9, letterSpacing: '0.3em' }}>YEAR</dt>
               <dd>{c.year}</dd>
-              <dt style={{ color: 'rgba(250,250,248,0.35)' }}>SCALE</dt>
+              <dt style={{ color: 'rgba(93,211,227,0.65)', fontSize: 9, letterSpacing: '0.3em' }}>SCALE</dt>
               <dd>{c.scale}</dd>
-              <dt style={{ color: 'rgba(250,250,248,0.35)' }}>TYPE</dt>
+              <dt style={{ color: 'rgba(93,211,227,0.65)', fontSize: 9, letterSpacing: '0.3em' }}>TYPE</dt>
               <dd>{c.types.join(' / ')}</dd>
-              <dt style={{ color: 'rgba(250,250,248,0.35)' }}>ROLE</dt>
+              <dt style={{ color: 'rgba(93,211,227,0.65)', fontSize: 9, letterSpacing: '0.3em' }}>ROLE</dt>
               <dd>{c.roles.join(' · ')}</dd>
-              <dt style={{ color: 'rgba(250,250,248,0.35)' }}>VENUE</dt>
+              <dt style={{ color: 'rgba(93,211,227,0.65)', fontSize: 9, letterSpacing: '0.3em' }}>VENUE</dt>
               <dd>{c.venue}</dd>
             </dl>
           </div>
@@ -95,7 +95,8 @@ export default function EventBentoRow({ caseItem: c, locale, expanded, onToggle 
             <button
               type="button"
               onClick={onToggle}
-              data-cursor={expanded ? 'CLOSE' : `PEEK · ${c.id}`}
+              data-cursor={expanded ? '× CLOSE' : `⊡ PEEK · ${c.id}`}
+              data-cursor-variant="action"
               style={{
                 fontFamily: 'var(--font-mono), monospace',
                 fontSize: 10,
@@ -125,7 +126,8 @@ export default function EventBentoRow({ caseItem: c, locale, expanded, onToggle 
             </button>
             <Link
               href={`/${locale}/work/${c.slug}`}
-              data-cursor={`OPEN · ${c.id}`}
+              data-cursor={`▸ OPEN · ${c.id}`}
+              data-cursor-variant="primary"
               style={{
                 fontFamily: 'var(--font-mono), monospace',
                 fontSize: 10,
