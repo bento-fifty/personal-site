@@ -63,6 +63,23 @@ export default function EditorialMasthead() {
     return () => window.removeEventListener('scroll', onScroll);
   }, []);
 
+  // Auto-close menu on route change (belt & suspenders — onClick already
+  // calls setMenuOpen(false), but this covers any edge case like the Link
+  // onClick prop not firing for some reason).
+  useEffect(() => {
+    setMenuOpen(false);
+  }, [pathname]);
+
+  // Close on ESC
+  useEffect(() => {
+    if (!menuOpen) return;
+    const onKey = (e: KeyboardEvent) => {
+      if (e.key === 'Escape') setMenuOpen(false);
+    };
+    window.addEventListener('keydown', onKey);
+    return () => window.removeEventListener('keydown', onKey);
+  }, [menuOpen]);
+
   useEffect(() => {
     const tick = () => {
       const d = new Date();
