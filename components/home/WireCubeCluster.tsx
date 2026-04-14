@@ -75,46 +75,34 @@ function WireCube({
     if (flying) return;
     setFlying(true);
 
-    // Random direction — pick a dominant quadrant so it reads as "flying out"
+    // Knocked-around: stays in viewport. Random direction, moderate travel,
+    // overshoot tumble, then spring home.
     const dirX = Math.random() > 0.5 ? 1 : -1;
     const dirY = Math.random() > 0.5 ? 1 : -1;
-    const dx = dirX * (600 + Math.random() * 300);
-    const dy = dirY * (400 + Math.random() * 200);
-    const rot = (Math.random() > 0.5 ? 1 : -1) * (540 + Math.random() * 360);
+    const dx = dirX * (90 + Math.random() * 70);   // 90–160px
+    const dy = dirY * (60 + Math.random() * 50);   // 60–110px
+    const rot = (Math.random() > 0.5 ? 1 : -1) * (540 + Math.random() * 360); // 540–900°
 
-    // Fly out
+    // Kick out — overshoot + tumble
     await controls.start({
       x: dx,
       y: dy,
       rotate: rot,
-      scale: 0.5,
-      opacity: 0,
-      transition: { duration: 0.65, ease: [0.22, 1, 0.36, 1] },
+      scale: 1.08,
+      transition: { duration: 0.45, ease: [0.34, 1.56, 0.64, 1] }, // back.out
     });
 
-    // Pause offscreen
-    await new Promise((r) => setTimeout(r, 150));
-
-    // Snap to opposite side instantly
-    await controls.start({
-      x: -dx * 1.1,
-      y: -dy * 1.1,
-      rotate: rot + 180,
-      scale: 0.3,
-      opacity: 0,
-      transition: { duration: 0 },
-    });
-
-    // Fly back home
+    // Spring back to origin with continued spin
     await controls.start({
       x: 0,
       y: 0,
-      rotate: 0,
+      rotate: rot + 180,
       scale: 1,
-      opacity: 1,
-      transition: { duration: 0.5, ease: [0.22, 1, 0.36, 1] },
+      transition: { type: 'spring', stiffness: 120, damping: 11, mass: 0.9 },
     });
 
+    // Reset rotation baseline silently for next launch
+    controls.set({ rotate: 0 });
     setFlying(false);
   };
 

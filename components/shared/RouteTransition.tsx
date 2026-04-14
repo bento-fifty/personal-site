@@ -32,10 +32,11 @@ type Phase = 'idle' | 'covering' | 'covered' | 'revealing';
 const COLS = 12;
 const ROWS = 8;
 const CELL_COUNT = COLS * ROWS;
-const CELL_FADE_S = 0.07;
-const STAGGER_S = 0.006;
-const COVER_HOLD_MS = CELL_COUNT * STAGGER_S * 1000 + CELL_FADE_S * 1000; // ~645ms
-const REVEAL_SAFETY_MS = 1000;
+const CELL_FADE_S = 0.14;
+const STAGGER_S = 0.012;
+const COVER_HOLD_MS = CELL_COUNT * STAGGER_S * 1000 + CELL_FADE_S * 1000; // ~1292ms
+const MIN_COVERED_MS = 260; // hold fully black briefly so user registers it
+const REVEAL_SAFETY_MS = 1200;
 
 function seededShuffle(seed: number): number[] {
   const arr = Array.from({ length: CELL_COUNT }, (_, i) => i);
@@ -141,23 +142,19 @@ export default function RouteTransition({ children }: { children: ReactNode }) {
     return () => clearTimeout(t);
   }, [phase, router]);
 
-  // covered → revealing once pathname changes OR safety timeout fires
+  // covered → revealing: wait for both (pathname changed) AND (min hold elapsed)
   useEffect(() => {
     if (phase !== 'covered') return;
 
-    let rid: number | null = null;
-    let fb: ReturnType<typeof setTimeout> | null = null;
+    const pathChanged = pathname && pathname !== startPathRef.current;
 
-    if (pathname && pathname !== startPathRef.current) {
-      rid = requestAnimationFrame(() => setPhase('revealing'));
-    } else {
-      fb = setTimeout(() => setPhase('revealing'), REVEAL_SAFETY_MS);
+    if (pathChanged) {
+      const t = setTimeout(() => setPhase('revealing'), MIN_COVERED_MS);
+      return () => clearTimeout(t);
     }
 
-    return () => {
-      if (rid != null) cancelAnimationFrame(rid);
-      if (fb != null) clearTimeout(fb);
-    };
+    const fb = setTimeout(() => setPhase('revealing'), REVEAL_SAFETY_MS);
+    return () => clearTimeout(fb);
   }, [phase, pathname]);
 
   // revealing → idle
@@ -234,8 +231,8 @@ export default function RouteTransition({ children }: { children: ReactNode }) {
                 key={i}
                 style={{
                   background: '#000',
-                  borderRight: '1px solid rgba(93,211,227,0.22)',
-                  borderBottom: '1px solid rgba(93,211,227,0.22)',
+                  borderRight: '1px solid rgba(93,211,227,0.38)',
+                  borderBottom: '1px solid rgba(93,211,227,0.38)',
                 }}
                 initial={{ opacity: 0 }}
                 animate={{ opacity: showFilled ? 1 : 0 }}
