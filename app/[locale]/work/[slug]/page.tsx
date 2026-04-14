@@ -97,7 +97,28 @@ export default async function CaseStudyPage({
           </p>
           <Link
             href="/work"
-            className="font-label text-[#1A1A1A]/35 text-[0.625rem] hover:text-[#0891B2] transition-colors tracking-[0.2em] uppercase"
+            data-cursor="◀ ARCHIVE"
+            data-cursor-variant="link"
+            className="flex items-center"
+            style={{
+              fontFamily: 'var(--font-mono), monospace',
+              fontSize: 10,
+              letterSpacing: '0.28em',
+              textTransform: 'uppercase',
+              color: '#5DD3E3',
+              border: '1px solid #5DD3E3',
+              padding: '6px 12px',
+              textDecoration: 'none',
+              transition: 'background 0ms, color 0ms',
+            }}
+            onMouseEnter={(e) => {
+              e.currentTarget.style.background = '#5DD3E3';
+              e.currentTarget.style.color = '#0B1026';
+            }}
+            onMouseLeave={(e) => {
+              e.currentTarget.style.background = 'transparent';
+              e.currentTarget.style.color = '#5DD3E3';
+            }}
           >
             ← {zh ? '返回作品集' : 'Back to work'}
           </Link>
@@ -189,7 +210,27 @@ export default async function CaseStudyPage({
         <div className="pb-24 flex justify-center">
           <Link
             href="/work"
-            className="font-label text-[#1A1A1A]/45 text-[11px] hover:text-[#0891B2] tracking-[0.28em] uppercase transition-colors"
+            data-cursor="◀ ARCHIVE"
+            data-cursor-variant="link"
+            style={{
+              fontFamily: 'var(--font-mono), monospace',
+              fontSize: 11,
+              letterSpacing: '0.28em',
+              textTransform: 'uppercase',
+              color: '#5DD3E3',
+              border: '1px solid #5DD3E3',
+              padding: '10px 18px',
+              textDecoration: 'none',
+              transition: 'background 0ms, color 0ms',
+            }}
+            onMouseEnter={(e) => {
+              e.currentTarget.style.background = '#5DD3E3';
+              e.currentTarget.style.color = '#0B1026';
+            }}
+            onMouseLeave={(e) => {
+              e.currentTarget.style.background = 'transparent';
+              e.currentTarget.style.color = '#5DD3E3';
+            }}
           >
             ← {zh ? '看其他案例' : 'Explore more work'}
           </Link>
