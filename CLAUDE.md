@@ -21,10 +21,12 @@ Deploy plan + API abstraction (Vercel main site, Cloudflare Workers future split
 Component tour, routing, home composition, data conventions — **read the code directly**. Key entry points:
 
 - `app/[locale]/layout.tsx` — root shell (i18n provider + fonts + `<Nav>` + `<main>` + `<Footer>`)
-- `app/[locale]/page.tsx` — home composition (Hero / FeaturedWork / LocationsMap)
+- `app/[locale]/page.tsx` — home composition (Hero / FeaturedWork / LocationsMap / HomeCta)
 - `app/[locale]/about/page.tsx` → `components/about/AboutPage.tsx` — about page
+- `app/[locale]/contact/page.tsx` → `components/contact/ContactPage.tsx` — contact page
+- `app/[locale]/work/[slug]/page.tsx` — case detail (OSER: Objective / Strategy / Execution / Result)
 - `components/home/*` — marketing sections
-- `components/shared/GlitchText.tsx` — reusable scramble decode
+- `components/shared/HudCorners.tsx`, `components/shared/GlitchText.tsx` — reusable primitives
 
 ## Critical gotchas
 
@@ -45,9 +47,13 @@ Component tour, routing, home composition, data conventions — **read the code 
 ### Layout
 
 - `<main className="pt-14">` in `app/[locale]/layout.tsx` is tied to `<Nav>` `h-14`. Change both together or the hero gets cropped.
+- Home sections use `bg-transparent` so `HomeAmbientBg` streams show through every section. Do NOT add `bg-[#080808]` to individual home sections — it breaks visual continuity.
 
 ### Environment
 
 - **Dev server runs in `.worktrees/build/`** on branch `feature/build-personal-site`, NOT the main checkout. Edit files at the worktree path during active sessions — main-path edits won't be picked up by HMR.
 - **`git push` is blocked** by a harness hook per user rule. Commit freely; always stop before push and let the user run `git push` manually.
-</content>
+
+## 品質管控
+
+交給用戶前必須：build 通過、Playwright 截圖自審（無殘留/穿透/不可見元素）、對照最新指令、不重複已否決做法。未通過不準叫用戶看。

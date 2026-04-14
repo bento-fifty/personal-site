@@ -2,151 +2,156 @@ import { getTranslations } from 'next-intl/server';
 import { Link } from '@/i18n/navigation';
 import CopyrightYear from './CopyrightYear';
 import BackToTop from './BackToTop';
-import FooterWordmark from './FooterWordmark';
 
 const NAV_LINKS = [
-  { key: 'about',    href: '/about'    as const },
-  { key: 'work',     href: '/work'     as const },
-  { key: 'services', href: '/services' as const },
-  { key: 'blog',     href: '/blog'     as const },
+  { key: 'about', href: '/about' as const },
+  { key: 'work',  href: '/work'  as const },
+  { key: 'blog',  href: '/blog'  as const },
 ] as const;
 
 const SOCIAL_LINKS = [
   { label: 'Instagram', href: 'https://instagram.com' },
   { label: 'LinkedIn',  href: 'https://linkedin.com' },
-  { label: 'Behance',   href: 'https://behance.net' },
 ] as const;
 
 export default async function Footer() {
   const t = await getTranslations('nav');
   return (
-    <footer id="contact" className="relative bg-[#080808] text-white border-t border-[rgba(92,225,255,0.12)] overflow-hidden">
-      {/* Top-edge glow bar */}
-      <div className="absolute top-0 left-0 right-0 h-px bg-gradient-to-r from-transparent via-[#5CE1FF]/60 to-transparent pointer-events-none" />
+    <footer className="bg-[#0C0C0E] text-[#EAEAE8] overflow-hidden">
+      {/* ── CTA hero block ──────────────────────────── */}
+      <div className="relative max-w-[1200px] mx-auto px-6 md:px-10 pt-28 pb-24">
+        {/* Large decorative brand watermark */}
+        <p
+          aria-hidden
+          className="absolute top-8 left-6 md:left-10 text-[clamp(80px,14vw,180px)] font-bold leading-none select-none pointer-events-none"
+          style={{
+            fontFamily: 'var(--font-playfair), serif',
+            color: 'rgba(255,255,255,0.03)',
+          }}
+        >
+          TLS
+        </p>
 
-      {/* Subtle dust grid */}
-      <div
-        aria-hidden
-        className="absolute inset-0 opacity-30 pointer-events-none"
-        style={{
-          backgroundImage:
-            'radial-gradient(circle, rgba(92,225,255,0.18) 0.5px, transparent 0.5px)',
-          backgroundSize: '80px 80px',
-        }}
-      />
+        <p
+          className="text-[10px] tracking-[0.3em] uppercase mb-6"
+          style={{ color: '#888886', fontFamily: 'var(--font-departure-mono), monospace' }}
+        >
+          Let&apos;s connect
+        </p>
 
-      <div className="relative max-w-7xl mx-auto px-6 md:px-10 pt-24 pb-10">
-        {/* ── CTA block — stacked tight ───────────────── */}
-        <div className="pb-20 border-b border-white/[0.06]">
-          <p
-            className="font-label text-[0.625rem] text-[#5CE1FF]/70 mb-6 tracking-[0.25em]"
-            style={{ textShadow: '0 0 10px rgba(92,225,255,0.45)' }}
+        <h2
+          className="text-[clamp(32px,6vw,56px)] leading-[1.1] mb-4"
+          style={{
+            fontFamily: 'var(--font-playfair), var(--font-noto-serif-tc), serif',
+            fontWeight: 500,
+          }}
+        >
+          Have a project<br />worth remembering?
+        </h2>
+
+        <p
+          className="text-[15px] max-w-md mb-10"
+          style={{ color: '#888886', fontFamily: 'var(--font-geist), sans-serif', lineHeight: 1.65 }}
+        >
+          Fill in a brief and I&apos;ll reply within 2 working days.
+          Free 30-min strategy call included.
+        </p>
+
+        <a
+          href="mailto:evanchang818@gmail.com"
+          className="inline-flex items-center gap-3 group"
+        >
+          <span
+            className="text-[13px] font-medium tracking-[0.08em] border-b border-[rgba(255,255,255,0.25)] pb-1 group-hover:border-[#818CF8] group-hover:text-[#818CF8] transition-colors"
+            style={{ fontFamily: 'var(--font-geist), sans-serif' }}
           >
-            {'// LET\'S WORK TOGETHER'}
-          </p>
-          <h2 className="font-display text-white text-[33px] md:text-[44px] lg:text-[55px] leading-[1.05] max-w-2xl mb-10">
-            Have a project
-            <br />
-            worth remembering?
-          </h2>
-          <Link
-            href="/contact"
-            className="group inline-flex items-center gap-4 font-label text-xs text-white hover:text-[#5CE1FF] border border-white/20 hover:border-[#5CE1FF]/60 px-8 py-5 tracking-[0.22em] transition-colors"
-          >
-            <span>START A PROJECT</span>
-            <span className="inline-block transition-transform group-hover:translate-x-1">→</span>
-          </Link>
-        </div>
+            evanchang818@gmail.com
+          </span>
+          <span className="text-[#888886] group-hover:text-[#818CF8] group-hover:translate-x-1 transition-all">&rarr;</span>
+        </a>
+      </div>
 
-        {/* ── Middle grid: brand · navigate · social ──── */}
-        <div className="grid grid-cols-1 md:grid-cols-12 gap-12 md:gap-8 py-20">
-          {/* Brand + location */}
-          <div className="md:col-span-5 lg:col-span-6">
-            <FooterWordmark />
-            <p className="font-label text-white/55 text-[0.75rem] tracking-[0.2em] uppercase mb-8 max-w-sm">
-              Event planner, producer & consultant.
+      {/* ── Divider ─────────────────────────────────── */}
+      <div className="max-w-[1200px] mx-auto px-6 md:px-10">
+        <div className="h-px bg-[rgba(255,255,255,0.06)]" />
+      </div>
+
+      {/* ── Footer grid ─────────────────────────────── */}
+      <div className="max-w-[1200px] mx-auto px-6 md:px-10 py-14">
+        <div className="grid grid-cols-1 md:grid-cols-[1fr_auto_auto] gap-10 md:gap-16">
+          {/* Brand */}
+          <div>
+            <p
+              className="text-[14px] font-medium tracking-[0.12em] uppercase mb-3"
+              style={{ fontFamily: 'var(--font-geist), sans-serif' }}
+            >
+              The Level Studio
             </p>
-            <div className="font-label text-[0.625rem] text-white/30 space-y-2">
-              <p>
-                [ BASED IN ]{' '}
-                <span
-                  className="text-[#5CE1FF]"
-                  style={{ textShadow: '0 0 10px rgba(92,225,255,0.5)' }}
-                >
-                  TAIPEI, TAIWAN
-                </span>
-              </p>
-              <p>
-                [ STATUS ]{' '}
-                <span
-                  className="text-[#5CE1FF]"
-                  style={{ textShadow: '0 0 10px rgba(92,225,255,0.5)' }}
-                >
-                  OPEN FOR 2026 Q3 →
-                </span>
-              </p>
-            </div>
+            <p className="text-[13px] leading-relaxed" style={{ color: '#6B6B67' }}>
+              Event planning, production<br />
+              &amp; brand experience consulting.<br />
+              Based in Taipei.
+            </p>
           </div>
 
           {/* Navigate */}
-          <div className="md:col-span-3">
-            <p className="font-label text-[0.625rem] text-white/30 mb-6">
-              [ NAVIGATE ]
+          <div>
+            <p
+              className="text-[10px] tracking-[0.2em] uppercase mb-4"
+              style={{ color: '#6B6B67', fontFamily: 'var(--font-departure-mono), monospace' }}
+            >
+              Navigate
             </p>
-            <ul className="space-y-3">
+            <ul className="flex flex-col gap-3">
               {NAV_LINKS.map(({ key, href }) => (
                 <li key={key}>
                   <Link
                     href={href}
-                    className="font-display text-white/75 text-lg hover:text-[#5CE1FF] transition-colors inline-flex items-baseline gap-2 group"
+                    className="text-[14px] text-[#888886] hover:text-[#EAEAE8] transition-colors"
+                    style={{ fontFamily: 'var(--font-geist), sans-serif' }}
                   >
-                    <span>{t(key)}</span>
-                    <span className="font-label text-[0.5625rem] text-white/20 group-hover:text-[#5CE1FF]/60 transition-colors">↗</span>
+                    {t(key)}
                   </Link>
                 </li>
               ))}
             </ul>
           </div>
 
-          {/* Social + contact */}
-          <div className="md:col-span-4 lg:col-span-3">
-            <p className="font-label text-[0.625rem] text-white/30 mb-6">
-              [ CHANNELS ]
+          {/* Social */}
+          <div>
+            <p
+              className="text-[10px] tracking-[0.2em] uppercase mb-4"
+              style={{ color: '#6B6B67', fontFamily: 'var(--font-departure-mono), monospace' }}
+            >
+              Channels
             </p>
-            <ul className="space-y-3 mb-8">
+            <ul className="flex flex-col gap-3">
               {SOCIAL_LINKS.map(({ label, href }) => (
                 <li key={label}>
                   <a
                     href={href}
                     target="_blank"
                     rel="noopener noreferrer"
-                    className="font-display text-white/75 text-lg hover:text-[#5CE1FF] transition-colors inline-flex items-baseline gap-2 group"
+                    className="text-[14px] text-[#888886] hover:text-[#EAEAE8] transition-colors"
+                    style={{ fontFamily: 'var(--font-geist), sans-serif' }}
                   >
-                    <span>{label}</span>
-                    <span className="font-label text-[0.5625rem] text-white/20 group-hover:text-[#5CE1FF]/60 transition-colors">↗</span>
+                    {label}
                   </a>
                 </li>
               ))}
             </ul>
-            <a
-              href="mailto:evanchang818@gmail.com"
-              className="font-label text-xs text-[#5CE1FF]/80 hover:text-[#5CE1FF] transition-colors tracking-[0.15em]"
-              style={{ textShadow: '0 0 10px rgba(92,225,255,0.4)' }}
-            >
-              evanchang818@gmail.com&nbsp;&nbsp;→
-            </a>
           </div>
         </div>
+      </div>
 
-        {/* ── Meta line ─────────────────────────────────── */}
-        <div className="pt-8 border-t border-white/[0.06] flex flex-col md:flex-row items-start md:items-center justify-between gap-6 font-label text-[0.625rem] text-white/30">
-          <div className="flex flex-wrap items-center gap-x-6 gap-y-2">
-            <span>©&nbsp;<CopyrightYear /> EVAN CHANG</span>
-            <span className="hidden md:inline text-white/15">/</span>
-            <span>ALL RIGHTS RESERVED</span>
-            <span className="hidden md:inline text-white/15">/</span>
-            <span className="text-[#5CE1FF]/50">SIG_ARCH&nbsp;v1.0</span>
-          </div>
+      {/* ── Bottom bar ──────────────────────────────── */}
+      <div className="max-w-[1200px] mx-auto px-6 md:px-10 pb-8">
+        <div className="h-px bg-[rgba(255,255,255,0.06)] mb-6" />
+        <div
+          className="flex flex-col md:flex-row items-start md:items-center justify-between gap-4 text-[11px]"
+          style={{ color: '#6B6B67', fontFamily: 'var(--font-geist), sans-serif' }}
+        >
+          <span>&copy;&nbsp;<CopyrightYear />&nbsp;The Level Studio. All rights reserved.</span>
           <BackToTop />
         </div>
       </div>

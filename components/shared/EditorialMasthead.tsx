@@ -1,0 +1,233 @@
+'use client';
+
+import { usePathname } from 'next/navigation';
+import { TransitionLink as Link } from '@/components/shared/RouteTransition';
+import { useState, useEffect } from 'react';
+
+function useCursorCoords() {
+  const [coords, setCoords] = useState<{ x: number; y: number } | null>(null);
+  useEffect(() => {
+    if (typeof window === 'undefined') return;
+    if (!window.matchMedia('(pointer: fine)').matches) return;
+    const onMove = (e: MouseEvent) => setCoords({ x: e.clientX, y: e.clientY });
+    const onLeave = () => setCoords(null);
+    window.addEventListener('mousemove', onMove);
+    document.addEventListener('mouseleave', onLeave);
+    return () => {
+      window.removeEventListener('mousemove', onMove);
+      document.removeEventListener('mouseleave', onLeave);
+    };
+  }, []);
+  return coords;
+}
+
+/**
+ * EditorialMasthead — v8 global top strip, 32px tall, hairline bottom.
+ *
+ * Left: THE LEVEL STUDIO (always)
+ * Center: contextual — varies by route (issue / archive / feature)
+ * Right: reference code + MENU
+ */
+
+function getContextLabel(pathname: string): string {
+  // Strip locale prefix
+  const path = pathname.replace(/^\/(zh-TW|en-US)/, '') || '/';
+  if (path === '/') return 'ISSUE N°003 · SEASON 2026';
+  if (path === '/work') return 'ARCHIVE · 042 ENTRIES';
+  if (path.startsWith('/work/')) return 'FEATURE · CASE FILE';
+  if (path === '/about') return 'PRINCIPAL · EVAN CHANG';
+  if (path === '/contact') return 'CONTACT';
+  if (path === '/services') return 'SERVICES';
+  return path.toUpperCase().slice(1);
+}
+
+function getRefCode(pathname: string): string {
+  const path = pathname.replace(/^\/(zh-TW|en-US)/, '') || '/';
+  if (path === '/') return 'TLS-COVER';
+  if (path === '/work') return 'TLS-ARCH';
+  if (path.startsWith('/work/')) return 'TLS-FTR';
+  return `TLS-${path.slice(1).slice(0, 4).toUpperCase()}`;
+}
+
+export default function EditorialMasthead() {
+  const pathname = usePathname();
+  const [scrolled, setScrolled] = useState(false);
+  const [menuOpen, setMenuOpen] = useState(false);
+  const [now, setNow] = useState<string>('');
+  const coords = useCursorCoords();
+
+  useEffect(() => {
+    const onScroll = () => setScrolled(window.scrollY > 8);
+    onScroll();
+    window.addEventListener('scroll', onScroll, { passive: true });
+    return () => window.removeEventListener('scroll', onScroll);
+  }, []);
+
+  // Auto-close menu on route change (belt & suspenders — onClick already
+  // calls setMenuOpen(false), but this covers any edge case like the Link
+  // onClick prop not firing for some reason).
+  useEffect(() => {
+    setMenuOpen(false);
+  }, [pathname]);
+
+  // Close on ESC
+  useEffect(() => {
+    if (!menuOpen) return;
+    const onKey = (e: KeyboardEvent) => {
+      if (e.key === 'Escape') setMenuOpen(false);
+    };
+    window.addEventListener('keydown', onKey);
+    return () => window.removeEventListener('keydown', onKey);
+  }, [menuOpen]);
+
+  useEffect(() => {
+    const tick = () => {
+      const d = new Date();
+      const yyyy = d.getFullYear();
+      const mm = String(d.getMonth() + 1).padStart(2, '0');
+      const dd = String(d.getDate()).padStart(2, '0');
+      setNow(`${yyyy}.${mm}.${dd}`);
+    };
+    tick();
+    const id = setInterval(tick, 60_000);
+    return () => clearInterval(id);
+  }, []);
+
+  const context = getContextLabel(pathname || '/');
+  const ref = getRefCode(pathname || '/');
+  const localePrefix = pathname?.startsWith('/en-US') ? '/en-US' : '/zh-TW';
+
+  const NAV = [
+    { label: 'WORKS', href: `${localePrefix}/work` },
+    { label: 'PROFILE', href: `${localePrefix}/about` },
+    { label: 'CONTACT', href: `${localePrefix}/contact` },
+  ];
+
+  const normalizedPath = (pathname || '/').replace(/^\/(zh-TW|en-US)/, '') || '/';
+  const isActiveRoute = (href: string): boolean => {
+    const relative = href.replace(/^\/(zh-TW|en-US)/, '') || '/';
+    if (relative === '/') return normalizedPath === '/';
+    return normalizedPath === relative || normalizedPath.startsWith(relative + '/');
+  };
+
+  return (
+    <>
+      <header
+        className="fixed top-0 left-0 right-0 z-[100]"
+        style={{
+          height: 44,
+          background: scrolled ? 'rgba(10,10,12,0.92)' : 'transparent',
+          backdropFilter: scrolled ? 'blur(16px)' : 'none',
+          WebkitBackdropFilter: scrolled ? 'blur(16px)' : 'none',
+          borderBottom: '1px solid rgba(250,250,248,0.08)',
+          transition: 'background 200ms ease-out, backdrop-filter 200ms ease-out',
+        }}
+      >
+        <div
+          className="h-full items-center px-5 md:px-8"
+          style={{
+            display: 'grid',
+            gridTemplateColumns: 'minmax(0, 1fr) auto minmax(0, 1fr)',
+            gap: 24,
+          }}
+        >
+          {/* Left */}
+          <Link
+            href={`${localePrefix}/`}
+            data-cursor="▸ HOME"
+            data-cursor-variant="link"
+            className="font-mono text-[10px] tracking-[0.22em] text-[#FAFAF8] hover:text-[#E63E1F] transition-colors justify-self-start"
+            style={{ fontFamily: 'var(--font-mono), monospace', textTransform: 'uppercase' }}
+          >
+            THE LEVEL STUDIO
+          </Link>
+
+          {/* Center: inline nav (desktop) */}
+          <nav className="hidden md:flex items-center gap-6 justify-self-center">
+            {NAV.map((item) => {
+              const active = isActiveRoute(item.href);
+              return (
+                <Link
+                  key={item.href}
+                  href={item.href}
+                  data-cursor={`▸ ${item.label}`}
+                  data-cursor-variant="link"
+                  className="font-mono text-[10px] tracking-[0.22em] transition-colors"
+                  style={{
+                    fontFamily: 'var(--font-mono), monospace',
+                    textTransform: 'uppercase',
+                    color: active ? '#5DD3E3' : 'rgba(250,250,248,0.5)',
+                    borderBottom: active ? '1px solid #5DD3E3' : '1px solid transparent',
+                    paddingBottom: 2,
+                  }}
+                >
+                  {item.label}
+                </Link>
+              );
+            })}
+          </nav>
+          <span
+            className="md:hidden font-mono text-[10px] tracking-[0.22em] text-[rgba(250,250,248,0.55)] justify-self-center"
+            style={{ fontFamily: 'var(--font-mono), monospace', textTransform: 'uppercase' }}
+          >
+            {context}
+          </span>
+
+          {/* Right — meta + live cursor coords (replaces REF/date) */}
+          <div className="flex items-center gap-4 justify-self-end">
+            <span
+              className="hidden lg:inline font-mono text-[9px] tracking-[0.22em]"
+              style={{ fontFamily: 'var(--font-mono), monospace', color: 'rgba(250,250,248,0.3)' }}
+            >
+              {now} · TPE
+            </span>
+            <span
+              className="hidden lg:inline font-mono text-[9px] tracking-[0.22em] tabular-nums"
+              style={{
+                fontFamily: 'var(--font-mono), monospace',
+                color: coords ? 'rgba(93,211,227,0.75)' : 'rgba(93,211,227,0.3)',
+                minWidth: 110,
+              }}
+            >
+              X {String(coords ? Math.round(coords.x) : 0).padStart(4, '0')} · Y {String(coords ? Math.round(coords.y) : 0).padStart(4, '0')}
+            </span>
+            <button
+              type="button"
+              onClick={() => setMenuOpen((v) => !v)}
+              data-cursor={menuOpen ? '× CLOSE' : '▸ MENU'}
+              data-cursor-variant="action"
+              className="font-mono text-[10px] tracking-[0.22em] text-[#FAFAF8] hover:text-[#E63E1F] transition-colors md:hidden"
+              style={{ fontFamily: 'var(--font-mono), monospace', textTransform: 'uppercase' }}
+              aria-expanded={menuOpen}
+            >
+              [ {menuOpen ? 'CLOSE' : 'MENU'} ]
+            </button>
+          </div>
+        </div>
+      </header>
+
+      {/* Menu overlay */}
+      {menuOpen && (
+        <div
+          className="fixed inset-0 z-[99] flex items-center justify-center"
+          style={{ background: 'rgba(10,10,12,0.97)', backdropFilter: 'blur(20px)' }}
+          onClick={() => setMenuOpen(false)}
+        >
+          <nav className="flex flex-col items-center gap-8" onClick={(e) => e.stopPropagation()}>
+            {NAV.map((item) => (
+              <Link
+                key={item.href}
+                href={item.href}
+                onClick={() => setMenuOpen(false)}
+                className="font-display-lg text-[#FAFAF8] hover:text-[#E63E1F] transition-colors"
+                style={{ fontFamily: 'var(--font-display), serif', fontSize: 'clamp(48px, 8vw, 96px)' }}
+              >
+                {item.label}
+              </Link>
+            ))}
+          </nav>
+        </div>
+      )}
+    </>
+  );
+}
