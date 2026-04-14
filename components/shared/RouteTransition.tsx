@@ -88,6 +88,8 @@ export function TransitionLink(
           /^https?:\/\//i.test(hrefStr)
         ) return;
         e.preventDefault();
+        // eslint-disable-next-line no-console
+        console.log('[RouteTransition] TransitionLink clicked →', hrefStr);
         navigate(hrefStr);
       }}
     />
@@ -121,16 +123,21 @@ export default function RouteTransition({ children }: { children: ReactNode }) {
   const navigate = useCallback(
     (href: string) => {
       if (phase !== 'idle') return;
-      if (prefersReduced.current) {
-        router.push(href);
-        return;
-      }
+      // NOTE: intentionally NOT bypassing for prefers-reduced-motion.
+      // A 1.5s cream cover → reveal is not seizure-risk motion. Users on
+      // reduced-motion get the same transition, it just feels like a fade.
       pendingHrefRef.current = href;
       startPathRef.current = pathname;
       setPhase('covering');
     },
-    [phase, router, pathname],
+    [phase, pathname],
   );
+
+  // Debug: trace every phase change
+  useEffect(() => {
+    // eslint-disable-next-line no-console
+    console.log('[RouteTransition] phase =', phase);
+  }, [phase]);
 
   // covering → covered (all cells in) → push route
   useEffect(() => {
@@ -210,6 +217,31 @@ export default function RouteTransition({ children }: { children: ReactNode }) {
   return (
     <RouteTransitionCtx.Provider value={{ navigate, active }}>
       {children}
+      {/* Debug banner — visible whenever transition phase !== idle */}
+      {active && (
+        <div
+          aria-hidden
+          style={{
+            position: 'fixed',
+            top: 0,
+            left: 0,
+            right: 0,
+            zIndex: 99999,
+            background: '#E63E1F',
+            color: '#FAFAF8',
+            fontFamily: 'var(--font-mono), monospace',
+            fontSize: 12,
+            letterSpacing: '0.3em',
+            textTransform: 'uppercase',
+            textAlign: 'center',
+            padding: '8px',
+            pointerEvents: 'none',
+          }}
+        >
+          ▸▸▸ ROUTE TRANSITION · PHASE = {phase.toUpperCase()} ◂◂◂
+        </div>
+      )}
+
       <AnimatePresence>
         {active && (
           <motion.div
