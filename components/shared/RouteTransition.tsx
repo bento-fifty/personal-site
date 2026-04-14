@@ -29,13 +29,13 @@ import type { ComponentProps } from 'react';
 
 type Phase = 'idle' | 'covering' | 'covered' | 'revealing';
 
-const COLS = 12;
-const ROWS = 8;
+const COLS = 8;
+const ROWS = 5;
 const CELL_COUNT = COLS * ROWS;
-const CELL_FADE_S = 0.14;
-const STAGGER_S = 0.012;
-const COVER_HOLD_MS = CELL_COUNT * STAGGER_S * 1000 + CELL_FADE_S * 1000; // ~1292ms
-const MIN_COVERED_MS = 260; // hold fully black briefly so user registers it
+const CELL_FADE_S = 0.12;
+const STAGGER_S = 0.025;
+const COVER_HOLD_MS = CELL_COUNT * STAGGER_S * 1000 + CELL_FADE_S * 1000; // ~1120ms
+const MIN_COVERED_MS = 320;
 const REVEAL_SAFETY_MS = 1200;
 
 function seededShuffle(seed: number): number[] {
@@ -230,9 +230,7 @@ export default function RouteTransition({ children }: { children: ReactNode }) {
               <motion.div
                 key={i}
                 style={{
-                  background: '#000',
-                  borderRight: '1px solid rgba(93,211,227,0.38)',
-                  borderBottom: '1px solid rgba(93,211,227,0.38)',
+                  background: '#F0EDE6',
                 }}
                 initial={{ opacity: 0 }}
                 animate={{ opacity: showFilled ? 1 : 0 }}
