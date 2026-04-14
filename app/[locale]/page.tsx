@@ -1,4 +1,4 @@
-import IssueCover from '@/components/home/IssueCover';
+import HomeClient from '@/components/home/HomeClient';
 
 export default async function HomePage({
   params,
@@ -7,5 +7,5 @@ export default async function HomePage({
 }) {
   const { locale } = await params;
   const l = (locale === 'en-US' ? 'en-US' : 'zh-TW') as 'zh-TW' | 'en-US';
-  return <IssueCover locale={l} />;
+  return <HomeClient locale={l} />;
 }
