@@ -52,88 +52,53 @@ function HookContent({ mounted, igniting }: { mounted: boolean; igniting: boolea
         style={{ background: 'radial-gradient(ellipse 55% 55% at 50% 50%, transparent 0%, rgba(0,0,0,0.6) 100%)' }}
       />
 
-      {/* 等級 × THE LEVEL — overlay composition (designed, interactive) */}
+      {/* 等級 title card + caption bar — editorial masthead composition */}
       <motion.div
-        className="absolute inset-0 flex items-center justify-center pointer-events-none"
-        initial={{ opacity: 0, scale: 0.92 }}
-        animate={{ opacity: mounted ? 1 : 0, scale: mounted ? 1 : 0.92 }}
+        className="absolute inset-0 flex flex-col items-center justify-center pointer-events-none px-6"
+        initial={{ opacity: 0, scale: 0.94 }}
+        animate={{ opacity: mounted ? 1 : 0, scale: mounted ? 1 : 0.94 }}
         transition={{ duration: 1.5, ease: [0.22, 1, 0.36, 1] }}
       >
-        <div className="relative" aria-label="等級 · THE LEVEL">
-          {/* 等級 — flame outline, oversized watermark */}
-          <h1
-            style={{
-              fontFamily: 'var(--font-noto-serif-tc), serif',
-              fontSize: 'clamp(140px, 32vw, 520px)',
-              fontWeight: 700,
-              color: 'transparent',
-              WebkitTextStroke: '3px #E63E1F',
-              lineHeight: 0.86,
-              letterSpacing: '-0.04em',
-              margin: 0,
-              position: 'relative',
-              zIndex: 1,
-            }}
-          >
-            等級
-          </h1>
+        {/* 等級 — centered flame outline, title card */}
+        <h1
+          aria-label="等級 · The Level Studio"
+          style={{
+            fontFamily: 'var(--font-noto-serif-tc), serif',
+            fontSize: 'clamp(120px, 26vw, 420px)',
+            fontWeight: 700,
+            color: igniting ? '#E63E1F' : 'transparent',
+            WebkitTextStroke: '3px #E63E1F',
+            lineHeight: 0.9,
+            letterSpacing: '-0.025em',
+            margin: 0,
+            textAlign: 'center',
+            transition: 'color 150ms ease-out',
+          }}
+        >
+          等級
+        </h1>
 
-          {/* THE LEVEL — ice solid, STACKED INSIDE the counter space of 等級,
-              two words split across the two Chinese characters */}
-          <div
-            aria-hidden
-            className="absolute inset-0 flex items-center justify-between pointer-events-none"
-            style={{
-              zIndex: 2,
-              padding: '0 clamp(20px, 4vw, 72px)',
-              mixBlendMode: 'normal',
-            }}
-          >
-            <span
-              style={{
-                fontFamily: 'var(--font-display), serif',
-                fontVariationSettings: '"opsz" 144, "wght" 900',
-                fontSize: 'clamp(30px, 7vw, 120px)',
-                color: igniting ? '#0B1026' : '#5DD3E3',
-                lineHeight: 1,
-                letterSpacing: '-0.04em',
-                transition: 'color 150ms ease-out',
-                textAlign: 'left',
-                transform: 'translateY(10%)',
-              }}
-            >
-              THE
-            </span>
-            <span
-              style={{
-                fontFamily: 'var(--font-display), serif',
-                fontVariationSettings: '"opsz" 144, "wght" 900',
-                fontSize: 'clamp(30px, 7vw, 120px)',
-                color: igniting ? '#0B1026' : '#5DD3E3',
-                lineHeight: 1,
-                letterSpacing: '-0.04em',
-                transition: 'color 150ms ease-out',
-                textAlign: 'right',
-                transform: 'translateY(-10%)',
-              }}
-            >
-              LEVEL
-            </span>
-          </div>
-
-          {/* Connecting hairline between THE and LEVEL — design intent */}
-          <div
-            aria-hidden
-            className="absolute pointer-events-none"
-            style={{
-              left: '32%',
-              right: '32%',
-              top: '50%',
-              height: 1,
-              background: 'rgba(93,211,227,0.5)',
-              zIndex: 1,
-            }}
-          />
+        {/* Caption bar — English credit strip, never competes with the Chinese */}
+        <div
+          aria-hidden
+          className="mt-[clamp(32px,6vh,64px)] flex items-center gap-4 md:gap-6"
+          style={{
+            fontFamily: 'var(--font-mono), monospace',
+            fontSize: 'clamp(9px, 0.9vw, 11px)',
+            letterSpacing: '0.32em',
+            textTransform: 'uppercase',
+            color: '#5DD3E3',
+          }}
+        >
+          <span style={{ width: 'clamp(32px, 6vw, 80px)', height: 1, background: 'rgba(93,211,227,0.6)' }} />
+          <span>THE</span>
+          <span style={{ color: 'rgba(250,250,248,0.35)' }}>·</span>
+          <span>LEVEL</span>
+          <span style={{ color: 'rgba(250,250,248,0.35)' }}>·</span>
+          <span>STUDIO</span>
+          <span style={{ color: 'rgba(250,250,248,0.35)' }}>·</span>
+          <span style={{ color: 'rgba(250,250,248,0.55)' }}>ISSUE N°003</span>
+          <span style={{ width: 'clamp(32px, 6vw, 80px)', height: 1, background: 'rgba(93,211,227,0.6)' }} />
         </div>
       </motion.div>
 
