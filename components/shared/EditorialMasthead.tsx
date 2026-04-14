@@ -4,6 +4,23 @@ import { usePathname } from 'next/navigation';
 import Link from 'next/link';
 import { useState, useEffect } from 'react';
 
+function useCursorCoords() {
+  const [coords, setCoords] = useState<{ x: number; y: number } | null>(null);
+  useEffect(() => {
+    if (typeof window === 'undefined') return;
+    if (!window.matchMedia('(pointer: fine)').matches) return;
+    const onMove = (e: MouseEvent) => setCoords({ x: e.clientX, y: e.clientY });
+    const onLeave = () => setCoords(null);
+    window.addEventListener('mousemove', onMove);
+    document.addEventListener('mouseleave', onLeave);
+    return () => {
+      window.removeEventListener('mousemove', onMove);
+      document.removeEventListener('mouseleave', onLeave);
+    };
+  }, []);
+  return coords;
+}
+
 /**
  * EditorialMasthead — v8 global top strip, 32px tall, hairline bottom.
  *
@@ -37,6 +54,7 @@ export default function EditorialMasthead() {
   const [scrolled, setScrolled] = useState(false);
   const [menuOpen, setMenuOpen] = useState(false);
   const [now, setNow] = useState<string>('');
+  const coords = useCursorCoords();
 
   useEffect(() => {
     const onScroll = () => setScrolled(window.scrollY > 8);
@@ -138,13 +156,23 @@ export default function EditorialMasthead() {
             {context}
           </span>
 
-          {/* Right */}
+          {/* Right — meta + live cursor coords (replaces REF/date) */}
           <div className="flex items-center gap-4 justify-self-end">
             <span
-              className="hidden lg:inline font-mono text-[9px] tracking-[0.22em] text-[rgba(250,250,248,0.3)]"
-              style={{ fontFamily: 'var(--font-mono), monospace' }}
+              className="hidden lg:inline font-mono text-[9px] tracking-[0.22em]"
+              style={{ fontFamily: 'var(--font-mono), monospace', color: 'rgba(250,250,248,0.3)' }}
             >
-              REF. {ref} · {now} · TPE
+              {now} · TPE
+            </span>
+            <span
+              className="hidden lg:inline font-mono text-[9px] tracking-[0.22em] tabular-nums"
+              style={{
+                fontFamily: 'var(--font-mono), monospace',
+                color: coords ? 'rgba(93,211,227,0.75)' : 'rgba(93,211,227,0.3)',
+                minWidth: 110,
+              }}
+            >
+              X {String(coords ? Math.round(coords.x) : 0).padStart(4, '0')} · Y {String(coords ? Math.round(coords.y) : 0).padStart(4, '0')}
             </span>
             <button
               type="button"

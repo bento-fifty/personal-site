@@ -113,24 +113,6 @@ export default function CursorChip() {
           transform: 'translateZ(0)',
         }}
       />
-      {/* Coordinate readout (bottom-left, small mono) */}
-      <div
-        aria-hidden
-        className="fixed pointer-events-none z-[190] hidden md:block"
-        style={{
-          left: 8,
-          bottom: 8,
-          fontFamily: 'var(--font-mono), monospace',
-          fontSize: 9,
-          letterSpacing: '0.22em',
-          color: 'rgba(93,211,227,0.55)',
-          opacity: crosshairVisible ? 1 : 0,
-          transition: 'opacity 200ms ease-out',
-        }}
-      >
-        X {String(Math.round(coords.x)).padStart(4, '0')} · Y {String(Math.round(coords.y)).padStart(4, '0')}
-      </div>
-
       {/* Chip */}
       <motion.div
         aria-hidden
