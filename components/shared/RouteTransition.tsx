@@ -25,8 +25,8 @@ type Phase = 'idle' | 'covering' | 'covered' | 'revealing';
 const COLS = 12;
 const ROWS = 8;
 const CELL_COUNT = COLS * ROWS;
-const CELL_FADE_MS = 90;
-const STAGGER_MS = 7;
+const CELL_FADE_MS = 60;
+const STAGGER_MS = 5;
 const COVER_HOLD_MS = CELL_COUNT * STAGGER_MS + CELL_FADE_MS; // ~762ms
 
 function seededShuffle(seed: number): number[] {
@@ -181,7 +181,9 @@ export default function RouteTransition({ children }: { children: ReactNode }) {
             <div
               key={i}
               style={{
-                background: '#0B1026',
+                background: '#000',
+                borderRight: '1px solid rgba(93,211,227,0.18)',
+                borderBottom: '1px solid rgba(93,211,227,0.18)',
                 opacity: showFilled ? 1 : 0,
                 transition: `opacity ${CELL_FADE_MS}ms linear ${cellDelays[i]}ms`,
               }}

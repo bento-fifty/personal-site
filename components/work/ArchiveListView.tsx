@@ -1,13 +1,10 @@
 'use client';
 
-import Link from 'next/link';
 import { useState } from 'react';
 import { Case } from '@/lib/work-data';
-import InlineWindowCard from './InlineWindowCard';
 
 interface Props {
   cases: Case[];
-  locale: 'zh-TW' | 'en-US';
   expandedId: string | null;
   onToggle: (id: string) => void;
 }
@@ -17,9 +14,9 @@ interface Props {
  *
  * Each row: NO. / TITLE / TYPE / YEAR as a single line with hairline dividers.
  * Right side: giant Fraunces letter (first letter of currently displayed archive).
- * Click row → expands InlineWindowCard inline.
+ * Click row → triggers CaseLightbox at parent level.
  */
-export default function ArchiveListView({ cases, locale, expandedId, onToggle }: Props) {
+export default function ArchiveListView({ cases, expandedId, onToggle }: Props) {
   const [hoverLetter, setHoverLetter] = useState<string | null>(null);
 
   // Compute the big letter: first letter of current filter's title
@@ -136,7 +133,6 @@ export default function ArchiveListView({ cases, locale, expandedId, onToggle }:
                 </span>
               </button>
 
-              {expanded && <InlineWindowCard caseItem={c} locale={locale} onClose={() => onToggle(c.id)} />}
             </li>
           );
         })}

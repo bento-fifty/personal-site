@@ -5,6 +5,7 @@ import { CASES, EventType, countByType } from '@/lib/work-data';
 import FilterChips from '@/components/shared/FilterChips';
 import EventBentoRow from './EventBentoRow';
 import ArchiveListView from './ArchiveListView';
+import CaseLightbox from './CaseLightbox';
 
 type ViewMode = 'bento' | 'list';
 
@@ -25,6 +26,11 @@ export default function ArchivePage({ locale }: Props) {
       return typeMatch && yearMatch;
     });
   }, [activeType, activeYear]);
+
+  const expandedCase = useMemo(
+    () => (expandedId ? CASES.find((c) => c.id === expandedId) ?? null : null),
+    [expandedId],
+  );
 
   const totalCount = countByType('ALL');
 
@@ -168,7 +174,6 @@ export default function ArchivePage({ locale }: Props) {
         ) : (
           <ArchiveListView
             cases={filtered}
-            locale={locale}
             expandedId={expandedId}
             onToggle={toggleExpand}
           />
@@ -186,6 +191,12 @@ export default function ArchivePage({ locale }: Props) {
           [ END OF ARCHIVE · BACK TO TOP ↑ ]
         </div>
       </main>
+
+      <CaseLightbox
+        caseItem={expandedCase}
+        locale={locale}
+        onClose={() => setExpandedId(null)}
+      />
     </>
   );
 }
