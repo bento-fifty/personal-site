@@ -6,7 +6,7 @@ import { motion } from 'framer-motion';
  * ActiveSystemsToolbelt — Section 02.
  *
  * 8 service-domain cards in a bento grid. Hover: translateY lift + red scan
- * line + shadow + border brightening. Color: #C23B22 accent throughout.
+ * line + shadow + border brightening. Color: #5DD3E3 accent throughout.
  */
 
 interface System {
@@ -31,7 +31,8 @@ export default function ActiveSystemsToolbelt() {
   return (
     <section
       id="toolbelt"
-      className="relative min-h-[100dvh] flex flex-col justify-center py-24 md:py-28 px-6 md:px-12 lg:px-20"
+      className="relative min-h-[120dvh] flex flex-col justify-center py-32 md:py-36 px-6 md:px-12 lg:px-20"
+      style={{ background: '#0A0A0C' }}
     >
       {/* Section header */}
       <div className="mb-12 md:mb-16 max-w-[1200px] mx-auto w-full">
@@ -44,7 +45,7 @@ export default function ActiveSystemsToolbelt() {
             fontFamily: 'var(--font-mono), monospace',
             fontSize: '9px',
             letterSpacing: '0.3em',
-            color: 'rgba(194,59,34,0.5)',
+            color: 'rgba(93,211,227,0.5)',
             textTransform: 'uppercase',
             marginBottom: 24,
           }}
@@ -109,10 +110,10 @@ export default function ActiveSystemsToolbelt() {
               }}
               onMouseEnter={(e) => {
                 const el = e.currentTarget;
-                el.style.border = '2px solid #C23B22';
+                el.style.border = '2px solid #5DD3E3';
                 el.style.padding = '19px';
-                el.style.background = 'rgba(194,59,34,0.2)';
-                el.style.boxShadow = '0 0 12px rgba(194,59,34,0.4), 0 0 30px rgba(194,59,34,0.2), 0 8px 24px rgba(0,0,0,0.3)';
+                el.style.background = 'rgba(93,211,227,0.2)';
+                el.style.boxShadow = '0 0 12px rgba(93,211,227,0.4), 0 0 30px rgba(93,211,227,0.2), 0 8px 24px rgba(0,0,0,0.3)';
                 // Text → dark
                 const title = el.querySelector('[data-title]') as HTMLElement;
                 const desc = el.querySelector('[data-desc]') as HTMLElement;
@@ -136,7 +137,7 @@ export default function ActiveSystemsToolbelt() {
                 if (title) title.style.color = '#FAFAF8';
                 if (desc) desc.style.color = 'rgba(250,250,248,0.45)';
                 if (tag) tag.style.color = 'rgba(250,250,248,0.25)';
-                if (status) status.style.color = 'rgba(194,59,34,0.4)';
+                if (status) status.style.color = 'rgba(93,211,227,0.4)';
               }}
             >
               {/* Top row — code (scales up on hover) + tag */}
@@ -147,7 +148,7 @@ export default function ActiveSystemsToolbelt() {
                     fontFamily: 'var(--font-mono), monospace',
                     fontSize: '10px',
                     letterSpacing: '0.22em',
-                    color: '#C23B22',
+                    color: '#5DD3E3',
                   }}
                 >
                   {s.code}
@@ -199,7 +200,7 @@ export default function ActiveSystemsToolbelt() {
 
               {/* Bottom status — dot becomes red bar on hover */}
               <div
-                className="pt-4 flex items-center justify-between transition-all duration-[250ms] group-hover:border-[rgba(194,59,34,0.3)]"
+                className="pt-4 flex items-center justify-between transition-all duration-[250ms] group-hover:border-[rgba(93,211,227,0.3)]"
                 style={{ borderTop: '1px solid rgba(250,250,248,0.06)' }}
               >
                 <span
@@ -209,7 +210,7 @@ export default function ActiveSystemsToolbelt() {
                     fontFamily: 'var(--font-mono), monospace',
                     fontSize: '9px',
                     letterSpacing: '0.22em',
-                    color: 'rgba(194,59,34,0.4)',
+                    color: 'rgba(93,211,227,0.4)',
                   }}
                 >
                   [ ACTIVE ]
@@ -221,8 +222,8 @@ export default function ActiveSystemsToolbelt() {
                   style={{
                     width: '6px',
                     height: '6px',
-                    background: 'rgba(194,59,34,0.5)',
-                    boxShadow: '0 0 6px rgba(194,59,34,0.3)',
+                    background: 'rgba(93,211,227,0.5)',
+                    boxShadow: '0 0 6px rgba(93,211,227,0.3)',
                   }}
                 />
               </div>

@@ -11,7 +11,7 @@ export default function FooterCard() {
       viewport={{ once: true, amount: 0.2 }}
       transition={{ duration: 0.9, ease: [0.22, 1, 0.36, 1] }}
       style={{
-        background: '#C23B22',
+        background: '#E63E1F',
         minHeight: '70vh',
         borderRadius: '8px 8px 0 0',
       }}
@@ -74,6 +74,9 @@ export default function FooterCard() {
           }}>
             Events crafted to be remembered.
           </h2>
+
+          {/* Blue accent line */}
+          <div style={{ width: 48, height: 2, background: '#5DD3E3', marginTop: 28 }} />
 
           {/* Credits grid */}
           <div className="mt-10 grid grid-cols-2 md:grid-cols-3 gap-6 max-w-[500px]">

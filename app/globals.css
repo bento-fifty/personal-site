@@ -8,20 +8,20 @@
 @import url('https://cdn.jsdelivr.net/gh/chiron-fonts/chiron-sung-hk@release/WOFF2_TTF/css/vf.t1.css');
 @import "tailwindcss";
 
-/* ── Design Tokens · White Galaxy narrative palette ─── */
+/* ── Design Tokens · v7 color-block palette (ink / paper / flame / ice) ─── */
 :root {
-  /* ── Section surfaces (white → gray → dark journey) ── */
-  --bg-space: #FAFAF8;
-  --bg-descent: #F0EEEB;
-  --bg-lunar: #E8E5E0;
-  --bg-lunar-deep: #D5D0C8;
-  --bg-abyss: #1A1918;
-  --bg-base: #0C0C0E;
+  /* ── Core 4-color lock ── */
+  --ink: #0A0A0C;
+  --paper: #FAFAF8;
+  --flame: #E63E1F;
+  --ice: #5DD3E3;
 
-  /* Legacy aliases for components not yet migrated */
-  --bg-primary: #FAFAF8;
-  --bg-secondary: #F0EEEB;
-  --bg-dark: #0C0C0E;
+  /* ── Section surfaces (legacy aliases, map to core palette) ── */
+  --bg-space: var(--paper);
+  --bg-base: var(--ink);
+  --bg-abyss: #1A1918;
+  --bg-primary: var(--paper);
+  --bg-dark: var(--ink);
 
   /* ── Text ── */
   --text-primary: #141413;
@@ -30,15 +30,13 @@
   --text-on-dark: #EAEAE8;
   --text-on-dark-secondary: #888886;
 
-  /* ── Accent — contextual ── */
-  --accent: #4F46E5;         /* indigo for light sections */
-  --accent-light: #818CF8;
-  --accent-subtle: rgba(79, 70, 229, 0.08);
-  --accent-red: #9B2C2C;     /* deep red / wine accent */
-  --accent-red-light: #C53030;
-  --accent-cyan: #5CE1FF;    /* cyan returns in dark sections */
-  --accent-cyan-dim: rgba(92, 225, 255, 0.15);
-  --accent-cyan-glow: rgba(92, 225, 255, 0.45);
+  /* ── Accent aliases (legacy naming, now pointing to core palette) ── */
+  --accent: var(--flame);
+  --accent-subtle: rgba(230, 62, 31, 0.08);
+  --accent-red: var(--flame);
+  --accent-cyan: var(--ice);
+  --accent-cyan-dim: rgba(93, 211, 227, 0.15);
+  --accent-cyan-glow: rgba(93, 211, 227, 0.45);
 
   /* ── Borders ── */
   --border: rgba(20, 20, 19, 0.07);
@@ -55,13 +53,15 @@
 }
 
 @theme inline {
-  --color-accent: var(--accent);
-  --color-accent-light: var(--accent-light);
-  --color-accent-cyan: var(--accent-cyan);
-  --color-bg-space: var(--bg-space);
-  --color-bg-lunar: var(--bg-lunar);
+  --color-ink: var(--ink);
+  --color-paper: var(--paper);
+  --color-flame: var(--flame);
+  --color-ice: var(--ice);
+  --color-accent: var(--flame);
+  --color-accent-cyan: var(--ice);
+  --color-bg-space: var(--paper);
   --color-bg-abyss: var(--bg-abyss);
-  --color-bg-base: var(--bg-base);
+  --color-bg-base: var(--ink);
   --color-text-primary: var(--text-primary);
   --color-text-secondary: var(--text-secondary);
   --color-text-tertiary: var(--text-tertiary);

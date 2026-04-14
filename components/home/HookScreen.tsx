@@ -7,7 +7,7 @@ interface Props {
   onEnter: () => void;
 }
 
-function HookContent({ mounted }: { mounted: boolean }) {
+function HookContent({ mounted, igniting }: { mounted: boolean; igniting: boolean }) {
   return (
     <>
       {/* Solid background */}
@@ -64,11 +64,12 @@ function HookContent({ mounted }: { mounted: boolean }) {
             fontFamily: 'var(--font-noto-serif-tc), serif',
             fontSize: 'clamp(120px, 28vw, 420px)',
             fontWeight: 700,
-            color: 'transparent',
-            WebkitTextStroke: '2px #C23B22',
+            color: igniting ? '#E63E1F' : 'transparent',
+            WebkitTextStroke: igniting ? '2px #E63E1F' : '2px #E63E1F',
             lineHeight: 0.9,
             letterSpacing: '-0.03em',
             textAlign: 'center',
+            transition: 'color 150ms ease-out',
           }}
         >
           等級
@@ -149,11 +150,11 @@ function HookContent({ mounted }: { mounted: boolean }) {
         />
         <motion.div
           className="w-2 h-2 rounded-full"
-          style={{ background: '#C23B22' }}
+          style={{ background: '#E63E1F' }}
           animate={{
             scale: [1, 1.5, 1],
             opacity: [0.6, 1, 0.6],
-            boxShadow: ['0 0 0px rgba(194,59,34,0)', '0 0 24px rgba(194,59,34,0.5)', '0 0 0px rgba(194,59,34,0)'],
+            boxShadow: ['0 0 0px rgba(230,62,31,0)', '0 0 24px rgba(230,62,31,0.5)', '0 0 0px rgba(230,62,31,0)'],
           }}
           transition={{ duration: 2.5, repeat: Infinity, ease: 'easeInOut' }}
         />
@@ -190,8 +191,10 @@ function HookContent({ mounted }: { mounted: boolean }) {
   );
 }
 
+type Phase = 'idle' | 'igniting' | 'flashing' | 'tearing';
+
 export default function HookScreen({ onEnter }: Props) {
-  const [exiting, setExiting] = useState(false);
+  const [phase, setPhase] = useState<Phase>('idle');
   const [mounted, setMounted] = useState(false);
 
   useEffect(() => {
@@ -199,10 +202,19 @@ export default function HookScreen({ onEnter }: Props) {
   }, []);
 
   const handleEnter = useCallback(() => {
-    if (exiting) return;
-    setExiting(true);
-    setTimeout(() => onEnter(), 1150);
-  }, [onEnter, exiting]);
+    if (phase !== 'idle') return;
+    setPhase('igniting');
+    // T+150: flash
+    setTimeout(() => setPhase('flashing'), 150);
+    // T+230: tear
+    setTimeout(() => setPhase('tearing'), 230);
+    // T+1330: unmount
+    setTimeout(() => onEnter(), 1330);
+  }, [onEnter, phase]);
+
+  const igniting = phase !== 'idle';
+  const tearing = phase === 'tearing';
+  const flashing = phase === 'flashing' || phase === 'tearing';
 
   return (
     <div
@@ -214,11 +226,11 @@ export default function HookScreen({ onEnter }: Props) {
         className="absolute inset-0 overflow-hidden"
         style={{
           clipPath: 'inset(0 50% 0 0)',
-          transform: exiting ? 'translateX(-105%) rotate(-2deg)' : 'none',
-          transition: exiting ? 'transform 1.1s cubic-bezier(0.76, 0, 0.24, 1)' : 'none',
+          transform: tearing ? 'translateX(-105%) rotate(-2deg)' : 'none',
+          transition: tearing ? 'transform 1.1s cubic-bezier(0.76, 0, 0.24, 1)' : 'none',
         }}
       >
-        <HookContent mounted={mounted} />
+        <HookContent mounted={mounted} igniting={igniting} />
       </div>
 
       {/* Right tear panel */}
@@ -226,14 +238,23 @@ export default function HookScreen({ onEnter }: Props) {
         className="absolute inset-0 overflow-hidden"
         style={{
           clipPath: 'inset(0 0 0 50%)',
-          transform: exiting ? 'translateX(105%) rotate(2deg)' : 'none',
-          transition: exiting ? 'transform 1.1s cubic-bezier(0.76, 0, 0.24, 1)' : 'none',
+          transform: tearing ? 'translateX(105%) rotate(2deg)' : 'none',
+          transition: tearing ? 'transform 1.1s cubic-bezier(0.76, 0, 0.24, 1)' : 'none',
         }}
       >
-        <HookContent mounted={mounted} />
+        <HookContent mounted={mounted} igniting={igniting} />
       </div>
 
-      {/* No center line — tear effect is clear without it */}
+      {/* Pre-tear orange flash overlay */}
+      <div
+        className="absolute inset-0 pointer-events-none"
+        style={{
+          background: '#E63E1F',
+          opacity: flashing && !tearing ? 1 : 0,
+          transition: 'opacity 60ms linear',
+          zIndex: 50,
+        }}
+      />
     </div>
   );
 }

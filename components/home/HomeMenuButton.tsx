@@ -43,7 +43,7 @@ export default function HomeMenuButton() {
           fontFamily: 'var(--font-departure-mono), monospace',
           fontSize: '10px',
           letterSpacing: '0.2em',
-          color: open ? '#C23B22' : 'rgba(10,10,12,0.55)',
+          color: open ? '#E63E1F' : 'rgba(10,10,12,0.55)',
           background: 'none',
           border: 'none',
           cursor: 'pointer',
@@ -92,7 +92,7 @@ export default function HomeMenuButton() {
                   color: 'rgba(10,10,12,0.55)',
                   letterSpacing: '0.06em',
                 }}
-                onMouseEnter={(e) => { e.currentTarget.style.color = '#C23B22'; }}
+                onMouseEnter={(e) => { e.currentTarget.style.color = '#E63E1F'; }}
                 onMouseLeave={(e) => { e.currentTarget.style.color = 'rgba(10,10,12,0.55)'; }}
               >
                 {t(key)}

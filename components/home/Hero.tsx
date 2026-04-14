@@ -52,7 +52,7 @@ export default function Hero() {
       GAP = Math.max(2, Math.ceil(Math.sqrt((W * H) / 150000)));
 
       // Compute text layout
-      mainSize = Math.min(100, Math.max(40, W * 0.07));
+      mainSize = Math.min(100, Math.max(28, W * 0.065));
       mainY = H * 0.44;
       subSize = Math.min(15, Math.max(12, W * 0.012));
       subY = mainY + mainSize * 0.55 + 24;
@@ -69,7 +69,7 @@ export default function Hero() {
       offCtx.font = `600 ${mainSize}px "Playfair Display", "Georgia", serif`;
       offCtx.textAlign = 'center';
       offCtx.textBaseline = 'middle';
-      offCtx.fillStyle = '#000';
+      offCtx.fillStyle = '#FAFAF8';
       offCtx.fillText('THE LEVEL STUDIO', W / 2, mainY);
 
       offCtx.font = `500 ${subSize}px "Geist", "Helvetica Neue", "Arial", sans-serif`;
@@ -108,18 +108,22 @@ export default function Hero() {
       ctx!.font = `600 ${mainSize}px "Playfair Display", "Georgia", serif`;
       ctx!.textAlign = 'center';
       ctx!.textBaseline = 'middle';
-      ctx!.fillStyle = '#000';
+      ctx!.fillStyle = '#FAFAF8';
       ctx!.fillText('THE LEVEL STUDIO', W / 2, mainY);
 
       // Subtitle
       ctx!.font = `500 ${subSize}px "Geist", "Helvetica Neue", "Arial", sans-serif`;
-      ctx!.fillStyle = '#000';
+      ctx!.fillStyle = '#FAFAF8';
       ctx!.fillText('Events crafted to be remembered.', W / 2, subY);
+
+      // Orange accent line under subtitle — v7 brand signal
+      ctx!.fillStyle = '#E63E1F';
+      ctx!.fillRect(W / 2 - 14, subY + subSize * 0.8 + 6, 28, 2);
 
       // Credit
       ctx!.font = `400 ${creditSize}px "Geist", "Helvetica Neue", "Arial", sans-serif`;
       ctx!.fillStyle = '#888';
-      ctx!.fillText('Evan Chang', W / 2, creditY);
+      ctx!.fillText('Evan Chang', W / 2, creditY + 12);
     }
 
     function onMouseMove(e: MouseEvent) {
@@ -192,7 +196,7 @@ export default function Hero() {
 
         ctx!.beginPath();
         ctx!.arc(p.x, p.y, p.size, 0, Math.PI * 2);
-        ctx!.fillStyle = '#000';
+        ctx!.fillStyle = '#FAFAF8';
         ctx!.fill();
       }
 
@@ -224,7 +228,7 @@ export default function Hero() {
     <section
       id="hero"
       className="relative min-h-[100dvh] -mt-14 flex items-center justify-center overflow-hidden"
-      style={{ background: 'transparent' }}
+      style={{ background: '#0A0A0C' }}
     >
       <canvas ref={canvasRef} className="absolute inset-0 w-full h-full" style={{ zIndex: 10 }} />
 
@@ -234,11 +238,11 @@ export default function Hero() {
         transition={{ delay: 2.4, duration: 0.8 }}
         className="absolute bottom-8 left-1/2 -translate-x-1/2 flex flex-col items-center gap-3 z-20"
       >
-        <span style={{ fontSize: '9px', letterSpacing: '0.3em', color: '#A8A8A3', fontFamily: 'var(--font-departure-mono), monospace', textTransform: 'uppercase' }}>
+        <span style={{ fontSize: '9px', letterSpacing: '0.3em', color: '#5DD3E3', fontFamily: 'var(--font-departure-mono), monospace', textTransform: 'uppercase' }}>
           Scroll to descend
         </span>
-        <motion.span className="block w-px h-6" style={{ background: '#A8A8A3', opacity: 0.5 }} />
-        <motion.span className="block w-1 h-1 rounded-full" style={{ background: '#A8A8A3' }} animate={{ y: [0, 8, 0] }} transition={{ duration: 2.4, repeat: Infinity, ease: 'easeInOut' }} />
+        <motion.span className="block w-px h-6" style={{ background: '#5DD3E3', opacity: 0.5 }} />
+        <motion.span className="block w-1 h-1 rounded-full" style={{ background: '#5DD3E3' }} animate={{ y: [0, 8, 0] }} transition={{ duration: 2.4, repeat: Infinity, ease: 'easeInOut' }} />
       </motion.div>
     </section>
   );

@@ -29,7 +29,7 @@ function CaseCard({ c, onClick }: CaseCardProps) {
     >
       {/* Gradient overlay for depth */}
       <div className="absolute inset-0 opacity-0 group-hover:opacity-100 transition-opacity duration-300"
-        style={{ background: 'linear-gradient(135deg, rgba(194,59,34,0.15) 0%, transparent 60%)' }} />
+        style={{ background: 'linear-gradient(135deg, rgba(230,62,31,0.15) 0%, transparent 60%)' }} />
 
       {/* Content */}
       <div className="absolute inset-0 p-4 flex flex-col justify-between">
@@ -53,7 +53,7 @@ function CaseCard({ c, onClick }: CaseCardProps) {
 
       {/* Corner accent */}
       <div className="absolute bottom-0 right-0 w-8 h-8 opacity-0 group-hover:opacity-100 transition-opacity"
-        style={{ borderRight: '2px solid #C23B22', borderBottom: '2px solid #C23B22' }} />
+        style={{ borderRight: '2px solid #E63E1F', borderBottom: '2px solid #E63E1F' }} />
     </button>
   );
 }
@@ -74,7 +74,7 @@ function CaseFolder({ c, onClose }: { c: typeof WALL_CASES[0]; onClose: () => vo
       {/* Folder card */}
       <motion.div
         className="relative w-[90vw] max-w-[700px] border overflow-hidden"
-        style={{ background: '#0A0A0C', borderColor: 'rgba(194,59,34,0.3)', borderRadius: '4px' }}
+        style={{ background: '#0A0A0C', borderColor: 'rgba(230,62,31,0.3)', borderRadius: '4px' }}
         initial={{ scale: 0.9, y: 30 }}
         animate={{ scale: 1, y: 0 }}
         exit={{ scale: 0.9, y: 30 }}
@@ -82,8 +82,8 @@ function CaseFolder({ c, onClose }: { c: typeof WALL_CASES[0]; onClose: () => vo
         onClick={e => e.stopPropagation()}
       >
         {/* Tab */}
-        <div className="px-6 py-3 border-b flex justify-between items-center" style={{ borderColor: 'rgba(194,59,34,0.15)' }}>
-          <span style={{ fontFamily: 'var(--font-mono), monospace', fontSize: '9px', letterSpacing: '0.3em', color: '#C23B22' }}>
+        <div className="px-6 py-3 border-b flex justify-between items-center" style={{ borderColor: 'rgba(230,62,31,0.15)' }}>
+          <span style={{ fontFamily: 'var(--font-mono), monospace', fontSize: '9px', letterSpacing: '0.3em', color: '#E63E1F' }}>
             CASE #{c.id}
           </span>
           <button onClick={onClose} style={{ fontFamily: 'var(--font-mono), monospace', fontSize: '10px', color: 'rgba(250,250,248,0.4)', letterSpacing: '0.15em' }}>
@@ -103,7 +103,7 @@ function CaseFolder({ c, onClose }: { c: typeof WALL_CASES[0]; onClose: () => vo
           <div className="mt-8 grid grid-cols-2 gap-6">
             <div>
               <p style={{ fontFamily: 'var(--font-mono), monospace', fontSize: '8px', letterSpacing: '0.2em', color: 'rgba(250,250,248,0.25)', marginBottom: 4 }}>TYPE</p>
-              <p style={{ fontFamily: 'var(--font-mono), monospace', fontSize: '12px', color: '#C23B22' }}>{c.tag}</p>
+              <p style={{ fontFamily: 'var(--font-mono), monospace', fontSize: '12px', color: '#E63E1F' }}>{c.tag}</p>
             </div>
             <div>
               <p style={{ fontFamily: 'var(--font-mono), monospace', fontSize: '8px', letterSpacing: '0.2em', color: 'rgba(250,250,248,0.25)', marginBottom: 4 }}>YEAR</p>
@@ -141,10 +141,10 @@ export default function CaseWall() {
 
   return (
     <>
-      <div className="py-12">
+      <div className="py-12" style={{ background: '#0A0A0C' }}>
         {/* Section label */}
         <div className="px-8 md:px-16 mb-8">
-          <p style={{ fontFamily: 'var(--font-mono), monospace', fontSize: '9px', letterSpacing: '0.3em', color: 'rgba(79,70,229,0.4)', textTransform: 'uppercase' }}>
+          <p style={{ fontFamily: 'var(--font-mono), monospace', fontSize: '9px', letterSpacing: '0.3em', color: 'rgba(93,211,227,0.8)', textTransform: 'uppercase' }}>
             [ 02 ] Case Archive
           </p>
         </div>

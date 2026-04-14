@@ -52,48 +52,14 @@ export default function CaseShowcase3D() {
     <section
       id="showcase"
       className="relative min-h-[100dvh] flex flex-col py-14 md:py-16"
+      style={{ background: '#FAFAF8' }}
     >
       <div className="hud-grid shrink-0">
-        {/* Header */}
-        <div className="col-span-12 mb-4 text-center">
-          <motion.p
-            initial={{ opacity: 0, y: 10 }}
-            whileInView={{ opacity: 1, y: 0 }}
-            viewport={{ once: true, amount: 0.6 }}
-            transition={{ duration: 0.7, ease: 'easeOut' }}
-            style={{
-              fontFamily: 'var(--font-mono), monospace',
-              fontSize: '9px',
-              letterSpacing: '0.3em',
-              color: 'rgba(194,59,34,0.5)',
-              textTransform: 'uppercase',
-              marginBottom: 20,
-            }}
-          >
-            [ 02 ] Case Showcase
-          </motion.p>
-          <motion.h2
-            initial={{ opacity: 0, y: 18 }}
-            whileInView={{ opacity: 1, y: 0 }}
-            viewport={{ once: true, amount: 0.5 }}
-            transition={{ duration: 0.9, ease: [0.22, 1, 0.36, 1] }}
-            style={{
-              fontFamily: 'var(--font-heading), Georgia, serif',
-              fontSize: 'clamp(28px, 5vw, 55px)',
-              fontWeight: 400,
-              color: '#FAFAF8',
-              lineHeight: 1.1,
-              letterSpacing: '-0.015em',
-              textAlign: 'center',
-            }}
-          >
-            Selected work.
-          </motion.h2>
-          <p className="mt-4 font-label text-[10px] text-white/35 tracking-[0.22em]">
+        <div className="col-span-12 text-center pt-2">
+          <p className="font-label text-[10px] tracking-[0.22em]" style={{ color: 'rgba(10,10,12,0.4)' }}>
             [ CLICK CENTER CARD TO OPEN DETAIL ]
           </p>
         </div>
-
       </div>
 
       {/* 3D Stage — grows to fill remaining space between header and nav */}
@@ -162,7 +128,8 @@ export default function CaseShowcase3D() {
             type="button"
             onClick={() => go(-1)}
             aria-label="Previous case"
-            className="font-label text-[11px] text-white/55 hover:text-[#C23B22] tracking-[0.22em] transition-colors flex items-center gap-2"
+            className="font-label text-[11px] tracking-[0.22em] transition-colors flex items-center gap-2 hover:text-[#E63E1F]"
+            style={{ color: 'rgba(10,10,12,0.5)' }}
           >
             <span>◁</span>
             <span>PREV</span>
@@ -181,10 +148,10 @@ export default function CaseShowcase3D() {
                   style={{
                     width:      i === active ? '10px' : '5px',
                     height:     i === active ? '10px' : '5px',
-                    background: i === active ? '#C23B22' : 'rgba(255,255,255,0.3)',
+                    background: i === active ? '#E63E1F' : 'rgba(10,10,12,0.3)',
                     boxShadow:
                       i === active
-                        ? '0 0 10px rgba(194,59,34,0.9), 0 0 2px rgba(194,59,34,1)'
+                        ? '0 0 10px rgba(230,62,31,0.9), 0 0 2px rgba(230,62,31,1)'
                         : 'none',
                   }}
                 />
@@ -195,7 +162,8 @@ export default function CaseShowcase3D() {
             type="button"
             onClick={() => go(1)}
             aria-label="Next case"
-            className="font-label text-[11px] text-white/55 hover:text-[#C23B22] tracking-[0.22em] transition-colors flex items-center gap-2"
+            className="font-label text-[11px] tracking-[0.22em] transition-colors flex items-center gap-2 hover:text-[#E63E1F]"
+            style={{ color: 'rgba(10,10,12,0.5)' }}
           >
             <span>NEXT</span>
             <span>▷</span>
@@ -225,10 +193,10 @@ export default function CaseShowcase3D() {
               exit={{    opacity: 0, y: 24, scale: 0.96 }}
               transition={{ duration: 0.45, ease: [0.22, 1, 0.36, 1] }}
               onClick={(e) => e.stopPropagation()}
-              className="relative w-full max-w-2xl border border-[#C23B22]/30 bg-[#050505]/95 p-7 md:p-10 max-h-[85vh] overflow-y-auto"
+              className="relative w-full max-w-2xl border border-[#E63E1F]/30 bg-[#050505]/95 p-7 md:p-10 max-h-[85vh] overflow-y-auto"
               data-allow-scroll="true"
               style={{
-                boxShadow: '0 40px 120px rgba(0,0,0,0.7), 0 0 60px rgba(194,59,34,0.08)',
+                boxShadow: '0 40px 120px rgba(0,0,0,0.7), 0 0 60px rgba(230,62,31,0.08)',
               }}
             >
               {/* Close */}
@@ -236,14 +204,14 @@ export default function CaseShowcase3D() {
                 type="button"
                 onClick={() => setModalOpen(false)}
                 aria-label="Close detail"
-                className="absolute top-4 right-4 font-label text-[11px] text-white/40 hover:text-[#C23B22] tracking-[0.22em] transition-colors"
+                className="absolute top-4 right-4 font-label text-[11px] text-white/40 hover:text-[#E63E1F] tracking-[0.22em] transition-colors"
               >
                 [ ESC · CLOSE ]
               </button>
 
               <p
-                className="font-label text-[11px] text-[#C23B22] tracking-[0.22em] mb-6"
-                style={{ textShadow: '0 0 10px rgba(194,59,34,0.55)' }}
+                className="font-label text-[11px] text-[#E63E1F] tracking-[0.22em] mb-6"
+                style={{ textShadow: '0 0 10px rgba(230,62,31,0.55)' }}
               >
                 [ CASE FILE // {activeCase.id} / {activeCase.type} ]
               </p>
@@ -280,7 +248,7 @@ export default function CaseShowcase3D() {
                       [ 0{i + 1} ]
                     </p>
                     <p
-                      className="text-[#C23B22] text-[26px] md:text-[36px] leading-none mb-2 tabular-nums"
+                      className="text-[#E63E1F] text-[26px] md:text-[36px] leading-none mb-2 tabular-nums"
                       style={{
                         fontFamily:
                           'var(--font-geist), "Chiron Sung HK WS", sans-serif',
@@ -312,8 +280,8 @@ export default function CaseShowcase3D() {
               {/* CTA */}
               <Link
                 href={`/work/${activeCase.slug}`}
-                className="group inline-flex items-center gap-4 px-6 py-3 border border-[#C23B22]/50 text-white hover:text-[#C23B22] hover:border-[#C23B22] transition-colors font-label text-[11px] tracking-[0.28em]"
-                style={{ textShadow: '0 0 12px rgba(194,59,34,0.4)' }}
+                className="group inline-flex items-center gap-4 px-6 py-3 border border-[#E63E1F]/50 text-white hover:text-[#E63E1F] hover:border-[#E63E1F] transition-colors font-label text-[11px] tracking-[0.28em]"
+                style={{ textShadow: '0 0 12px rgba(230,62,31,0.4)' }}
               >
                 <span>OPEN FULL CASE FILE</span>
                 <span className="inline-block transition-transform group-hover:translate-x-1">
@@ -343,12 +311,12 @@ function CaseCard({
         'relative w-full h-full overflow-hidden transition-all duration-300 ' +
         (isCenter
           ? 'border border-white/[0.12] bg-[#050505]/85'
-          : 'border border-white/[0.06] bg-[#050505]/70 hover:border-[rgba(194,59,34,0.3)]')
+          : 'border border-white/[0.06] bg-[#050505]/70 hover:border-[rgba(230,62,31,0.3)]')
       }
       style={{
         backdropFilter: 'blur(4px)',
         boxShadow: isCenter
-          ? '0 30px 80px rgba(0,0,0,0.6), 0 0 60px rgba(194,59,34,0.07)'
+          ? '0 30px 80px rgba(0,0,0,0.6), 0 0 60px rgba(230,62,31,0.07)'
           : '0 15px 40px rgba(0,0,0,0.5)',
       }}
     >
@@ -360,8 +328,8 @@ function CaseCard({
             ...(position === 'left' ? { right: '12px', transform: 'translateY(-50%) translateX(8px)' } : { left: '12px', transform: 'translateY(-50%) translateX(-8px)' }),
             fontFamily: 'var(--font-departure-mono), monospace',
             fontSize: '16px',
-            color: '#C23B22',
-            textShadow: '0 0 12px rgba(194,59,34,0.6)',
+            color: '#E63E1F',
+            textShadow: '0 0 12px rgba(230,62,31,0.6)',
           }}
         >
           {position === 'left' ? '→' : '←'}
@@ -372,7 +340,7 @@ function CaseCard({
         className="absolute top-0 left-0 right-0 h-[55%] overflow-hidden"
         style={{
           background:
-            'linear-gradient(135deg, rgba(194,59,34,0.05) 0%, rgba(5,5,5,0.92) 70%), #0a0a0a',
+            'linear-gradient(135deg, rgba(230,62,31,0.05) 0%, rgba(5,5,5,0.92) 70%), #0a0a0a',
         }}
       >
         <div
@@ -380,7 +348,7 @@ function CaseCard({
           className="absolute inset-0 opacity-25"
           style={{
             backgroundImage:
-              'linear-gradient(rgba(194,59,34,0.15) 1px, transparent 1px), linear-gradient(90deg, rgba(194,59,34,0.15) 1px, transparent 1px)',
+              'linear-gradient(rgba(230,62,31,0.15) 1px, transparent 1px), linear-gradient(90deg, rgba(230,62,31,0.15) 1px, transparent 1px)',
             backgroundSize: '40px 40px',
           }}
         />
@@ -390,13 +358,13 @@ function CaseCard({
               [ COVER ]
             </div>
             <div
-              className="text-[#C23B22]/55 text-[42px] md:text-[66px] leading-none tabular-nums"
+              className="text-[#E63E1F]/55 text-[42px] md:text-[66px] leading-none tabular-nums"
               style={{
                 fontFamily:
                   'var(--font-geist), "Chiron Sung HK WS", sans-serif',
                 fontWeight:          500,
                 WebkitFontSmoothing: 'antialiased',
-                textShadow:          '0 0 24px rgba(194,59,34,0.3)',
+                textShadow:          '0 0 24px rgba(230,62,31,0.3)',
               }}
             >
               {c.id}
@@ -411,17 +379,17 @@ function CaseCard({
           };
           if (cr.includes('t')) {
             style.top = '10px';
-            style.borderTop = '1px solid rgba(194,59,34,0.5)';
+            style.borderTop = '1px solid rgba(230,62,31,0.5)';
           } else {
             style.bottom = '10px';
-            style.borderBottom = '1px solid rgba(194,59,34,0.5)';
+            style.borderBottom = '1px solid rgba(230,62,31,0.5)';
           }
           if (cr.includes('l')) {
             style.left = '10px';
-            style.borderLeft = '1px solid rgba(194,59,34,0.5)';
+            style.borderLeft = '1px solid rgba(230,62,31,0.5)';
           } else {
             style.right = '10px';
-            style.borderRight = '1px solid rgba(194,59,34,0.5)';
+            style.borderRight = '1px solid rgba(230,62,31,0.5)';
           }
           return <span key={cr} aria-hidden style={style} />;
         })}
@@ -432,8 +400,8 @@ function CaseCard({
         <div>
           <div className="flex items-center gap-3 mb-3">
             <span
-              className="font-label text-[10px] text-[#C23B22] tracking-[0.22em]"
-              style={{ textShadow: '0 0 8px rgba(194,59,34,0.5)' }}
+              className="font-label text-[10px] text-[#E63E1F] tracking-[0.22em]"
+              style={{ textShadow: '0 0 8px rgba(230,62,31,0.5)' }}
             >
               [ {c.type} ]
             </span>
@@ -458,7 +426,7 @@ function CaseCard({
           </p>
         </div>
         {isCenter && (
-          <span className="self-start inline-flex items-center gap-2 font-label text-[10px] text-[#C23B22]/80 tracking-[0.22em]">
+          <span className="self-start inline-flex items-center gap-2 font-label text-[10px] text-[#E63E1F]/80 tracking-[0.22em]">
             <span>[ CLICK TO OPEN ]</span>
           </span>
         )}
