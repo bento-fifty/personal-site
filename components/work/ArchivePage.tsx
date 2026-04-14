@@ -4,6 +4,9 @@ import { useMemo, useState } from 'react';
 import { CASES, EventType, countByType } from '@/lib/work-data';
 import FilterChips from '@/components/shared/FilterChips';
 import EventBentoRow from './EventBentoRow';
+import ArchiveListView from './ArchiveListView';
+
+type ViewMode = 'bento' | 'list';
 
 interface Props {
   locale: 'zh-TW' | 'en-US';
@@ -13,6 +16,7 @@ export default function ArchivePage({ locale }: Props) {
   const [activeType, setActiveType] = useState<EventType | 'ALL'>('ALL');
   const [activeYear, setActiveYear] = useState<number | 'ALL'>('ALL');
   const [expandedId, setExpandedId] = useState<string | null>(null);
+  const [viewMode, setViewMode] = useState<ViewMode>('bento');
 
   const filtered = useMemo(() => {
     return CASES.filter((c) => {
@@ -63,17 +67,52 @@ export default function ArchivePage({ locale }: Props) {
           >
             Archive.
           </h1>
-          <p
-            style={{
-              fontFamily: 'var(--font-mono), monospace',
-              fontSize: 11,
-              letterSpacing: '0.25em',
-              color: 'rgba(250,250,248,0.55)',
-              marginTop: 24,
-            }}
-          >
-            {String(totalCount).padStart(3, '0')} ENTRIES LOGGED · {filtered.length} MATCH
-          </p>
+          <div className="mt-6 flex items-center justify-between flex-wrap gap-4">
+            <p
+              style={{
+                fontFamily: 'var(--font-mono), monospace',
+                fontSize: 11,
+                letterSpacing: '0.25em',
+                color: 'rgba(250,250,248,0.55)',
+              }}
+            >
+              {String(totalCount).padStart(3, '0')} ENTRIES LOGGED · {filtered.length} MATCH
+            </p>
+            {/* View mode toggle */}
+            <div className="flex gap-0" role="tablist" aria-label="View mode">
+              {(['bento', 'list'] as ViewMode[]).map((m) => {
+                const active = viewMode === m;
+                return (
+                  <button
+                    key={m}
+                    type="button"
+                    onClick={() => {
+                      setViewMode(m);
+                      setExpandedId(null);
+                    }}
+                    data-cursor={`⊙ ${m.toUpperCase()}`}
+                    data-cursor-variant="action"
+                    role="tab"
+                    aria-selected={active}
+                    style={{
+                      fontFamily: 'var(--font-mono), monospace',
+                      fontSize: 10,
+                      letterSpacing: '0.28em',
+                      textTransform: 'uppercase',
+                      color: active ? '#0A0A0C' : '#FAFAF8',
+                      background: active ? '#5DD3E3' : 'transparent',
+                      border: '1px solid #5DD3E3',
+                      padding: '6px 14px',
+                      cursor: 'pointer',
+                      transition: 'color 0ms, background 0ms',
+                    }}
+                  >
+                    [ {m === 'bento' ? 'BENTO' : 'LIST'} ]
+                  </button>
+                );
+              })}
+            </div>
+          </div>
         </div>
       </section>
 
@@ -93,7 +132,7 @@ export default function ArchivePage({ locale }: Props) {
         />
       </div>
 
-      {/* Bento rows */}
+      {/* Archive body — switches between BENTO and LIST */}
       <main className="">
         {filtered.length === 0 ? (
           <div
@@ -107,7 +146,7 @@ export default function ArchivePage({ locale }: Props) {
           >
             NO RESULTS. RESET A FILTER.
           </div>
-        ) : (
+        ) : viewMode === 'bento' ? (
           filtered.map((c, idx) => (
             <div
               key={c.id}
@@ -126,6 +165,13 @@ export default function ArchivePage({ locale }: Props) {
               />
             </div>
           ))
+        ) : (
+          <ArchiveListView
+            cases={filtered}
+            locale={locale}
+            expandedId={expandedId}
+            onToggle={toggleExpand}
+          />
         )}
 
         <div
