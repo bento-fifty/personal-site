@@ -153,7 +153,7 @@ function HookContent({ mounted, igniting }: { mounted: boolean; igniting: boolea
         className="absolute bottom-12 left-1/2 -translate-x-1/2 flex flex-col items-center gap-4"
         initial={{ opacity: 0 }}
         animate={{ opacity: mounted ? 1 : 0 }}
-        transition={{ delay: 1.2, duration: 0.8 }}
+        transition={{ delay: 0.4, duration: 0.5 }}
       >
         <motion.span
           style={{
@@ -191,7 +191,7 @@ function HookContent({ mounted, igniting }: { mounted: boolean; igniting: boolea
         className="absolute bottom-0 left-0 right-0 overflow-hidden border-t border-[rgba(250,250,248,0.12)] py-2"
         initial={{ opacity: 0 }}
         animate={{ opacity: mounted ? 1 : 0 }}
-        transition={{ delay: 1.4, duration: 0.8 }}
+        transition={{ delay: 0.6, duration: 0.6 }}
       >
         <div className="flex whitespace-nowrap" style={{ animation: 'marquee 25s linear infinite' }}>
           {Array.from({ length: 4 }).map((_, i) => (
