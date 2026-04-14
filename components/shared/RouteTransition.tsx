@@ -35,18 +35,18 @@ import NextLink from 'next/link';
 type Phase = 'idle' | 'active';
 type Scenario = 'forward' | 'back' | 'lateral' | 'home';
 
+// Total ~680ms (shortened 25% from 900ms baseline)
 const T = {
-  splatBloom: 320,
-  splatStag: 32,
-  tickerInAt: 160,
-  tickerIn: 260,
-  pageSwapAt: 380,
-  splatExitAt: 420,
-  splatExit: 220,
-  gridFadeAt: 500,
-  tickerOutAt: 620,
-  tickerOut: 240,
-  cleanup: 900,
+  splatBloom: 240,
+  splatStag: 24,
+  tickerInAt: 120,
+  tickerIn: 200,
+  pageSwapAt: 280,
+  splatExitAt: 320,
+  splatExit: 170,
+  tickerOutAt: 460,
+  tickerOut: 180,
+  cleanup: 680,
 };
 
 const SPLAT_PATHS = [
