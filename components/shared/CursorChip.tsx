@@ -30,8 +30,15 @@ export default function CursorChip() {
   const [label, setLabel] = useState<string | null>(null);
   const [variant, setVariant] = useState<Variant>('link');
   const [visible, setVisible] = useState(false);
+  const [crosshairVisible, setCrosshairVisible] = useState(false);
+  const [coords, setCoords] = useState({ x: 0, y: 0 });
   const reduce = useReducedMotion();
 
+  // Raw cursor position for crosshair (instant, no spring)
+  const rawX = useMotionValue(-100);
+  const rawY = useMotionValue(-100);
+
+  // Chip position (damped)
   const mx = useMotionValue(-100);
   const my = useMotionValue(-100);
   const x = useSpring(mx, reduce ? { duration: 0 } : { stiffness: 150, damping: 40 });
@@ -43,6 +50,10 @@ export default function CursorChip() {
     function onMove(e: MouseEvent) {
       mx.set(e.clientX + 14);
       my.set(e.clientY + 14);
+      rawX.set(e.clientX);
+      rawY.set(e.clientY);
+      setCoords({ x: e.clientX, y: e.clientY });
+      if (!crosshairVisible) setCrosshairVisible(true);
 
       const target = e.target as HTMLElement | null;
       if (!target) return;
@@ -60,6 +71,7 @@ export default function CursorChip() {
 
     function onLeave() {
       setVisible(false);
+      setCrosshairVisible(false);
     }
 
     window.addEventListener('mousemove', onMove);
@@ -68,39 +80,89 @@ export default function CursorChip() {
       window.removeEventListener('mousemove', onMove);
       document.removeEventListener('mouseleave', onLeave);
     };
-  }, [label, variant, mx, my, visible]);
+  }, [label, variant, mx, my, rawX, rawY, visible, crosshairVisible]);
 
   return (
-    <motion.div
-      aria-hidden
-      className="fixed pointer-events-none z-[200] hidden md:block"
-      style={{
-        left: 0,
-        top: 0,
-        x,
-        y,
-        opacity: visible ? 1 : 0,
-        transition: 'opacity 200ms ease-out',
-      }}
-    >
-      {label && (
-        <span
-          style={{
-            display: 'inline-block',
-            background: 'rgba(10,10,12,0.95)',
-            color: '#FAFAF8',
-            border: `1px solid ${BORDER[variant]}`,
-            padding: '4px 8px',
-            fontFamily: 'var(--font-mono), monospace',
-            fontSize: 10,
-            letterSpacing: '0.18em',
-            textTransform: 'uppercase',
-            whiteSpace: 'nowrap',
-          }}
-        >
-          {label}
-        </span>
-      )}
-    </motion.div>
+    <>
+      {/* Crosshair — horizontal + vertical guide lines at cursor */}
+      <div
+        aria-hidden
+        className="fixed pointer-events-none z-[190] hidden md:block"
+        style={{
+          left: 0,
+          top: coords.y,
+          width: '100vw',
+          height: 1,
+          background: 'rgba(93,211,227,0.18)',
+          opacity: crosshairVisible ? 1 : 0,
+          transition: 'opacity 200ms ease-out',
+          transform: 'translateZ(0)',
+        }}
+      />
+      <div
+        aria-hidden
+        className="fixed pointer-events-none z-[190] hidden md:block"
+        style={{
+          left: coords.x,
+          top: 0,
+          width: 1,
+          height: '100vh',
+          background: 'rgba(93,211,227,0.18)',
+          opacity: crosshairVisible ? 1 : 0,
+          transition: 'opacity 200ms ease-out',
+          transform: 'translateZ(0)',
+        }}
+      />
+      {/* Coordinate readout (bottom-left, small mono) */}
+      <div
+        aria-hidden
+        className="fixed pointer-events-none z-[190] hidden md:block"
+        style={{
+          left: 8,
+          bottom: 8,
+          fontFamily: 'var(--font-mono), monospace',
+          fontSize: 9,
+          letterSpacing: '0.22em',
+          color: 'rgba(93,211,227,0.55)',
+          opacity: crosshairVisible ? 1 : 0,
+          transition: 'opacity 200ms ease-out',
+        }}
+      >
+        X {String(Math.round(coords.x)).padStart(4, '0')} · Y {String(Math.round(coords.y)).padStart(4, '0')}
+      </div>
+
+      {/* Chip */}
+      <motion.div
+        aria-hidden
+        className="fixed pointer-events-none z-[200] hidden md:block"
+        style={{
+          left: 0,
+          top: 0,
+          x,
+          y,
+          opacity: visible ? 1 : 0,
+          transition: 'opacity 200ms ease-out',
+        }}
+      >
+        {label && (
+          <span
+            style={{
+              display: 'inline-block',
+              background: 'rgba(11,16,38,0.95)',
+              color: '#FAFAF8',
+              border: `1px solid ${BORDER[variant]}`,
+              padding: '4px 8px',
+              fontFamily: 'var(--font-mono), monospace',
+              fontSize: 10,
+              letterSpacing: '0.18em',
+              textTransform: 'uppercase',
+              whiteSpace: 'nowrap',
+            }}
+          >
+            {label}
+          </span>
+        )}
+      </motion.div>
+    </>
   );
 }

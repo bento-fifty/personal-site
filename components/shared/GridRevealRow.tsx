@@ -96,7 +96,7 @@ export default function GridRevealRow({
             <div
               key={i}
               style={{
-                background: '#0A0A0C',
+                background: '#0B1026',
                 opacity: revealed ? 0 : 1,
                 transition: `opacity ${cellFadeMs}ms ease-out ${order[i] * staggerMs}ms`,
               }}

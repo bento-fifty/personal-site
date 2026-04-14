@@ -89,7 +89,7 @@ export default function FeaturedMarquee({ locale }: Props) {
             right: 260,
             top: Math.max(90, Math.min(hoverY - 40, window.innerHeight - 320)),
             width: 320,
-            background: '#0A0A0C',
+            background: '#0B1026',
             border: '1px solid rgba(93,211,227,0.4)',
             boxShadow: '0 20px 60px rgba(0,0,0,0.6)',
           }}

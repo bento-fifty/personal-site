@@ -10,9 +10,9 @@
 
 /* ── Design Tokens · v7 color-block palette (ink / paper / flame / ice) ─── */
 :root {
-  /* ── Core 4-color lock + tonal subscales (v8) ── */
-  --ink: #0A0A0C;
-  --ink-deep: #060608;
+  /* ── Core 4-color lock + tonal subscales (v8 — ichiki deep navy) ── */
+  --ink: #0B1026;          /* deep navy, replaces near-black */
+  --ink-deep: #06091A;     /* deeper modal / case bg */
   --paper: #FAFAF8;
   --paper-cream: #F0EDE6;
   --flame: #E63E1F;

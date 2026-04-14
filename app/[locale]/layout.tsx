@@ -83,7 +83,7 @@ export default async function LocaleLayout({
       lang={locale}
       className={`${geist.variable} ${fraunces.variable} ${departureMono.variable} ${notoSerifTC.variable} ${notoSansTC.variable} h-full antialiased`}
     >
-      <body className="min-h-full flex flex-col" style={{ background: '#0A0A0C', color: '#FAFAF8' }}>
+      <body className="min-h-full flex flex-col" style={{ background: '#0B1026', color: '#FAFAF8' }}>
         <NextIntlClientProvider messages={messages}>
           <EditorialMasthead />
           <main className="flex-1 pt-11">

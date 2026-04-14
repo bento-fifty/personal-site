@@ -29,7 +29,7 @@ export default function MagnetTile({
   className = '',
   style,
   invertBg = '#E63E1F',
-  invertFg = '#0A0A0C',
+  invertFg = '#0B1026',
   cursor,
   href,
   onClick,

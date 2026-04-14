@@ -145,7 +145,7 @@ export default function InlineWindowCard({ caseItem: c, locale, onClose }: Props
             }}
             onMouseEnter={(e) => {
               e.currentTarget.style.background = '#E63E1F';
-              e.currentTarget.style.color = '#0A0A0C';
+              e.currentTarget.style.color = '#0B1026';
               e.currentTarget.style.transform = 'translateY(-2px)';
             }}
             onMouseLeave={(e) => {

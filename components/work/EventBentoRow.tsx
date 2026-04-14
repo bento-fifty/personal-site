@@ -111,7 +111,7 @@ export default function EventBentoRow({ caseItem: c, locale, expanded, onToggle 
               aria-expanded={expanded}
               onMouseEnter={(e) => {
                 e.currentTarget.style.background = '#5DD3E3';
-                e.currentTarget.style.color = '#0A0A0C';
+                e.currentTarget.style.color = '#0B1026';
                 e.currentTarget.style.transform = 'translateY(-4px)';
               }}
               onMouseLeave={(e) => {
@@ -138,7 +138,7 @@ export default function EventBentoRow({ caseItem: c, locale, expanded, onToggle 
               }}
               onMouseEnter={(e) => {
                 e.currentTarget.style.background = '#E63E1F';
-                e.currentTarget.style.color = '#0A0A0C';
+                e.currentTarget.style.color = '#0B1026';
                 e.currentTarget.style.transform = 'translateY(-4px)';
               }}
               onMouseLeave={(e) => {

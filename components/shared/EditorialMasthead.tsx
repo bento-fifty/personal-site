@@ -63,7 +63,6 @@ export default function EditorialMasthead() {
   const localePrefix = pathname?.startsWith('/en-US') ? '/en-US' : '/zh-TW';
 
   const NAV = [
-    { label: 'HOME', href: `${localePrefix}/` },
     { label: 'WORKS', href: `${localePrefix}/work` },
     { label: 'PROFILE', href: `${localePrefix}/about` },
     { label: 'CONTACT', href: `${localePrefix}/contact` },

@@ -1,25 +1,20 @@
 'use client';
 
-import Link from 'next/link';
 import { motion } from 'framer-motion';
 import { useState } from 'react';
 import FeaturedMarquee from './FeaturedMarquee';
+import WireCubeCluster from './WireCubeCluster';
 
 /**
  * IssueCover — v8 home. Single viewport, no scroll.
  *
- * Single anchor: stacked THE / LEVEL monogram in flame Fraunces.
- * Supporting actors: top-right issue meta, bottom-right tagline, bottom-left CTA.
+ * Main anchor: THE / LEVEL monogram (flame Fraunces, left).
+ * Supports: top-right issue meta, bottom-right cubes cluster, right featured rail, wireframe floor.
  */
 
 interface Props {
   locale: 'zh-TW' | 'en-US';
 }
-
-const TAGLINES = {
-  'zh-TW': 'Events crafted to be remembered.',
-  'en-US': 'Events crafted to be remembered.',
-};
 
 export default function IssueCover({ locale }: Props) {
   const [monoHover, setMonoHover] = useState(false);
@@ -27,42 +22,34 @@ export default function IssueCover({ locale }: Props) {
   return (
     <section
       className="relative w-full overflow-hidden"
-      style={{ height: 'calc(100dvh - 44px)', background: '#0A0A0C' }}
+      style={{ height: 'calc(100dvh - 44px)', background: '#0B1026' }}
       aria-label="Issue Cover"
     >
-      {/* Perspective grid — Ichiki-style wireframe floor (stronger than before) */}
+      {/* Wireframe floor — white lines (stronger, ichiki direction) */}
       <div
         aria-hidden
         className="hidden md:block absolute inset-x-0 bottom-0 pointer-events-none"
         style={{
-          height: '65%',
+          height: '60%',
           backgroundImage: `
-            linear-gradient(rgba(93,211,227,0.22) 1px, transparent 1px),
-            linear-gradient(90deg, rgba(93,211,227,0.22) 1px, transparent 1px)
+            linear-gradient(rgba(250,250,248,0.35) 1px, transparent 1px),
+            linear-gradient(90deg, rgba(250,250,248,0.35) 1px, transparent 1px)
           `,
-          backgroundSize: '48px 48px',
-          transform: 'perspective(520px) rotateX(64deg)',
+          backgroundSize: '64px 64px',
+          transform: 'perspective(480px) rotateX(66deg)',
           transformOrigin: 'bottom center',
-          maskImage: 'linear-gradient(to top, black 15%, transparent 95%)',
-          WebkitMaskImage: 'linear-gradient(to top, black 15%, transparent 95%)',
-          zIndex: 0,
-        }}
-      />
-      {/* Thin horizon line at wireframe origin */}
-      <div
-        aria-hidden
-        className="hidden md:block absolute inset-x-0 pointer-events-none"
-        style={{
-          bottom: '35%',
-          height: 1,
-          background: 'rgba(93,211,227,0.3)',
+          maskImage: 'linear-gradient(to top, black 5%, transparent 92%)',
+          WebkitMaskImage: 'linear-gradient(to top, black 5%, transparent 92%)',
           zIndex: 0,
         }}
       />
 
+      {/* 3D wireframe cubes cluster (bottom-right) */}
+      <WireCubeCluster />
+
       {/* Top-right issue meta */}
       <motion.div
-        className="absolute top-6 right-5 md:top-10 md:right-10 text-right"
+        className="absolute top-6 right-5 md:top-10 md:right-[240px] text-right z-10"
         initial={{ opacity: 0 }}
         animate={{ opacity: 1 }}
         transition={{ duration: 0.8, ease: 'easeOut', delay: 0.2 }}
@@ -79,9 +66,9 @@ export default function IssueCover({ locale }: Props) {
         <div>Vol. 003 / 042</div>
       </motion.div>
 
-      {/* Monogram — the single hero */}
+      {/* Monogram — single hero */}
       <div
-        className="absolute left-5 md:left-10 flex flex-col"
+        className="absolute left-5 md:left-10 flex flex-col z-10"
         style={{ bottom: 'clamp(84px, 14vh, 160px)' }}
       >
         {['THE', 'LEVEL'].map((word, i) => (
@@ -117,44 +104,9 @@ export default function IssueCover({ locale }: Props) {
         ))}
       </div>
 
-
-      {/* Bottom-left CTA — single anchor for action */}
+      {/* Bottom-right page indicator (moves left to avoid featured rail) */}
       <motion.div
-        className="absolute left-5 md:left-10 bottom-6 md:bottom-8"
-        initial={{ opacity: 0 }}
-        animate={{ opacity: 1 }}
-        transition={{ duration: 0.8, ease: 'easeOut', delay: 1.0 }}
-      >
-        <Link
-          href={`/${locale}/work`}
-          data-cursor="▸ ENTER"
-          data-cursor-variant="primary"
-          className="inline-block transition-colors duration-200"
-          style={{
-            fontFamily: 'var(--font-mono), monospace',
-            fontSize: 11,
-            letterSpacing: '0.3em',
-            textTransform: 'uppercase',
-            color: '#E63E1F',
-            padding: '10px 14px',
-            border: '1px solid #E63E1F',
-          }}
-          onMouseEnter={(e) => {
-            e.currentTarget.style.background = '#E63E1F';
-            e.currentTarget.style.color = '#0A0A0C';
-          }}
-          onMouseLeave={(e) => {
-            e.currentTarget.style.background = 'transparent';
-            e.currentTarget.style.color = '#E63E1F';
-          }}
-        >
-          [ ENTER ARCHIVE → ]
-        </Link>
-      </motion.div>
-
-      {/* Bottom-right page indicator (minimal) */}
-      <motion.div
-        className="absolute right-5 md:right-10 bottom-6 md:bottom-8"
+        className="absolute right-5 md:right-[240px] bottom-6 md:bottom-8 z-10"
         initial={{ opacity: 0 }}
         animate={{ opacity: 1 }}
         transition={{ duration: 0.8, ease: 'easeOut', delay: 1.1 }}

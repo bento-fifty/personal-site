@@ -11,7 +11,7 @@ function HookContent({ mounted, igniting }: { mounted: boolean; igniting: boolea
   return (
     <>
       {/* Solid background */}
-      <div className="absolute inset-0" style={{ background: '#0A0A0C' }} />
+      <div className="absolute inset-0" style={{ background: '#0B1026' }} />
 
       {/* Grid lines */}
       <div
@@ -52,47 +52,88 @@ function HookContent({ mounted, igniting }: { mounted: boolean; igniting: boolea
         style={{ background: 'radial-gradient(ellipse 55% 55% at 50% 50%, transparent 0%, rgba(0,0,0,0.6) 100%)' }}
       />
 
-      {/* 等級 outline (flame) + THE LEVEL solid (ice) — contrast composition */}
+      {/* 等級 × THE LEVEL — overlay composition (designed, interactive) */}
       <motion.div
-        className="absolute inset-0 flex items-end justify-center pointer-events-none px-[5vw] pb-[22vh]"
+        className="absolute inset-0 flex items-center justify-center pointer-events-none"
         initial={{ opacity: 0, scale: 0.92 }}
         animate={{ opacity: mounted ? 1 : 0, scale: mounted ? 1 : 0.92 }}
         transition={{ duration: 1.5, ease: [0.22, 1, 0.36, 1] }}
       >
-        <div className="relative flex items-end gap-[clamp(16px,4vw,80px)]">
-          {/* 等級 — flame outline */}
+        <div className="relative" aria-label="等級 · THE LEVEL">
+          {/* 等級 — flame outline, oversized watermark */}
           <h1
-            aria-label="等級 · THE LEVEL"
             style={{
               fontFamily: 'var(--font-noto-serif-tc), serif',
-              fontSize: 'clamp(100px, 24vw, 360px)',
+              fontSize: 'clamp(140px, 32vw, 520px)',
               fontWeight: 700,
               color: 'transparent',
-              WebkitTextStroke: '2.5px #E63E1F',
+              WebkitTextStroke: '3px #E63E1F',
               lineHeight: 0.86,
-              letterSpacing: '-0.03em',
+              letterSpacing: '-0.04em',
               margin: 0,
+              position: 'relative',
+              zIndex: 1,
             }}
           >
             等級
           </h1>
-          {/* THE / LEVEL — ice solid, vertically offset for creative baseline */}
+
+          {/* THE LEVEL — ice solid, STACKED INSIDE the counter space of 等級,
+              two words split across the two Chinese characters */}
           <div
             aria-hidden
+            className="absolute inset-0 flex items-center justify-between pointer-events-none"
             style={{
-              fontFamily: 'var(--font-display), serif',
-              fontVariationSettings: '"opsz" 144, "wght" 900',
-              fontSize: 'clamp(72px, 18vw, 260px)',
-              color: igniting ? '#0A0A0C' : '#5DD3E3',
-              lineHeight: 0.82,
-              letterSpacing: '-0.04em',
-              marginBottom: 'clamp(8px, 2vh, 24px)',
-              transition: 'color 150ms ease-out',
+              zIndex: 2,
+              padding: '0 clamp(20px, 4vw, 72px)',
+              mixBlendMode: 'normal',
             }}
           >
-            <div>THE</div>
-            <div>LEVEL</div>
+            <span
+              style={{
+                fontFamily: 'var(--font-display), serif',
+                fontVariationSettings: '"opsz" 144, "wght" 900',
+                fontSize: 'clamp(30px, 7vw, 120px)',
+                color: igniting ? '#0B1026' : '#5DD3E3',
+                lineHeight: 1,
+                letterSpacing: '-0.04em',
+                transition: 'color 150ms ease-out',
+                textAlign: 'left',
+                transform: 'translateY(10%)',
+              }}
+            >
+              THE
+            </span>
+            <span
+              style={{
+                fontFamily: 'var(--font-display), serif',
+                fontVariationSettings: '"opsz" 144, "wght" 900',
+                fontSize: 'clamp(30px, 7vw, 120px)',
+                color: igniting ? '#0B1026' : '#5DD3E3',
+                lineHeight: 1,
+                letterSpacing: '-0.04em',
+                transition: 'color 150ms ease-out',
+                textAlign: 'right',
+                transform: 'translateY(-10%)',
+              }}
+            >
+              LEVEL
+            </span>
           </div>
+
+          {/* Connecting hairline between THE and LEVEL — design intent */}
+          <div
+            aria-hidden
+            className="absolute pointer-events-none"
+            style={{
+              left: '32%',
+              right: '32%',
+              top: '50%',
+              height: 1,
+              background: 'rgba(93,211,227,0.5)',
+              zIndex: 1,
+            }}
+          />
         </div>
       </motion.div>
 

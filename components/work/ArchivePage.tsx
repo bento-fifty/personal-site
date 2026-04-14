@@ -99,7 +99,7 @@ export default function ArchivePage({ locale }: Props) {
                       fontSize: 10,
                       letterSpacing: '0.28em',
                       textTransform: 'uppercase',
-                      color: active ? '#0A0A0C' : '#FAFAF8',
+                      color: active ? '#0B1026' : '#FAFAF8',
                       background: active ? '#5DD3E3' : 'transparent',
                       border: '1px solid #5DD3E3',
                       padding: '6px 14px',
