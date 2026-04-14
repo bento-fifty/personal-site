@@ -112,12 +112,18 @@ export default function EventBentoRow({ caseItem: c, locale, expanded, onToggle 
               onMouseEnter={(e) => {
                 e.currentTarget.style.background = '#5DD3E3';
                 e.currentTarget.style.color = '#0B1026';
-                e.currentTarget.style.transform = 'translateY(-4px)';
+                e.currentTarget.style.transform = 'translate(0, -4px)';
+              }}
+              onMouseMove={(e) => {
+                const r = e.currentTarget.getBoundingClientRect();
+                const dx = Math.max(-4, Math.min(4, ((e.clientX - r.left) / r.width - 0.5) * 8));
+                const dy = Math.max(-4, Math.min(4, ((e.clientY - r.top) / r.height - 0.5) * 8));
+                e.currentTarget.style.transform = `translate(${dx}px, ${dy - 4}px)`;
               }}
               onMouseLeave={(e) => {
                 e.currentTarget.style.background = 'transparent';
                 e.currentTarget.style.color = '#5DD3E3';
-                e.currentTarget.style.transform = 'translateY(0)';
+                e.currentTarget.style.transform = 'translate(0, 0)';
               }}
             >
               [ {expanded ? '× CLOSE PEEK' : 'PEEK →'} ]
@@ -139,12 +145,18 @@ export default function EventBentoRow({ caseItem: c, locale, expanded, onToggle 
               onMouseEnter={(e) => {
                 e.currentTarget.style.background = '#E63E1F';
                 e.currentTarget.style.color = '#0B1026';
-                e.currentTarget.style.transform = 'translateY(-4px)';
+                e.currentTarget.style.transform = 'translate(0, -4px)';
+              }}
+              onMouseMove={(e) => {
+                const r = e.currentTarget.getBoundingClientRect();
+                const dx = Math.max(-4, Math.min(4, ((e.clientX - r.left) / r.width - 0.5) * 8));
+                const dy = Math.max(-4, Math.min(4, ((e.clientY - r.top) / r.height - 0.5) * 8));
+                e.currentTarget.style.transform = `translate(${dx}px, ${dy - 4}px)`;
               }}
               onMouseLeave={(e) => {
                 e.currentTarget.style.background = 'transparent';
                 e.currentTarget.style.color = '#E63E1F';
-                e.currentTarget.style.transform = 'translateY(0)';
+                e.currentTarget.style.transform = 'translate(0, 0)';
               }}
             >
               [ OPEN CASE FILE → ]
