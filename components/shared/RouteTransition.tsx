@@ -32,11 +32,11 @@ type Phase = 'idle' | 'covering' | 'covered' | 'revealing';
 const COLS = 8;
 const ROWS = 5;
 const CELL_COUNT = COLS * ROWS;
-const CELL_FADE_S = 0.12;
-const STAGGER_S = 0.025;
-const COVER_HOLD_MS = CELL_COUNT * STAGGER_S * 1000 + CELL_FADE_S * 1000; // ~1120ms
-const MIN_COVERED_MS = 320;
-const REVEAL_SAFETY_MS = 1200;
+const CELL_FADE_S = 0.08;
+const STAGGER_S = 0.007;
+const COVER_HOLD_MS = CELL_COUNT * STAGGER_S * 1000 + CELL_FADE_S * 1000; // ~360ms
+const MIN_COVERED_MS = 80;
+const REVEAL_SAFETY_MS = 800;
 
 function seededShuffle(seed: number): number[] {
   const arr = Array.from({ length: CELL_COUNT }, (_, i) => i);
@@ -88,8 +88,6 @@ export function TransitionLink(
           /^https?:\/\//i.test(hrefStr)
         ) return;
         e.preventDefault();
-        // eslint-disable-next-line no-console
-        console.log('[RouteTransition] TransitionLink clicked →', hrefStr);
         navigate(hrefStr);
       }}
     />
@@ -132,12 +130,6 @@ export default function RouteTransition({ children }: { children: ReactNode }) {
     },
     [phase, pathname],
   );
-
-  // Debug: trace every phase change
-  useEffect(() => {
-    // eslint-disable-next-line no-console
-    console.log('[RouteTransition] phase =', phase);
-  }, [phase]);
 
   // covering → covered (all cells in) → push route
   useEffect(() => {
@@ -217,31 +209,6 @@ export default function RouteTransition({ children }: { children: ReactNode }) {
   return (
     <RouteTransitionCtx.Provider value={{ navigate, active }}>
       {children}
-      {/* Debug banner — visible whenever transition phase !== idle */}
-      {active && (
-        <div
-          aria-hidden
-          style={{
-            position: 'fixed',
-            top: 0,
-            left: 0,
-            right: 0,
-            zIndex: 99999,
-            background: '#E63E1F',
-            color: '#FAFAF8',
-            fontFamily: 'var(--font-mono), monospace',
-            fontSize: 12,
-            letterSpacing: '0.3em',
-            textTransform: 'uppercase',
-            textAlign: 'center',
-            padding: '8px',
-            pointerEvents: 'none',
-          }}
-        >
-          ▸▸▸ ROUTE TRANSITION · PHASE = {phase.toUpperCase()} ◂◂◂
-        </div>
-      )}
-
       <AnimatePresence>
         {active && (
           <motion.div
@@ -269,7 +236,7 @@ export default function RouteTransition({ children }: { children: ReactNode }) {
                 transition={{
                   duration: CELL_FADE_S,
                   delay: cellDelays[i],
-                  ease: 'linear',
+                  ease: [0.7, 0, 0.3, 1],
                 }}
               />
             ))}
