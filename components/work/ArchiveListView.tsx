@@ -1,7 +1,8 @@
 'use client';
 
-import { useState } from 'react';
-import { Case } from '@/lib/work-data';
+import { useEffect, useRef, useState } from 'react';
+import { motion, useMotionValue, useSpring } from 'framer-motion';
+import { Case, CasePhoto } from '@/lib/work-data';
 
 interface Props {
   cases: Case[];
@@ -15,15 +16,54 @@ interface Props {
  * Each row: NO. / TITLE / TYPE / YEAR as a single line with hairline dividers.
  * Right side: giant Fraunces letter (first letter of currently displayed archive).
  * Click row → triggers CaseLightbox at parent level.
+ *
+ * Magnet C: hover a row → floating thumbnail anchored to cursor, damped lerp.
  */
 export default function ArchiveListView({ cases, expandedId, onToggle }: Props) {
   const [hoverLetter, setHoverLetter] = useState<string | null>(null);
+  const [hoverCase, setHoverCase] = useState<Case | null>(null);
+
+  // Floating thumbnail motion values
+  const mx = useMotionValue(0);
+  const my = useMotionValue(0);
+  const sx = useSpring(mx, { stiffness: 280, damping: 32, mass: 0.5 });
+  const sy = useSpring(my, { stiffness: 280, damping: 32, mass: 0.5 });
+  const containerRef = useRef<HTMLDivElement>(null);
+
+  useEffect(() => {
+    if (!hoverCase) return;
+    const onMove = (e: MouseEvent) => {
+      const rect = containerRef.current?.getBoundingClientRect();
+      if (!rect) return;
+      mx.set(e.clientX - rect.left + 22);
+      my.set(e.clientY - rect.top + 22);
+    };
+    window.addEventListener('mousemove', onMove);
+    return () => window.removeEventListener('mousemove', onMove);
+  }, [hoverCase, mx, my]);
 
   // Compute the big letter: first letter of current filter's title
   const bigLetter = hoverLetter || (cases[0]?.titleEn?.[0]?.toUpperCase() ?? 'A');
 
   return (
-    <div className="relative">
+    <div ref={containerRef} className="relative">
+      {/* Floating hover thumbnail (Magnet C) */}
+      <motion.div
+        className="pointer-events-none absolute hidden md:block"
+        style={{
+          top: 0,
+          left: 0,
+          x: sx,
+          y: sy,
+          opacity: hoverCase ? 1 : 0,
+          transition: 'opacity 140ms ease-out',
+          zIndex: 30,
+        }}
+        aria-hidden
+      >
+        {hoverCase && <HoverThumb caseItem={hoverCase} />}
+      </motion.div>
+
       {/* Giant corner letter (desktop) */}
       <div
         aria-hidden
@@ -55,8 +95,20 @@ export default function ArchiveListView({ cases, expandedId, onToggle }: Props) 
               <button
                 type="button"
                 onClick={() => onToggle(c.id)}
-                onMouseEnter={() => setHoverLetter(c.titleEn[0]?.toUpperCase() ?? null)}
-                onMouseLeave={() => setHoverLetter(null)}
+                onMouseEnter={(e) => {
+                  setHoverLetter(c.titleEn[0]?.toUpperCase() ?? null);
+                  setHoverCase(c);
+                  // Seed motion values so thumb doesn't fly from (0,0) on first show
+                  const rect = containerRef.current?.getBoundingClientRect();
+                  if (rect) {
+                    mx.set(e.clientX - rect.left + 22);
+                    my.set(e.clientY - rect.top + 22);
+                  }
+                }}
+                onMouseLeave={() => {
+                  setHoverLetter(null);
+                  setHoverCase(null);
+                }}
                 data-cursor={expanded ? '× CLOSE' : `⊡ PEEK · ${c.id}`}
                 data-cursor-variant={expanded ? 'action' : 'link'}
                 className="group w-full text-left px-5 md:px-8 py-5 flex items-center gap-4 md:gap-8 transition-colors"
@@ -137,6 +189,44 @@ export default function ArchiveListView({ cases, expandedId, onToggle }: Props) 
           );
         })}
       </ul>
+    </div>
+  );
+}
+
+function HoverThumb({ caseItem }: { caseItem: Case }) {
+  const hero: CasePhoto | undefined =
+    caseItem.photos.find((p) => p.role === 'hero') ?? caseItem.photos[0];
+  const hueMatch = hero?.src.match(/\/(\d+)$/);
+  const hue = hueMatch ? parseInt(hueMatch[1], 10) : 15;
+  return (
+    <div
+      style={{
+        width: 220,
+        aspectRatio: '4 / 3',
+        border: '1px solid rgba(93,211,227,0.5)',
+        background: '#0B1026',
+        boxShadow: '0 12px 40px rgba(0,0,0,0.55)',
+        overflow: 'hidden',
+      }}
+    >
+      <div
+        className="w-full h-full flex items-end p-2"
+        style={{
+          background: `linear-gradient(135deg, hsl(${hue}, 48%, 22%) 0%, hsl(${hue + 14}, 36%, 10%) 100%)`,
+        }}
+      >
+        <span
+          style={{
+            fontFamily: 'var(--font-mono), monospace',
+            fontSize: 8,
+            letterSpacing: '0.22em',
+            color: 'rgba(250,250,248,0.35)',
+            textTransform: 'uppercase',
+          }}
+        >
+          {caseItem.id} · PREVIEW
+        </span>
+      </div>
     </div>
   );
 }

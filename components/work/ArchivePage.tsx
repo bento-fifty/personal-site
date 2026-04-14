@@ -5,9 +5,11 @@ import { CASES, EventType, countByType } from '@/lib/work-data';
 import FilterChips from '@/components/shared/FilterChips';
 import EventBentoRow from './EventBentoRow';
 import ArchiveListView from './ArchiveListView';
+import PhotoGridView from './PhotoGridView';
 import CaseLightbox from './CaseLightbox';
+import PhotoWindow from './PhotoWindow';
 
-type ViewMode = 'bento' | 'list';
+type ViewMode = 'bento' | 'list' | 'photo';
 
 interface Props {
   locale: 'zh-TW' | 'en-US';
@@ -18,6 +20,7 @@ export default function ArchivePage({ locale }: Props) {
   const [activeYear, setActiveYear] = useState<number | 'ALL'>('ALL');
   const [expandedId, setExpandedId] = useState<string | null>(null);
   const [viewMode, setViewMode] = useState<ViewMode>('bento');
+  const [spawnPos, setSpawnPos] = useState<{ x: number; y: number } | null>(null);
 
   const filtered = useMemo(() => {
     return CASES.filter((c) => {
@@ -86,7 +89,7 @@ export default function ArchivePage({ locale }: Props) {
             </p>
             {/* View mode toggle */}
             <div className="flex gap-0" role="tablist" aria-label="View mode">
-              {(['bento', 'list'] as ViewMode[]).map((m) => {
+              {(['bento', 'list', 'photo'] as ViewMode[]).map((m) => {
                 const active = viewMode === m;
                 return (
                   <button
@@ -113,7 +116,7 @@ export default function ArchivePage({ locale }: Props) {
                       transition: 'color 0ms, background 0ms',
                     }}
                   >
-                    [ {m === 'bento' ? 'BENTO' : 'LIST'} ]
+                    [ {m.toUpperCase()} ]
                   </button>
                 );
               })}
@@ -171,11 +174,20 @@ export default function ArchivePage({ locale }: Props) {
               />
             </div>
           ))
-        ) : (
+        ) : viewMode === 'list' ? (
           <ArchiveListView
             cases={filtered}
             expandedId={expandedId}
             onToggle={toggleExpand}
+          />
+        ) : (
+          <PhotoGridView
+            cases={filtered}
+            activeId={expandedId}
+            onSelect={(id, pos) => {
+              setSpawnPos(pos);
+              setExpandedId((curr) => (curr === id ? null : id));
+            }}
           />
         )}
 
@@ -192,11 +204,21 @@ export default function ArchivePage({ locale }: Props) {
         </div>
       </main>
 
-      <CaseLightbox
-        caseItem={expandedCase}
-        locale={locale}
-        onClose={() => setExpandedId(null)}
-      />
+      {viewMode !== 'photo' && (
+        <CaseLightbox
+          caseItem={expandedCase}
+          locale={locale}
+          onClose={() => setExpandedId(null)}
+        />
+      )}
+      {viewMode === 'photo' && (
+        <PhotoWindow
+          caseItem={expandedCase}
+          locale={locale}
+          spawnPos={spawnPos}
+          onClose={() => setExpandedId(null)}
+        />
+      )}
     </>
   );
 }

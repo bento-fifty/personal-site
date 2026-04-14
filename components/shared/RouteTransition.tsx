@@ -156,8 +156,11 @@ export default function RouteTransition({ children }: { children: ReactNode }) {
       navigate(url.pathname + url.search);
     };
 
-    document.addEventListener('click', onClick);
-    return () => document.removeEventListener('click', onClick);
+    // Capture phase: fire BEFORE next/link's React onClick delegated at root.
+    // Without this, Link's preventDefault + router.push runs first and we never
+    // get the chance to override.
+    document.addEventListener('click', onClick, true);
+    return () => document.removeEventListener('click', onClick, true);
   }, [navigate]);
 
   const active = phase !== 'idle';

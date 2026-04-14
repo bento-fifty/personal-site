@@ -1,7 +1,8 @@
 'use client';
 
 import { EventType, YEARS, EVENT_TYPES, countByType, CASES } from '@/lib/work-data';
-import { useMemo } from 'react';
+import { useMemo, useState, useRef } from 'react';
+import { motion } from 'framer-motion';
 
 interface Props {
   activeType: EventType | 'ALL';
@@ -20,6 +21,14 @@ export default function FilterChips({
     () => EVENT_TYPES.map((t) => ({ ...t, count: countByType(t.value, activeYear) })),
     [activeYear]
   );
+
+  const [poppingId, setPoppingId] = useState<string | null>(null);
+  const popTimer = useRef<ReturnType<typeof setTimeout> | null>(null);
+  const pop = (id: string) => {
+    setPoppingId(id);
+    if (popTimer.current) clearTimeout(popTimer.current);
+    popTimer.current = setTimeout(() => setPoppingId(null), 260);
+  };
 
   const yearCounts = useMemo(() => {
     return YEARS.map((y) => ({
@@ -53,11 +62,17 @@ export default function FilterChips({
         </span>
         {typeCounts.map((t) => {
           const active = activeType === t.value;
+          const popId = `type-${t.value}`;
           return (
-            <button
+            <motion.button
               key={t.value}
               type="button"
-              onClick={() => onTypeChange(t.value)}
+              onClick={() => {
+                onTypeChange(t.value);
+                pop(popId);
+              }}
+              animate={{ scale: poppingId === popId ? 1.08 : 1 }}
+              transition={{ type: 'spring', stiffness: 500, damping: 14 }}
               data-cursor="⊙ FILTER"
               data-cursor-variant="action"
               style={{
@@ -75,7 +90,7 @@ export default function FilterChips({
               disabled={t.count === 0 && !active}
             >
               {t.labelEn} ({t.count})
-            </button>
+            </motion.button>
           );
         })}
       </div>
@@ -94,11 +109,17 @@ export default function FilterChips({
         </span>
         {yearCounts.map((y) => {
           const active = activeYear === y.value;
+          const popId = `year-${y.value}`;
           return (
-            <button
+            <motion.button
               key={String(y.value)}
               type="button"
-              onClick={() => onYearChange(y.value)}
+              onClick={() => {
+                onYearChange(y.value);
+                pop(popId);
+              }}
+              animate={{ scale: poppingId === popId ? 1.08 : 1 }}
+              transition={{ type: 'spring', stiffness: 500, damping: 14 }}
               data-cursor="⊙ FILTER"
               data-cursor-variant="action"
               style={{
@@ -115,7 +136,7 @@ export default function FilterChips({
               disabled={y.count === 0 && !active}
             >
               {y.label} ({y.count})
-            </button>
+            </motion.button>
           );
         })}
       </div>
