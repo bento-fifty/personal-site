@@ -11,6 +11,7 @@ import {
   type ReactNode,
 } from 'react';
 import { useRouter, usePathname } from 'next/navigation';
+import { motion, AnimatePresence } from 'framer-motion';
 
 /**
  * RouteTransition — grid-cell overlay for internal route changes.
@@ -18,6 +19,10 @@ import { useRouter, usePathname } from 'next/navigation';
  * Flow: covering (cells fade in staggered) → push route → revealing (cells fade out).
  * Intercepts same-origin anchor clicks globally. Honors prefers-reduced-motion
  * and bypasses modifier-keyed clicks / target=_blank / external hrefs.
+ *
+ * Why framer-motion: raw CSS transitions don't fire on initial mount because
+ * React commits the overlay + cells already at target opacity. framer's
+ * `initial` + `animate` guarantees cells start at 0 and animate to 1 on mount.
  */
 
 type Phase = 'idle' | 'covering' | 'covered' | 'revealing';
@@ -25,9 +30,10 @@ type Phase = 'idle' | 'covering' | 'covered' | 'revealing';
 const COLS = 12;
 const ROWS = 8;
 const CELL_COUNT = COLS * ROWS;
-const CELL_FADE_MS = 60;
-const STAGGER_MS = 5;
-const COVER_HOLD_MS = CELL_COUNT * STAGGER_MS + CELL_FADE_MS; // ~762ms
+const CELL_FADE_S = 0.07;
+const STAGGER_S = 0.006;
+const COVER_HOLD_MS = CELL_COUNT * STAGGER_S * 1000 + CELL_FADE_S * 1000; // ~645ms
+const REVEAL_SAFETY_MS = 1000;
 
 function seededShuffle(seed: number): number[] {
   const arr = Array.from({ length: CELL_COUNT }, (_, i) => i);
@@ -55,15 +61,15 @@ export default function RouteTransition({ children }: { children: ReactNode }) {
   const pathname = usePathname();
   const [phase, setPhase] = useState<Phase>('idle');
   const pendingHrefRef = useRef<string | null>(null);
+  const startPathRef = useRef<string | null>(null);
   const prefersReduced = useRef(false);
 
   // Per-cell order (stable across renders)
   const cellDelays = useMemo(() => {
     const order = seededShuffle(42);
-    // order[cellIndex] = fireSlot → delay = fireSlot * STAGGER_MS
     const delays = new Array(CELL_COUNT);
     for (let cellIdx = 0; cellIdx < CELL_COUNT; cellIdx++) {
-      delays[cellIdx] = order.indexOf(cellIdx) * STAGGER_MS;
+      delays[cellIdx] = order.indexOf(cellIdx) * STAGGER_S;
     }
     return delays;
   }, []);
@@ -82,9 +88,10 @@ export default function RouteTransition({ children }: { children: ReactNode }) {
         return;
       }
       pendingHrefRef.current = href;
+      startPathRef.current = pathname;
       setPhase('covering');
     },
-    [phase, router],
+    [phase, router, pathname],
   );
 
   // covering → covered (all cells in) → push route
@@ -97,19 +104,23 @@ export default function RouteTransition({ children }: { children: ReactNode }) {
     return () => clearTimeout(t);
   }, [phase, router]);
 
-  // covered → revealing once pathname catches up
+  // covered → revealing once pathname changes OR safety timeout fires
   useEffect(() => {
     if (phase !== 'covered') return;
-    if (!pendingHrefRef.current) return;
-    // pathname contains locale prefix; check suffix match
-    if (pathname && pendingHrefRef.current.endsWith(pathname.replace(/^\/[^/]+/, ''))) {
-      // matched target route — reveal
-      const rid = requestAnimationFrame(() => setPhase('revealing'));
-      return () => cancelAnimationFrame(rid);
+
+    let rid: number | null = null;
+    let fb: ReturnType<typeof setTimeout> | null = null;
+
+    if (pathname && pathname !== startPathRef.current) {
+      rid = requestAnimationFrame(() => setPhase('revealing'));
+    } else {
+      fb = setTimeout(() => setPhase('revealing'), REVEAL_SAFETY_MS);
     }
-    // fallback: reveal after a short timeout even if pathname doesn't match exactly
-    const fallback = setTimeout(() => setPhase('revealing'), 300);
-    return () => clearTimeout(fallback);
+
+    return () => {
+      if (rid != null) cancelAnimationFrame(rid);
+      if (fb != null) clearTimeout(fb);
+    };
   }, [phase, pathname]);
 
   // revealing → idle
@@ -118,11 +129,12 @@ export default function RouteTransition({ children }: { children: ReactNode }) {
     const t = setTimeout(() => {
       setPhase('idle');
       pendingHrefRef.current = null;
+      startPathRef.current = null;
     }, COVER_HOLD_MS);
     return () => clearTimeout(t);
   }, [phase]);
 
-  // Global anchor click interceptor
+  // Global anchor click interceptor — CAPTURE phase to beat Link's React onClick
   useEffect(() => {
     const onClick = (e: MouseEvent) => {
       if (e.defaultPrevented) return;
@@ -143,22 +155,17 @@ export default function RouteTransition({ children }: { children: ReactNode }) {
         raw.startsWith('mailto:') ||
         raw.startsWith('tel:') ||
         /^https?:\/\//i.test(raw)
-      ) {
-        return;
-      }
+      ) return;
 
-      // Resolve to pathname
       const url = new URL(a.href, window.location.href);
       if (url.origin !== window.location.origin) return;
       if (url.pathname === window.location.pathname) return;
 
       e.preventDefault();
+      e.stopPropagation();
       navigate(url.pathname + url.search);
     };
 
-    // Capture phase: fire BEFORE next/link's React onClick delegated at root.
-    // Without this, Link's preventDefault + router.push runs first and we never
-    // get the chance to override.
     document.addEventListener('click', onClick, true);
     return () => document.removeEventListener('click', onClick, true);
   }, [navigate]);
@@ -169,31 +176,42 @@ export default function RouteTransition({ children }: { children: ReactNode }) {
   return (
     <RouteTransitionCtx.Provider value={{ navigate, active }}>
       {children}
-      {active && (
-        <div
-          aria-hidden
-          className="fixed inset-0 pointer-events-none"
-          style={{
-            zIndex: 9999,
-            display: 'grid',
-            gridTemplateColumns: `repeat(${COLS}, 1fr)`,
-            gridTemplateRows: `repeat(${ROWS}, 1fr)`,
-          }}
-        >
-          {Array.from({ length: CELL_COUNT }).map((_, i) => (
-            <div
-              key={i}
-              style={{
-                background: '#000',
-                borderRight: '1px solid rgba(93,211,227,0.18)',
-                borderBottom: '1px solid rgba(93,211,227,0.18)',
-                opacity: showFilled ? 1 : 0,
-                transition: `opacity ${CELL_FADE_MS}ms linear ${cellDelays[i]}ms`,
-              }}
-            />
-          ))}
-        </div>
-      )}
+      <AnimatePresence>
+        {active && (
+          <motion.div
+            key="route-transition"
+            aria-hidden
+            className="fixed inset-0 pointer-events-none"
+            style={{
+              zIndex: 9999,
+              display: 'grid',
+              gridTemplateColumns: `repeat(${COLS}, 1fr)`,
+              gridTemplateRows: `repeat(${ROWS}, 1fr)`,
+            }}
+            initial={{ opacity: 1 }}
+            animate={{ opacity: 1 }}
+            exit={{ opacity: 0, transition: { duration: 0.15 } }}
+          >
+            {Array.from({ length: CELL_COUNT }).map((_, i) => (
+              <motion.div
+                key={i}
+                style={{
+                  background: '#000',
+                  borderRight: '1px solid rgba(93,211,227,0.22)',
+                  borderBottom: '1px solid rgba(93,211,227,0.22)',
+                }}
+                initial={{ opacity: 0 }}
+                animate={{ opacity: showFilled ? 1 : 0 }}
+                transition={{
+                  duration: CELL_FADE_S,
+                  delay: cellDelays[i],
+                  ease: 'linear',
+                }}
+              />
+            ))}
+          </motion.div>
+        )}
+      </AnimatePresence>
     </RouteTransitionCtx.Provider>
   );
 }

@@ -3,35 +3,78 @@
 import { useEffect, useRef, useState } from 'react';
 
 /**
- * WireCubeCluster — pure CSS 3D wireframe cubes.
+ * WireCubeCluster — 3 wireframe cubes acting as identity HUD widgets.
  *
- * Three hollow cubes made of 12 edges each (stroke-only).
- * Slow Y-axis auto-rotation + cursor-driven parallax tilt (±8°).
- * Sits in the bottom-right corner of IssueCover above the wireframe floor.
+ * Hover a cube → ice tooltip with its facet meaning.
+ * Click a cube → enters drag mode (30s), user rotates cluster by drag; release
+ * returns to auto-spin.
  */
 
-interface CubeProps {
+type CubeKey = 'issue' | 'roles' | 'location';
+
+interface CubeFacet {
+  key: CubeKey;
   size: number;
   x: number;
   y: number;
   duration: number;
   color: string;
+  label: string;
+  value: string;
 }
 
-function WireCube({ size, x, y, duration, color }: CubeProps) {
-  // Build 12 edges of a cube using absolute divs on a 3D transform stage
+const FACETS: CubeFacet[] = [
+  {
+    key: 'issue',
+    size: 140,
+    x: 0,
+    y: 10,
+    duration: 22,
+    color: '#FAFAF8',
+    label: 'ISSUE',
+    value: 'N°003 · 2026',
+  },
+  {
+    key: 'roles',
+    size: 90,
+    x: 180,
+    y: 80,
+    duration: 16,
+    color: '#5DD3E3',
+    label: 'ROLES',
+    value: 'PRINCIPAL · PRODUCER · CONSULT',
+  },
+  {
+    key: 'location',
+    size: 60,
+    x: 120,
+    y: 160,
+    duration: 12,
+    color: '#E63E1F',
+    label: 'LOCATION',
+    value: 'TAIPEI · 25.03°N 121.57°E',
+  },
+];
+
+interface CubeRenderProps {
+  facet: CubeFacet;
+  paused: boolean;
+  onHover: (key: CubeKey | null) => void;
+  onClick: (e: React.MouseEvent) => void;
+}
+
+function WireCube({ facet, paused, onHover, onClick }: CubeRenderProps) {
+  const { size, x, y, duration, color } = facet;
   const half = size / 2;
-  const edges: { rot: string; len: number }[] = [
-    // Top face 4 edges (z = +half)
-    { rot: `translate3d(${-half}px, ${-half}px, ${half}px) rotateY(90deg)`, len: size }, // left
-    { rot: `translate3d(${-half}px, ${-half}px, ${half}px)`, len: size }, // top
-    { rot: `translate3d(${half}px, ${-half}px, ${half}px) rotateY(90deg)`, len: size }, // right
-    { rot: `translate3d(${-half}px, ${half}px, ${half}px)`, len: size }, // bottom
-  ];
 
   return (
     <div
-      className="absolute"
+      onMouseEnter={() => onHover(facet.key)}
+      onMouseLeave={() => onHover(null)}
+      onMouseDown={onClick}
+      data-cursor={`⊡ ${facet.label}`}
+      data-cursor-variant="link"
+      className="absolute pointer-events-auto cursor-pointer"
       style={{
         width: size,
         height: size,
@@ -39,20 +82,20 @@ function WireCube({ size, x, y, duration, color }: CubeProps) {
         bottom: y,
         transformStyle: 'preserve-3d',
         animation: `cube-spin ${duration}s linear infinite`,
+        animationPlayState: paused ? 'paused' : 'running',
       }}
     >
-      {/* Cube = 6 faces rendered as stroked rectangles */}
       {[
-        { tf: `translateZ(${half}px)` },                        // front
-        { tf: `translateZ(${-half}px) rotateY(180deg)` },       // back
-        { tf: `rotateY(-90deg) translateZ(${half}px)` },        // left
-        { tf: `rotateY(90deg) translateZ(${half}px)` },         // right
-        { tf: `rotateX(90deg) translateZ(${half}px)` },         // top
-        { tf: `rotateX(-90deg) translateZ(${half}px)` },        // bottom
+        { tf: `translateZ(${half}px)` },
+        { tf: `translateZ(${-half}px) rotateY(180deg)` },
+        { tf: `rotateY(-90deg) translateZ(${half}px)` },
+        { tf: `rotateY(90deg) translateZ(${half}px)` },
+        { tf: `rotateX(90deg) translateZ(${half}px)` },
+        { tf: `rotateX(-90deg) translateZ(${half}px)` },
       ].map((f, i) => (
         <div
           key={i}
-          className="absolute"
+          className="absolute pointer-events-none"
           style={{
             width: size,
             height: size,
@@ -71,21 +114,56 @@ function WireCube({ size, x, y, duration, color }: CubeProps) {
 export default function WireCubeCluster() {
   const ref = useRef<HTMLDivElement>(null);
   const [tilt, setTilt] = useState({ x: 0, y: 0 });
+  const [hoverKey, setHoverKey] = useState<CubeKey | null>(null);
+  const [dragMode, setDragMode] = useState(false);
+  const dragStart = useRef<{ x: number; y: number; tx: number; ty: number } | null>(null);
+  const dragTimer = useRef<ReturnType<typeof setTimeout> | null>(null);
 
   useEffect(() => {
     function onMove(e: MouseEvent) {
       if (!ref.current) return;
+
+      if (dragMode && dragStart.current) {
+        const dx = (e.clientX - dragStart.current.x) / 4;
+        const dy = (e.clientY - dragStart.current.y) / 4;
+        setTilt({
+          x: Math.max(-45, Math.min(45, dragStart.current.tx - dy)),
+          y: Math.max(-60, Math.min(60, dragStart.current.ty + dx)),
+        });
+        return;
+      }
+
       const rect = ref.current.getBoundingClientRect();
       const cx = rect.left + rect.width / 2;
       const cy = rect.top + rect.height / 2;
       const dx = (e.clientX - cx) / window.innerWidth;
       const dy = (e.clientY - cy) / window.innerHeight;
-      // Max tilt ±8°
-      setTilt({ x: Math.max(-8, Math.min(8, dy * 16)), y: Math.max(-8, Math.min(8, dx * 16)) });
+      setTilt({
+        x: Math.max(-8, Math.min(8, dy * 16)),
+        y: Math.max(-8, Math.min(8, dx * 16)),
+      });
     }
+
+    function onUp() {
+      dragStart.current = null;
+    }
+
     window.addEventListener('mousemove', onMove);
-    return () => window.removeEventListener('mousemove', onMove);
-  }, []);
+    window.addEventListener('mouseup', onUp);
+    return () => {
+      window.removeEventListener('mousemove', onMove);
+      window.removeEventListener('mouseup', onUp);
+    };
+  }, [dragMode]);
+
+  const onCubeClick = (e: React.MouseEvent) => {
+    setDragMode(true);
+    dragStart.current = { x: e.clientX, y: e.clientY, tx: tilt.x, ty: tilt.y };
+    if (dragTimer.current) clearTimeout(dragTimer.current);
+    dragTimer.current = setTimeout(() => setDragMode(false), 30_000);
+  };
+
+  const currentFacet = hoverKey ? FACETS.find((f) => f.key === hoverKey) : null;
 
   return (
     <>
@@ -97,8 +175,7 @@ export default function WireCubeCluster() {
       `}</style>
       <div
         ref={ref}
-        aria-hidden
-        className="hidden lg:block absolute pointer-events-none z-[2]"
+        className="hidden lg:block absolute z-[2]"
         style={{
           right: 260,
           bottom: 80,
@@ -107,12 +184,49 @@ export default function WireCubeCluster() {
           perspective: '900px',
           transformStyle: 'preserve-3d',
           transform: `rotateX(${tilt.x}deg) rotateY(${tilt.y}deg)`,
-          transition: 'transform 300ms ease-out',
+          transition: dragMode ? 'none' : 'transform 300ms ease-out',
         }}
       >
-        <WireCube size={140} x={0}   y={10}  duration={22} color="#FAFAF8" />
-        <WireCube size={90}  x={180} y={80}  duration={16} color="#5DD3E3" />
-        <WireCube size={60}  x={120} y={160} duration={12} color="#E63E1F" />
+        {FACETS.map((f) => (
+          <WireCube
+            key={f.key}
+            facet={f}
+            paused={dragMode}
+            onHover={(k) => setHoverKey(k)}
+            onClick={onCubeClick}
+          />
+        ))}
+      </div>
+
+      {/* Tooltip + drag-mode status */}
+      <div
+        aria-live="polite"
+        className="hidden lg:block fixed pointer-events-none z-[3]"
+        style={{
+          right: 32,
+          bottom: 96,
+          fontFamily: 'var(--font-mono), monospace',
+          fontSize: 9,
+          letterSpacing: '0.28em',
+          textTransform: 'uppercase',
+          color: 'rgba(250,250,248,0.6)',
+          opacity: currentFacet || dragMode ? 1 : 0,
+          transition: 'opacity 200ms ease-out',
+          textAlign: 'right',
+          maxWidth: 260,
+        }}
+      >
+        {dragMode && (
+          <div style={{ color: '#5DD3E3', marginBottom: 6 }}>
+            ▸ DRAG MODE · RELEASE TO RESUME
+          </div>
+        )}
+        {currentFacet && (
+          <div>
+            <span style={{ color: '#5DD3E3' }}>[ {currentFacet.label} ]</span>{' '}
+            <span style={{ color: 'rgba(250,250,248,0.85)' }}>{currentFacet.value}</span>
+          </div>
+        )}
       </div>
     </>
   );
