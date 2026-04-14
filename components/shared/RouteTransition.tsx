@@ -176,18 +176,19 @@ function buildSplats(
 ): Splat[] {
   const origin = originFor(scn, clickPos, W, H);
   const origins = origin.origins ?? [{ x: origin.x, y: origin.y }];
-  const perOrigin = origins.length > 1 ? 2 : 7;
+  // Restrained: grid does the covering, splats are accents
+  const perOrigin = origins.length > 1 ? 1 : 4;
   const splats: Splat[] = [];
   let keyIdx = 0;
 
   origins.forEach((o, oi) => {
     for (let i = 0; i < perOrigin; i++) {
-      const angle = (i / perOrigin) * Math.PI * 2 + Math.random() * 1.2;
-      const dist = i === 0 && oi === 0 ? 0 : 140 + Math.random() * 340;
+      const angle = (i / perOrigin) * Math.PI * 2 + Math.random() * 0.9;
+      const dist = i === 0 && oi === 0 ? 0 : 80 + Math.random() * 160;
       const x = o.x + Math.cos(angle) * dist;
       const y = o.y + Math.sin(angle) * dist;
       const main = i === 0 && oi === 0;
-      const size = main ? 480 : 260 + Math.random() * 280;
+      const size = main ? 280 : 140 + Math.random() * 140;
       splats.push({
         key: keyIdx++,
         x,
@@ -383,34 +384,19 @@ export default function RouteTransition({ children }: { children: ReactNode }) {
                 }}
               >
                 <svg
-                  viewBox="-160 -160 832 832"
+                  viewBox="0 0 512 512"
                   style={{
                     transform: `rotate(${s.rot}deg)`,
                     width: '100%',
                     height: '100%',
-                    overflow: 'visible',
                   }}
                 >
                   <path d={s.shape} fill={s.color} />
-                  {Array.from({ length: 9 }).map((_, i) => {
-                    const dx = 0.05 + (Math.sin((s.key + 1) * (i + 1)) * 0.5 + 0.5) * 0.9;
-                    const dy = 0.05 + (Math.cos((s.key + 1) * (i + 1)) * 0.5 + 0.5) * 0.9;
-                    const r = 3 + (Math.sin((s.key + 1) * i * 7) * 0.5 + 0.5) * 12;
-                    return <circle key={i} cx={dx * 512} cy={dy * 512} r={r} fill={s.color} />;
-                  })}
                   {Array.from({ length: 5 }).map((_, i) => {
-                    const a = Math.sin((s.key + 2) * (i + 3)) * Math.PI * 2;
-                    const rr = 560 + (Math.cos((s.key + 2) * (i + 3)) * 0.5 + 0.5) * 100;
-                    const rad = 2 + (Math.sin((s.key + 3) * i * 5) * 0.5 + 0.5) * 4;
-                    return (
-                      <circle
-                        key={`s-${i}`}
-                        cx={256 + Math.cos(a) * rr}
-                        cy={256 + Math.sin(a) * rr}
-                        r={rad}
-                        fill={s.color}
-                      />
-                    );
+                    const dx = 0.1 + (Math.sin((s.key + 1) * (i + 1)) * 0.5 + 0.5) * 0.8;
+                    const dy = 0.1 + (Math.cos((s.key + 1) * (i + 1)) * 0.5 + 0.5) * 0.8;
+                    const r = 3 + (Math.sin((s.key + 1) * i * 7) * 0.5 + 0.5) * 8;
+                    return <circle key={i} cx={dx * 512} cy={dy * 512} r={r} fill={s.color} />;
                   })}
                 </svg>
               </div>
