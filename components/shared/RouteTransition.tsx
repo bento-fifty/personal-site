@@ -5,7 +5,6 @@ import {
   useCallback,
   useContext,
   useEffect,
-  useMemo,
   useRef,
   useState,
   type ComponentProps,
@@ -36,14 +35,9 @@ import NextLink from 'next/link';
 type Phase = 'idle' | 'active';
 type Scenario = 'forward' | 'back' | 'lateral' | 'home';
 
-const COLS = 8;
-const ROWS = 5;
-const CELL_COUNT = COLS * ROWS;
-
 const T = {
   splatBloom: 320,
   splatStag: 32,
-  gridStag: 7,
   tickerInAt: 160,
   tickerIn: 260,
   pageSwapAt: 380,
@@ -66,7 +60,6 @@ const SPLAT_PATHS = [
 ];
 
 const SPLAT_COLORS = ['#5DD3E3', '#9FEFF7', '#2E8FA0'];
-const GRID_COLOR = '#2E8FA0';
 
 interface Ctx {
   navigate: (href: string, origin?: { x: number; y: number }) => void;
@@ -176,32 +169,51 @@ function buildSplats(
 ): Splat[] {
   const origin = originFor(scn, clickPos, W, H);
   const origins = origin.origins ?? [{ x: origin.x, y: origin.y }];
-  // Splats are the hero — grid is a sparse dappled backing
-  const perOrigin = origins.length > 1 ? 3 : 9;
   const splats: Splat[] = [];
   let keyIdx = 0;
 
+  const push = (x: number, y: number, size: number, colorIdx: number) => {
+    splats.push({
+      key: keyIdx++,
+      x,
+      y,
+      size,
+      rot: Math.random() * 360,
+      color: SPLAT_COLORS[colorIdx % SPLAT_COLORS.length],
+      shape: SPLAT_PATHS[Math.floor(Math.random() * SPLAT_PATHS.length)],
+      delayIn: Math.round(splats.length * T.splatStag * 0.55 + Math.random() * T.splatStag * 0.5),
+      delayOut: Math.round(splats.length * T.splatStag * 0.35),
+    });
+  };
+
+  // 1. Anchor splats at each origin — big dominant blobs
   origins.forEach((o, oi) => {
-    for (let i = 0; i < perOrigin; i++) {
-      const angle = (i / perOrigin) * Math.PI * 2 + Math.random() * 1.3;
-      const dist = i === 0 && oi === 0 ? 0 : 120 + Math.random() * 360;
-      const x = o.x + Math.cos(angle) * dist;
-      const y = o.y + Math.sin(angle) * dist;
-      const main = i === 0 && oi === 0;
-      const size = main ? 440 : 220 + Math.random() * 260;
-      splats.push({
-        key: keyIdx++,
-        x,
-        y,
-        size,
-        rot: Math.random() * 360,
-        color: SPLAT_COLORS[(i + oi) % SPLAT_COLORS.length],
-        shape: SPLAT_PATHS[Math.floor(Math.random() * SPLAT_PATHS.length)],
-        delayIn: Math.round(splats.length * T.splatStag * 0.7 + Math.random() * T.splatStag * 0.6),
-        delayOut: Math.round(i * T.splatStag * 0.5),
-      });
+    push(o.x, o.y, 520 + Math.random() * 120, oi);
+    // tight cluster around origin
+    const clusterCount = origins.length > 1 ? 2 : 4;
+    for (let i = 0; i < clusterCount; i++) {
+      const a = Math.random() * Math.PI * 2;
+      const d = 120 + Math.random() * 220;
+      push(o.x + Math.cos(a) * d, o.y + Math.sin(a) * d, 280 + Math.random() * 220, i + 1);
     }
   });
+
+  // 2. Scatter splats across the full viewport — ensures coverage spread
+  const scatterCount = 10;
+  for (let i = 0; i < scatterCount; i++) {
+    const x = Math.random() * W;
+    const y = Math.random() * H;
+    const size = 200 + Math.random() * 260;
+    push(x, y, size, i);
+  }
+
+  // 3. Smaller filler dots in random edge/corner voids
+  const fillerCount = 6;
+  for (let i = 0; i < fillerCount; i++) {
+    const x = Math.random() * W;
+    const y = Math.random() * H;
+    push(x, y, 120 + Math.random() * 120, i + 2);
+  }
 
   return splats;
 }
@@ -219,22 +231,6 @@ export default function RouteTransition({ children }: { children: ReactNode }) {
   const pendingHrefRef = useRef<string | null>(null);
   const startPathRef = useRef<string | null>(null);
   const timersRef = useRef<ReturnType<typeof setTimeout>[]>([]);
-
-  const cellOrder = useMemo(() => {
-    const arr = Array.from({ length: CELL_COUNT }, (_, i) => i);
-    for (let i = arr.length - 1; i > 0; i--) {
-      const j = Math.floor((i + 1) * Math.abs(Math.sin(i * 9301 + 49297)) % 1);
-      [arr[i], arr[j]] = [arr[j], arr[i]];
-    }
-    return arr;
-  }, []);
-
-  // Sparse grid: only ~55% of cells ever fill. The rest stay transparent
-  // so the page underneath shows through — dappled backing, not blanket cover.
-  const activeCells = useMemo(() => {
-    const fillCount = Math.round(CELL_COUNT * 0.55);
-    return new Set(cellOrder.slice(0, fillCount));
-  }, [cellOrder]);
 
   const clearTimers = () => {
     timersRef.current.forEach(clearTimeout);
@@ -343,36 +339,7 @@ export default function RouteTransition({ children }: { children: ReactNode }) {
       {children}
       {active && (
         <div aria-hidden style={{ position: 'fixed', inset: 0, zIndex: 9999, pointerEvents: 'none' }}>
-          {/* GRID (back layer) */}
-          <div
-            style={{
-              position: 'absolute',
-              inset: 0,
-              display: 'grid',
-              gridTemplateColumns: `repeat(${COLS}, 1fr)`,
-              gridTemplateRows: `repeat(${ROWS}, 1fr)`,
-            }}
-          >
-            {Array.from({ length: CELL_COUNT }).map((_, i) => {
-              const isActive = activeCells.has(i);
-              return (
-                <div
-                  key={i}
-                  style={{
-                    background: GRID_COLOR,
-                    opacity: isActive && subphase === 'bloom' ? 1 : 0,
-                    transition: `opacity 90ms cubic-bezier(0.7,0,0.3,1) ${
-                      subphase === 'bloom'
-                        ? cellOrder.indexOf(i) * T.gridStag + 40
-                        : Math.random() * 180
-                    }ms`,
-                  }}
-                />
-              );
-            })}
-          </div>
-
-          {/* SPLATTER (middle layer) */}
+          {/* SPLATTER (no grid — splats own the coverage) */}
           <div style={{ position: 'absolute', inset: 0 }}>
             {splats.map((s) => (
               <div
