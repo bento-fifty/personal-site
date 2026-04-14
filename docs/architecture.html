@@ -1,0 +1,322 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>evanchang.com — Architecture</title>
+  <link href="https://fonts.googleapis.com/css2?family=JetBrains+Mono:wght@400;500;600;700&display=swap" rel="stylesheet">
+  <style>
+    * { margin: 0; padding: 0; box-sizing: border-box; }
+    body {
+      font-family: 'JetBrains Mono', monospace;
+      background: #020617;
+      min-height: 100vh;
+      padding: 2rem;
+      color: white;
+    }
+    .container { max-width: 1200px; margin: 0 auto; }
+    .header { margin-bottom: 2rem; }
+    .header-row { display: flex; align-items: center; gap: 1rem; margin-bottom: 0.5rem; }
+    .pulse-dot {
+      width: 12px; height: 12px;
+      background: #22d3ee;
+      border-radius: 50%;
+      animation: pulse 2s infinite;
+    }
+    @keyframes pulse { 0%, 100% { opacity: 1; } 50% { opacity: 0.5; } }
+    h1 { font-size: 1.5rem; font-weight: 700; letter-spacing: -0.025em; }
+    .subtitle { color: #94a3b8; font-size: 0.875rem; margin-left: 1.75rem; }
+    .diagram-container {
+      background: rgba(15, 23, 42, 0.5);
+      border-radius: 1rem;
+      border: 1px solid #1e293b;
+      padding: 1.5rem;
+      overflow-x: auto;
+    }
+    svg { width: 100%; min-width: 960px; display: block; }
+    .cards {
+      display: grid;
+      grid-template-columns: repeat(auto-fit, minmax(280px, 1fr));
+      gap: 1rem;
+      margin-top: 2rem;
+    }
+    .card {
+      background: rgba(15, 23, 42, 0.5);
+      border-radius: 0.75rem;
+      border: 1px solid #1e293b;
+      padding: 1.25rem;
+    }
+    .card-header { display: flex; align-items: center; gap: 0.5rem; margin-bottom: 0.75rem; }
+    .card-dot { width: 8px; height: 8px; border-radius: 50%; }
+    .card-dot.cyan { background: #22d3ee; }
+    .card-dot.emerald { background: #34d399; }
+    .card-dot.violet { background: #a78bfa; }
+    .card-dot.amber { background: #fbbf24; }
+    .card-dot.rose { background: #fb7185; }
+    .card-dot.slate { background: #94a3b8; }
+    .card h3 { font-size: 0.875rem; font-weight: 600; }
+    .card ul { list-style: none; color: #94a3b8; font-size: 0.75rem; }
+    .card li { margin-bottom: 0.375rem; }
+    .footer {
+      text-align: center;
+      margin-top: 1.5rem;
+      color: #475569;
+      font-size: 0.75rem;
+    }
+  </style>
+</head>
+<body>
+  <div class="container">
+    <div class="header">
+      <div class="header-row">
+        <div class="pulse-dot"></div>
+        <h1>evanchang.com — Architecture</h1>
+      </div>
+      <p class="subtitle">Next.js 16 on Vercel · Cloudflare DNS · planned API split to Cloudflare Workers</p>
+    </div>
+
+    <div class="diagram-container">
+      <svg viewBox="0 0 1000 760">
+        <defs>
+          <marker id="arrowhead" markerWidth="10" markerHeight="7" refX="9" refY="3.5" orient="auto">
+            <polygon points="0 0, 10 3.5, 0 7" fill="#64748b" />
+          </marker>
+          <marker id="arrowhead-violet" markerWidth="10" markerHeight="7" refX="9" refY="3.5" orient="auto">
+            <polygon points="0 0, 10 3.5, 0 7" fill="#a78bfa" />
+          </marker>
+          <marker id="arrowhead-slate" markerWidth="10" markerHeight="7" refX="9" refY="3.5" orient="auto">
+            <polygon points="0 0, 10 3.5, 0 7" fill="#94a3b8" />
+          </marker>
+          <pattern id="grid" width="40" height="40" patternUnits="userSpaceOnUse">
+            <path d="M 40 0 L 0 0 0 40" fill="none" stroke="#1e293b" stroke-width="0.5"/>
+          </pattern>
+        </defs>
+
+        <rect width="100%" height="100%" fill="url(#grid)" />
+
+        <!-- ============ ARROWS (drawn first, behind boxes) ============ -->
+
+        <!-- Browser → Cloudflare DNS -->
+        <line x1="125" y1="370" x2="173" y2="370" stroke="#94a3b8" stroke-width="1.5" marker-end="url(#arrowhead-slate)"/>
+        <text x="149" y="363" fill="#94a3b8" font-size="8" text-anchor="middle">DNS</text>
+
+        <!-- Cloudflare DNS → Vercel edge (proxy.ts) -->
+        <line x1="290" y1="370" x2="330" y2="160" stroke="#fbbf24" stroke-width="1.5" marker-end="url(#arrowhead)"/>
+        <text x="300" y="265" fill="#fbbf24" font-size="8">apex / www</text>
+        <text x="300" y="277" fill="#fbbf24" font-size="8">→ Vercel</text>
+
+        <!-- Cloudflare DNS → Cloudflare Workers (planned, dashed) -->
+        <line x1="290" y1="385" x2="690" y2="250" stroke="#94a3b8" stroke-width="1.2" stroke-dasharray="5,4" marker-end="url(#arrowhead-slate)"/>
+        <text x="540" y="330" fill="#94a3b8" font-size="8">api.evanchang.com</text>
+        <text x="540" y="342" fill="#94a3b8" font-size="8">(planned)</text>
+
+        <!-- proxy.ts → Next.js app -->
+        <line x1="490" y1="170" x2="490" y2="218" stroke="#22d3ee" stroke-width="1.5" marker-end="url(#arrowhead)"/>
+        <text x="500" y="194" fill="#94a3b8" font-size="8">i18n routed</text>
+
+        <!-- Next.js app → api-client abstraction -->
+        <line x1="490" y1="400" x2="490" y2="448" stroke="#22d3ee" stroke-width="1.5" marker-end="url(#arrowhead)"/>
+        <text x="500" y="424" fill="#94a3b8" font-size="8">fetch</text>
+
+        <!-- api-client → /api (today) -->
+        <line x1="430" y1="540" x2="395" y2="578" stroke="#a78bfa" stroke-width="1.5" marker-end="url(#arrowhead-violet)"/>
+        <text x="380" y="560" fill="#a78bfa" font-size="8">today</text>
+
+        <!-- api-client → Workers (tomorrow, dashed) -->
+        <line x1="550" y1="540" x2="795" y2="245" stroke="#a78bfa" stroke-width="1.5" stroke-dasharray="5,4" marker-end="url(#arrowhead-violet)"/>
+        <text x="700" y="430" fill="#a78bfa" font-size="8">when split triggered</text>
+
+        <!-- Next.js → analytics -->
+        <line x1="540" y1="400" x2="605" y2="578" stroke="#fbbf24" stroke-width="1" stroke-dasharray="3,3"/>
+
+        <!-- Workers → R2 -->
+        <line x1="810" y1="290" x2="810" y2="348" stroke="#94a3b8" stroke-width="1.2" stroke-dasharray="5,4" marker-end="url(#arrowhead-slate)"/>
+
+        <!-- Workers → Durable Objects -->
+        <line x1="870" y1="290" x2="870" y2="438" stroke="#94a3b8" stroke-width="1.2" stroke-dasharray="5,4" marker-end="url(#arrowhead-slate)"/>
+
+        <!-- ============ REGION BOUNDARIES ============ -->
+
+        <!-- Vercel region -->
+        <rect x="310" y="75" width="360" height="580" rx="12" fill="rgba(251, 191, 36, 0.05)" stroke="#fbbf24" stroke-width="1" stroke-dasharray="8,4"/>
+        <text x="322" y="95" fill="#fbbf24" font-size="10" font-weight="600">Main site · Vercel</text>
+
+        <!-- Cloudflare Workers region (planned) -->
+        <rect x="690" y="75" width="280" height="580" rx="12" fill="rgba(148, 163, 184, 0.04)" stroke="#94a3b8" stroke-width="1" stroke-dasharray="8,4"/>
+        <text x="702" y="95" fill="#94a3b8" font-size="10" font-weight="600">Burst APIs · Cloudflare (planned)</text>
+
+        <!-- ============ COMPONENTS ============ -->
+
+        <!-- Browser -->
+        <rect x="20" y="340" width="105" height="60" rx="6" fill="rgba(30, 41, 59, 0.5)" stroke="#94a3b8" stroke-width="1.5"/>
+        <text x="72" y="365" fill="white" font-size="11" font-weight="600" text-anchor="middle">Browser</text>
+        <text x="72" y="381" fill="#94a3b8" font-size="9" text-anchor="middle">zh-TW / en</text>
+
+        <!-- Cloudflare DNS -->
+        <rect x="173" y="340" width="117" height="60" rx="6" fill="#0f172a"/>
+        <rect x="173" y="340" width="117" height="60" rx="6" fill="rgba(120, 53, 15, 0.3)" stroke="#fbbf24" stroke-width="1.5"/>
+        <text x="231" y="363" fill="white" font-size="11" font-weight="600" text-anchor="middle">Cloudflare DNS</text>
+        <text x="231" y="379" fill="#94a3b8" font-size="9" text-anchor="middle">NS authority</text>
+        <text x="231" y="391" fill="#fbbf24" font-size="7" text-anchor="middle">apex · www · api</text>
+
+        <!-- proxy.ts (Vercel Edge) -->
+        <rect x="330" y="110" width="320" height="60" rx="6" fill="#0f172a"/>
+        <rect x="330" y="110" width="320" height="60" rx="6" fill="rgba(120, 53, 15, 0.3)" stroke="#fbbf24" stroke-width="1.5"/>
+        <text x="490" y="133" fill="white" font-size="11" font-weight="600" text-anchor="middle">Vercel Edge · proxy.ts</text>
+        <text x="490" y="149" fill="#94a3b8" font-size="9" text-anchor="middle">i18n locale routing · replaces middleware.ts (Next 16)</text>
+        <text x="490" y="163" fill="#fbbf24" font-size="8" text-anchor="middle">export const proxy = ...</text>
+
+        <!-- Next.js app -->
+        <rect x="330" y="220" width="320" height="180" rx="6" fill="#0f172a"/>
+        <rect x="330" y="220" width="320" height="180" rx="6" fill="rgba(8, 51, 68, 0.4)" stroke="#22d3ee" stroke-width="1.5"/>
+        <text x="490" y="243" fill="white" font-size="12" font-weight="600" text-anchor="middle">Next.js 16 App</text>
+        <text x="490" y="259" fill="#94a3b8" font-size="9" text-anchor="middle">App Router · RSC · ISR · Server Actions · Turbopack</text>
+
+        <!-- Marketing pages sub-box -->
+        <rect x="344" y="274" width="145" height="110" rx="4" fill="rgba(8, 51, 68, 0.5)" stroke="#22d3ee" stroke-width="1"/>
+        <text x="416" y="290" fill="#22d3ee" font-size="9" font-weight="600" text-anchor="middle">Marketing pages</text>
+        <text x="416" y="308" fill="#94a3b8" font-size="8" text-anchor="middle">• Hero</text>
+        <text x="416" y="322" fill="#94a3b8" font-size="8" text-anchor="middle">• FeaturedWork</text>
+        <text x="416" y="336" fill="#94a3b8" font-size="8" text-anchor="middle">• LocationsMap</text>
+        <text x="416" y="350" fill="#94a3b8" font-size="8" text-anchor="middle">• About</text>
+        <text x="416" y="370" fill="#22d3ee" font-size="7" text-anchor="middle">app/[locale]/*</text>
+
+        <!-- /api routes sub-box -->
+        <rect x="497" y="274" width="140" height="110" rx="4" fill="rgba(6, 78, 59, 0.4)" stroke="#34d399" stroke-width="1"/>
+        <text x="567" y="290" fill="#34d399" font-size="9" font-weight="600" text-anchor="middle">/api/* (light)</text>
+        <text x="567" y="308" fill="#94a3b8" font-size="8" text-anchor="middle">• contact form</text>
+        <text x="567" y="322" fill="#94a3b8" font-size="8" text-anchor="middle">• OG image gen</text>
+        <text x="567" y="336" fill="#94a3b8" font-size="8" text-anchor="middle">• internal</text>
+        <text x="567" y="370" fill="#34d399" font-size="7" text-anchor="middle">Server Functions</text>
+
+        <!-- api-client.ts (abstraction) -->
+        <rect x="330" y="450" width="320" height="90" rx="6" fill="#0f172a"/>
+        <rect x="330" y="450" width="320" height="90" rx="6" fill="rgba(76, 29, 149, 0.4)" stroke="#a78bfa" stroke-width="1.5"/>
+        <text x="490" y="473" fill="white" font-size="12" font-weight="600" text-anchor="middle">lib/api-client.ts</text>
+        <text x="490" y="490" fill="#94a3b8" font-size="9" text-anchor="middle">single abstraction — all fetches flow through</text>
+        <text x="490" y="506" fill="#a78bfa" font-size="9" text-anchor="middle">prepend(NEXT_PUBLIC_API_BASE)</text>
+        <text x="490" y="524" fill="#94a3b8" font-size="8" text-anchor="middle">default "/api" → flip to "https://api.evanchang.com"</text>
+
+        <!-- Today destination: /api -->
+        <rect x="325" y="580" width="140" height="55" rx="6" fill="#0f172a"/>
+        <rect x="325" y="580" width="140" height="55" rx="6" fill="rgba(6, 78, 59, 0.4)" stroke="#34d399" stroke-width="1.5"/>
+        <text x="395" y="601" fill="white" font-size="11" font-weight="600" text-anchor="middle">/api/* (today)</text>
+        <text x="395" y="617" fill="#94a3b8" font-size="9" text-anchor="middle">same-origin Vercel</text>
+        <text x="395" y="629" fill="#34d399" font-size="7" text-anchor="middle">default path</text>
+
+        <!-- Analytics -->
+        <rect x="515" y="580" width="135" height="55" rx="6" fill="#0f172a"/>
+        <rect x="515" y="580" width="135" height="55" rx="6" fill="rgba(120, 53, 15, 0.3)" stroke="#fbbf24" stroke-width="1.5"/>
+        <text x="582" y="601" fill="white" font-size="11" font-weight="600" text-anchor="middle">Analytics</text>
+        <text x="582" y="617" fill="#94a3b8" font-size="8" text-anchor="middle">@vercel/analytics</text>
+        <text x="582" y="629" fill="#94a3b8" font-size="8" text-anchor="middle">speed-insights</text>
+
+        <!-- Cloudflare Workers (planned, slate dashed over backend color) -->
+        <rect x="720" y="210" width="220" height="80" rx="6" fill="#0f172a"/>
+        <rect x="720" y="210" width="220" height="80" rx="6" fill="rgba(6, 78, 59, 0.25)" stroke="#94a3b8" stroke-width="1.5" stroke-dasharray="5,4"/>
+        <text x="830" y="233" fill="white" font-size="11" font-weight="600" text-anchor="middle">Cloudflare Workers</text>
+        <text x="830" y="250" fill="#94a3b8" font-size="8" text-anchor="middle">api.evanchang.com</text>
+        <text x="830" y="264" fill="#94a3b8" font-size="8" text-anchor="middle">/register · /contact · /webhooks/*</text>
+        <text x="830" y="281" fill="#94a3b8" font-size="7" font-style="italic" text-anchor="middle">not scaffolded yet</text>
+
+        <!-- R2 (planned) -->
+        <rect x="720" y="350" width="100" height="60" rx="6" fill="#0f172a"/>
+        <rect x="720" y="350" width="100" height="60" rx="6" fill="rgba(76, 29, 149, 0.3)" stroke="#94a3b8" stroke-width="1.5" stroke-dasharray="5,4"/>
+        <text x="770" y="372" fill="white" font-size="11" font-weight="600" text-anchor="middle">R2</text>
+        <text x="770" y="388" fill="#94a3b8" font-size="8" text-anchor="middle">media uploads</text>
+        <text x="770" y="401" fill="#94a3b8" font-size="7" text-anchor="middle">zero egress</text>
+
+        <!-- Durable Objects (planned) -->
+        <rect x="840" y="350" width="110" height="110" rx="6" fill="#0f172a"/>
+        <rect x="840" y="350" width="110" height="110" rx="6" fill="rgba(76, 29, 149, 0.3)" stroke="#94a3b8" stroke-width="1.5" stroke-dasharray="5,4"/>
+        <text x="895" y="372" fill="white" font-size="10" font-weight="600" text-anchor="middle">Durable</text>
+        <text x="895" y="385" fill="white" font-size="10" font-weight="600" text-anchor="middle">Objects</text>
+        <text x="895" y="405" fill="#94a3b8" font-size="7" text-anchor="middle">WebSocket</text>
+        <text x="895" y="418" fill="#94a3b8" font-size="7" text-anchor="middle">long-lived</text>
+        <text x="895" y="431" fill="#94a3b8" font-size="7" text-anchor="middle">conn state</text>
+
+        <!-- Split-trigger box -->
+        <rect x="720" y="490" width="230" height="140" rx="6" fill="rgba(136, 19, 55, 0.15)" stroke="#fb7185" stroke-width="1" stroke-dasharray="4,4"/>
+        <text x="835" y="509" fill="#fb7185" font-size="9" font-weight="600" text-anchor="middle">Split trigger — move to Workers if:</text>
+        <text x="735" y="528" fill="#94a3b8" font-size="8">• peak ≥ 5,000 req/min</text>
+        <text x="735" y="546" fill="#94a3b8" font-size="8">• returns large media</text>
+        <text x="735" y="564" fill="#94a3b8" font-size="8">  (R2 egress free)</text>
+        <text x="735" y="582" fill="#94a3b8" font-size="8">• WebSocket / long-lived</text>
+        <text x="735" y="600" fill="#94a3b8" font-size="8">• Workers AI inference</text>
+        <text x="735" y="620" fill="#fb7185" font-size="7" font-style="italic">anything else stays on Vercel</text>
+
+        <!-- ============ LEGEND ============ -->
+        <text x="30" y="685" fill="white" font-size="10" font-weight="600">Legend</text>
+
+        <rect x="30" y="696" width="16" height="10" rx="2" fill="rgba(8, 51, 68, 0.4)" stroke="#22d3ee" stroke-width="1"/>
+        <text x="52" y="704" fill="#94a3b8" font-size="8">Frontend (Next.js)</text>
+
+        <rect x="170" y="696" width="16" height="10" rx="2" fill="rgba(6, 78, 59, 0.4)" stroke="#34d399" stroke-width="1"/>
+        <text x="192" y="704" fill="#94a3b8" font-size="8">Backend (API)</text>
+
+        <rect x="300" y="696" width="16" height="10" rx="2" fill="rgba(120, 53, 15, 0.3)" stroke="#fbbf24" stroke-width="1"/>
+        <text x="322" y="704" fill="#94a3b8" font-size="8">Cloud (Vercel / CF)</text>
+
+        <rect x="450" y="696" width="16" height="10" rx="2" fill="rgba(76, 29, 149, 0.4)" stroke="#a78bfa" stroke-width="1"/>
+        <text x="472" y="704" fill="#94a3b8" font-size="8">Abstraction / Storage</text>
+
+        <rect x="620" y="696" width="16" height="10" rx="2" fill="transparent" stroke="#94a3b8" stroke-width="1" stroke-dasharray="3,3"/>
+        <text x="642" y="704" fill="#94a3b8" font-size="8">Planned / dashed</text>
+
+        <rect x="770" y="696" width="16" height="10" rx="2" fill="transparent" stroke="#fb7185" stroke-width="1" stroke-dasharray="3,3"/>
+        <text x="792" y="704" fill="#94a3b8" font-size="8">Trigger boundary</text>
+
+        <text x="30" y="735" fill="#475569" font-size="8">Arrows: solid = live traffic · dashed = planned / future swap · violet = funnels through api-client.ts</text>
+      </svg>
+    </div>
+
+    <div class="cards">
+      <div class="card">
+        <div class="card-header">
+          <div class="card-dot amber"></div>
+          <h3>Main site (Vercel)</h3>
+        </div>
+        <ul>
+          <li>• Next.js 16 · App Router · RSC · ISR</li>
+          <li>• Turbopack build, Server Actions</li>
+          <li>• proxy.ts handles zh-TW / en i18n</li>
+          <li>• Light /api/* for contact + OG</li>
+          <li>• @vercel/analytics + speed-insights</li>
+        </ul>
+      </div>
+
+      <div class="card">
+        <div class="card-header">
+          <div class="card-dot violet"></div>
+          <h3>lib/api-client.ts — the hinge</h3>
+        </div>
+        <ul>
+          <li>• Every frontend fetch routes through it</li>
+          <li>• Prepends NEXT_PUBLIC_API_BASE</li>
+          <li>• Today: same-origin "/api"</li>
+          <li>• Tomorrow: "https://api.evanchang.com"</li>
+          <li>• Splitting backend = env change, no code change</li>
+        </ul>
+      </div>
+
+      <div class="card">
+        <div class="card-header">
+          <div class="card-dot slate"></div>
+          <h3>Burst APIs (Cloudflare — planned)</h3>
+        </div>
+        <ul>
+          <li>• Workers: /register, /contact, /webhooks/*</li>
+          <li>• R2 for media (zero egress cost)</li>
+          <li>• Durable Objects for WebSocket / state</li>
+          <li>• Split only when a trigger is hit</li>
+          <li>• No wrangler.toml yet — not scaffolded</li>
+        </ul>
+      </div>
+    </div>
+
+    <p class="footer">
+      personal-site · evanchang.com · Next.js 16 on Vercel · DNS on Cloudflare · generated 2026-04-15
+    </p>
+  </div>
+</body>
+</html>
