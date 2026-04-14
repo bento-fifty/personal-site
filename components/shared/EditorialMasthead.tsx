@@ -1,7 +1,7 @@
 'use client';
 
 import { usePathname } from 'next/navigation';
-import Link from 'next/link';
+import { TransitionLink as Link } from '@/components/shared/RouteTransition';
 import { useState, useEffect } from 'react';
 
 function useCursorCoords() {

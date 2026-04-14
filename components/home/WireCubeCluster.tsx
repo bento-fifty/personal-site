@@ -1,13 +1,14 @@
 'use client';
 
 import { useEffect, useRef, useState } from 'react';
+import { motion, useAnimation } from 'framer-motion';
 
 /**
- * WireCubeCluster — 3 wireframe cubes acting as identity HUD widgets.
+ * WireCubeCluster — 3 wireframe cubes, hover tooltip + click to fly away.
  *
- * Hover a cube → ice tooltip with its facet meaning.
- * Click a cube → enters drag mode (30s), user rotates cluster by drag; release
- * returns to auto-spin.
+ * Click a cube → it flies out of the viewport with a rotation, pauses offscreen,
+ * then flies back in from the opposite side and settles. Other cubes keep
+ * auto-spinning unaffected.
  */
 
 type CubeKey = 'issue' | 'roles' | 'location';
@@ -24,67 +25,15 @@ interface CubeFacet {
 }
 
 const FACETS: CubeFacet[] = [
-  {
-    key: 'issue',
-    size: 140,
-    x: 0,
-    y: 10,
-    duration: 22,
-    color: '#FAFAF8',
-    label: 'ISSUE',
-    value: 'N°003 · 2026',
-  },
-  {
-    key: 'roles',
-    size: 90,
-    x: 180,
-    y: 80,
-    duration: 16,
-    color: '#5DD3E3',
-    label: 'ROLES',
-    value: 'PRINCIPAL · PRODUCER · CONSULT',
-  },
-  {
-    key: 'location',
-    size: 60,
-    x: 120,
-    y: 160,
-    duration: 12,
-    color: '#E63E1F',
-    label: 'LOCATION',
-    value: 'TAIPEI · 25.03°N 121.57°E',
-  },
+  { key: 'issue',    size: 140, x: 0,   y: 10,  duration: 22, color: '#FAFAF8', label: 'ISSUE',    value: 'N°003 · 2026' },
+  { key: 'roles',    size: 90,  x: 180, y: 80,  duration: 16, color: '#5DD3E3', label: 'ROLES',    value: 'PRINCIPAL · PRODUCER · CONSULT' },
+  { key: 'location', size: 60,  x: 120, y: 160, duration: 12, color: '#E63E1F', label: 'LOCATION', value: 'TAIPEI · 25.03°N 121.57°E' },
 ];
 
-interface CubeRenderProps {
-  facet: CubeFacet;
-  paused: boolean;
-  onHover: (key: CubeKey | null) => void;
-  onClick: (e: React.MouseEvent) => void;
-}
-
-function WireCube({ facet, paused, onHover, onClick }: CubeRenderProps) {
-  const { size, x, y, duration, color } = facet;
+function CubeFaces({ size, color }: { size: number; color: string }) {
   const half = size / 2;
-
   return (
-    <div
-      onMouseEnter={() => onHover(facet.key)}
-      onMouseLeave={() => onHover(null)}
-      onMouseDown={onClick}
-      data-cursor={`⊡ ${facet.label}`}
-      data-cursor-variant="link"
-      className="absolute pointer-events-auto cursor-pointer"
-      style={{
-        width: size,
-        height: size,
-        left: x,
-        bottom: y,
-        transformStyle: 'preserve-3d',
-        animation: `cube-spin ${duration}s linear infinite`,
-        animationPlayState: paused ? 'paused' : 'running',
-      }}
-    >
+    <>
       {[
         { tf: `translateZ(${half}px)` },
         { tf: `translateZ(${-half}px) rotateY(180deg)` },
@@ -107,7 +56,98 @@ function WireCube({ facet, paused, onHover, onClick }: CubeRenderProps) {
           }}
         />
       ))}
-    </div>
+    </>
+  );
+}
+
+function WireCube({
+  facet,
+  onHover,
+}: {
+  facet: CubeFacet;
+  onHover: (k: CubeKey | null) => void;
+}) {
+  const { size, x, y, duration, color } = facet;
+  const [flying, setFlying] = useState(false);
+  const controls = useAnimation();
+
+  const launch = async () => {
+    if (flying) return;
+    setFlying(true);
+
+    // Random direction — pick a dominant quadrant so it reads as "flying out"
+    const dirX = Math.random() > 0.5 ? 1 : -1;
+    const dirY = Math.random() > 0.5 ? 1 : -1;
+    const dx = dirX * (600 + Math.random() * 300);
+    const dy = dirY * (400 + Math.random() * 200);
+    const rot = (Math.random() > 0.5 ? 1 : -1) * (540 + Math.random() * 360);
+
+    // Fly out
+    await controls.start({
+      x: dx,
+      y: dy,
+      rotate: rot,
+      scale: 0.5,
+      opacity: 0,
+      transition: { duration: 0.65, ease: [0.22, 1, 0.36, 1] },
+    });
+
+    // Pause offscreen
+    await new Promise((r) => setTimeout(r, 150));
+
+    // Snap to opposite side instantly
+    await controls.start({
+      x: -dx * 1.1,
+      y: -dy * 1.1,
+      rotate: rot + 180,
+      scale: 0.3,
+      opacity: 0,
+      transition: { duration: 0 },
+    });
+
+    // Fly back home
+    await controls.start({
+      x: 0,
+      y: 0,
+      rotate: 0,
+      scale: 1,
+      opacity: 1,
+      transition: { duration: 0.5, ease: [0.22, 1, 0.36, 1] },
+    });
+
+    setFlying(false);
+  };
+
+  return (
+    <motion.div
+      className="absolute pointer-events-auto cursor-pointer"
+      style={{
+        width: size,
+        height: size,
+        left: x,
+        bottom: y,
+      }}
+      initial={{ x: 0, y: 0, rotate: 0, scale: 1, opacity: 1 }}
+      animate={controls}
+      onMouseEnter={() => onHover(facet.key)}
+      onMouseLeave={() => onHover(null)}
+      onClick={launch}
+      data-cursor={flying ? '↗ WHEE' : `⊡ ${facet.label}`}
+      data-cursor-variant="link"
+    >
+      {/* Inner: CSS spin (unaffected by outer fly transform) */}
+      <div
+        style={{
+          width: size,
+          height: size,
+          transformStyle: 'preserve-3d',
+          animation: `cube-spin ${duration}s linear infinite`,
+          animationPlayState: flying ? 'paused' : 'running',
+        }}
+      >
+        <CubeFaces size={size} color={color} />
+      </div>
+    </motion.div>
   );
 }
 
@@ -115,24 +155,10 @@ export default function WireCubeCluster() {
   const ref = useRef<HTMLDivElement>(null);
   const [tilt, setTilt] = useState({ x: 0, y: 0 });
   const [hoverKey, setHoverKey] = useState<CubeKey | null>(null);
-  const [dragMode, setDragMode] = useState(false);
-  const dragStart = useRef<{ x: number; y: number; tx: number; ty: number } | null>(null);
-  const dragTimer = useRef<ReturnType<typeof setTimeout> | null>(null);
 
   useEffect(() => {
     function onMove(e: MouseEvent) {
       if (!ref.current) return;
-
-      if (dragMode && dragStart.current) {
-        const dx = (e.clientX - dragStart.current.x) / 4;
-        const dy = (e.clientY - dragStart.current.y) / 4;
-        setTilt({
-          x: Math.max(-45, Math.min(45, dragStart.current.tx - dy)),
-          y: Math.max(-60, Math.min(60, dragStart.current.ty + dx)),
-        });
-        return;
-      }
-
       const rect = ref.current.getBoundingClientRect();
       const cx = rect.left + rect.width / 2;
       const cy = rect.top + rect.height / 2;
@@ -143,25 +169,9 @@ export default function WireCubeCluster() {
         y: Math.max(-8, Math.min(8, dx * 16)),
       });
     }
-
-    function onUp() {
-      dragStart.current = null;
-    }
-
     window.addEventListener('mousemove', onMove);
-    window.addEventListener('mouseup', onUp);
-    return () => {
-      window.removeEventListener('mousemove', onMove);
-      window.removeEventListener('mouseup', onUp);
-    };
-  }, [dragMode]);
-
-  const onCubeClick = (e: React.MouseEvent) => {
-    setDragMode(true);
-    dragStart.current = { x: e.clientX, y: e.clientY, tx: tilt.x, ty: tilt.y };
-    if (dragTimer.current) clearTimeout(dragTimer.current);
-    dragTimer.current = setTimeout(() => setDragMode(false), 30_000);
-  };
+    return () => window.removeEventListener('mousemove', onMove);
+  }, []);
 
   const currentFacet = hoverKey ? FACETS.find((f) => f.key === hoverKey) : null;
 
@@ -184,21 +194,15 @@ export default function WireCubeCluster() {
           perspective: '900px',
           transformStyle: 'preserve-3d',
           transform: `rotateX(${tilt.x}deg) rotateY(${tilt.y}deg)`,
-          transition: dragMode ? 'none' : 'transform 300ms ease-out',
+          transition: 'transform 300ms ease-out',
         }}
       >
         {FACETS.map((f) => (
-          <WireCube
-            key={f.key}
-            facet={f}
-            paused={dragMode}
-            onHover={(k) => setHoverKey(k)}
-            onClick={onCubeClick}
-          />
+          <WireCube key={f.key} facet={f} onHover={setHoverKey} />
         ))}
       </div>
 
-      {/* Tooltip + drag-mode status */}
+      {/* Tooltip */}
       <div
         aria-live="polite"
         className="hidden lg:block fixed pointer-events-none z-[3]"
@@ -210,17 +214,12 @@ export default function WireCubeCluster() {
           letterSpacing: '0.28em',
           textTransform: 'uppercase',
           color: 'rgba(250,250,248,0.6)',
-          opacity: currentFacet || dragMode ? 1 : 0,
+          opacity: currentFacet ? 1 : 0,
           transition: 'opacity 200ms ease-out',
           textAlign: 'right',
           maxWidth: 260,
         }}
       >
-        {dragMode && (
-          <div style={{ color: '#5DD3E3', marginBottom: 6 }}>
-            ▸ DRAG MODE · RELEASE TO RESUME
-          </div>
-        )}
         {currentFacet && (
           <div>
             <span style={{ color: '#5DD3E3' }}>[ {currentFacet.label} ]</span>{' '}

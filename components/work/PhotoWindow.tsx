@@ -1,7 +1,7 @@
 'use client';
 
 import { useEffect, useRef, useState } from 'react';
-import Link from 'next/link';
+import { TransitionLink as Link } from '@/components/shared/RouteTransition';
 import { motion, AnimatePresence } from 'framer-motion';
 import { Case, CasePhoto } from '@/lib/work-data';
 

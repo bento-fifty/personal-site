@@ -12,6 +12,8 @@ import {
 } from 'react';
 import { useRouter, usePathname } from 'next/navigation';
 import { motion, AnimatePresence } from 'framer-motion';
+import NextLink from 'next/link';
+import type { ComponentProps } from 'react';
 
 /**
  * RouteTransition — grid-cell overlay for internal route changes.
@@ -55,6 +57,41 @@ interface Ctx {
 }
 const RouteTransitionCtx = createContext<Ctx>({ navigate: () => {}, active: false });
 export const useRouteTransition = () => useContext(RouteTransitionCtx);
+
+/**
+ * TransitionLink — drop-in <Link> replacement that runs through RouteTransition.
+ *
+ * Why: document-level click interception races <Link>'s React-delegated onClick
+ * in some scenarios. Explicit onClick preventDefault + navigate() removes the
+ * race entirely. Use this wherever you want a grid transition.
+ */
+export function TransitionLink(
+  props: ComponentProps<typeof NextLink>,
+) {
+  const { navigate } = useRouteTransition();
+  const { href, onClick, ...rest } = props;
+  return (
+    <NextLink
+      href={href}
+      {...rest}
+      onClick={(e) => {
+        if (onClick) onClick(e);
+        if (e.defaultPrevented) return;
+        if (e.metaKey || e.ctrlKey || e.shiftKey || e.altKey) return;
+        const hrefStr = typeof href === 'string' ? href : null;
+        if (!hrefStr) return;
+        if (
+          hrefStr.startsWith('#') ||
+          hrefStr.startsWith('mailto:') ||
+          hrefStr.startsWith('tel:') ||
+          /^https?:\/\//i.test(hrefStr)
+        ) return;
+        e.preventDefault();
+        navigate(hrefStr);
+      }}
+    />
+  );
+}
 
 export default function RouteTransition({ children }: { children: ReactNode }) {
   const router = useRouter();

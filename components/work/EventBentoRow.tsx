@@ -3,7 +3,7 @@
 import { Case } from '@/lib/work-data';
 import PhotoCluster from './PhotoCluster';
 import GridRevealRow from '@/components/shared/GridRevealRow';
-import Link from 'next/link';
+import { TransitionLink as Link } from '@/components/shared/RouteTransition';
 
 interface Props {
   caseItem: Case;

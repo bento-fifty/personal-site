@@ -1,7 +1,7 @@
 'use client';
 
 import { useEffect, useRef } from 'react';
-import Link from 'next/link';
+import { TransitionLink as Link } from '@/components/shared/RouteTransition';
 import { motion, AnimatePresence } from 'framer-motion';
 import { Case } from '@/lib/work-data';
 import PhotoCluster from './PhotoCluster';
