@@ -176,19 +176,19 @@ function buildSplats(
 ): Splat[] {
   const origin = originFor(scn, clickPos, W, H);
   const origins = origin.origins ?? [{ x: origin.x, y: origin.y }];
-  // Restrained: grid does the covering, splats are accents
-  const perOrigin = origins.length > 1 ? 1 : 4;
+  // Splats are the hero — grid is a sparse dappled backing
+  const perOrigin = origins.length > 1 ? 3 : 9;
   const splats: Splat[] = [];
   let keyIdx = 0;
 
   origins.forEach((o, oi) => {
     for (let i = 0; i < perOrigin; i++) {
-      const angle = (i / perOrigin) * Math.PI * 2 + Math.random() * 0.9;
-      const dist = i === 0 && oi === 0 ? 0 : 80 + Math.random() * 160;
+      const angle = (i / perOrigin) * Math.PI * 2 + Math.random() * 1.3;
+      const dist = i === 0 && oi === 0 ? 0 : 120 + Math.random() * 360;
       const x = o.x + Math.cos(angle) * dist;
       const y = o.y + Math.sin(angle) * dist;
       const main = i === 0 && oi === 0;
-      const size = main ? 280 : 140 + Math.random() * 140;
+      const size = main ? 440 : 220 + Math.random() * 260;
       splats.push({
         key: keyIdx++,
         x,
@@ -228,6 +228,13 @@ export default function RouteTransition({ children }: { children: ReactNode }) {
     }
     return arr;
   }, []);
+
+  // Sparse grid: only ~55% of cells ever fill. The rest stay transparent
+  // so the page underneath shows through — dappled backing, not blanket cover.
+  const activeCells = useMemo(() => {
+    const fillCount = Math.round(CELL_COUNT * 0.55);
+    return new Set(cellOrder.slice(0, fillCount));
+  }, [cellOrder]);
 
   const clearTimers = () => {
     timersRef.current.forEach(clearTimeout);
@@ -346,20 +353,23 @@ export default function RouteTransition({ children }: { children: ReactNode }) {
               gridTemplateRows: `repeat(${ROWS}, 1fr)`,
             }}
           >
-            {Array.from({ length: CELL_COUNT }).map((_, i) => (
-              <div
-                key={i}
-                style={{
-                  background: GRID_COLOR,
-                  opacity: subphase === 'bloom' ? 1 : 0,
-                  transition: `opacity 90ms cubic-bezier(0.7,0,0.3,1) ${
-                    subphase === 'bloom'
-                      ? cellOrder.indexOf(i) * T.gridStag + 40
-                      : Math.random() * 180
-                  }ms`,
-                }}
-              />
-            ))}
+            {Array.from({ length: CELL_COUNT }).map((_, i) => {
+              const isActive = activeCells.has(i);
+              return (
+                <div
+                  key={i}
+                  style={{
+                    background: GRID_COLOR,
+                    opacity: isActive && subphase === 'bloom' ? 1 : 0,
+                    transition: `opacity 90ms cubic-bezier(0.7,0,0.3,1) ${
+                      subphase === 'bloom'
+                        ? cellOrder.indexOf(i) * T.gridStag + 40
+                        : Math.random() * 180
+                    }ms`,
+                  }}
+                />
+              );
+            })}
           </div>
 
           {/* SPLATTER (middle layer) */}
