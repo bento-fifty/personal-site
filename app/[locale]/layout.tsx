@@ -7,6 +7,7 @@ import {Geist, Fraunces, Noto_Serif_TC, Noto_Sans_TC} from 'next/font/google';
 import localFont from 'next/font/local';
 import EditorialMasthead from '@/components/shared/EditorialMasthead';
 import EditorialFooter from '@/components/layout/EditorialFooter';
+import CursorChip from '@/components/shared/CursorChip';
 import { Analytics } from '@vercel/analytics/next';
 import { SpeedInsights } from '@vercel/speed-insights/next';
 import '../globals.css';
@@ -89,6 +90,7 @@ export default async function LocaleLayout({
             {children}
           </main>
           <EditorialFooter />
+          <CursorChip />
         </NextIntlClientProvider>
         <Analytics />
         <SpeedInsights />

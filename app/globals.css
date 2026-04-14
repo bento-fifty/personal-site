@@ -10,10 +10,14 @@
 
 /* ── Design Tokens · v7 color-block palette (ink / paper / flame / ice) ─── */
 :root {
-  /* ── Core 4-color lock ── */
+  /* ── Core 4-color lock + tonal subscales (v8) ── */
   --ink: #0A0A0C;
+  --ink-deep: #060608;
   --paper: #FAFAF8;
+  --paper-cream: #F0EDE6;
   --flame: #E63E1F;
+  --flame-deep: #B8321C;
+  --flame-light: #FF6B47;
   --ice: #5DD3E3;
 
   /* ── Section surfaces (legacy aliases, map to core palette) ── */
