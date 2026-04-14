@@ -26,7 +26,7 @@ export default function EventBentoRow({ caseItem: c, locale, expanded, onToggle 
               fontFamily: 'var(--font-mono), monospace',
               fontSize: 11,
               letterSpacing: '0.3em',
-              color: '#E63E1F',
+              color: '#5DD3E3',
               marginBottom: 12,
             }}
           >
@@ -96,13 +96,13 @@ export default function EventBentoRow({ caseItem: c, locale, expanded, onToggle 
               type="button"
               onClick={onToggle}
               data-cursor={expanded ? '× CLOSE' : `⊡ PEEK · ${c.id}`}
-              data-cursor-variant="action"
+              data-cursor-variant="link"
               style={{
                 fontFamily: 'var(--font-mono), monospace',
                 fontSize: 10,
                 letterSpacing: '0.28em',
-                color: '#FAFAF8',
-                border: '1px solid rgba(250,250,248,0.4)',
+                color: '#5DD3E3',
+                border: '1px solid #5DD3E3',
                 padding: '8px 12px',
                 background: 'transparent',
                 cursor: 'pointer',
@@ -110,15 +110,13 @@ export default function EventBentoRow({ caseItem: c, locale, expanded, onToggle 
               }}
               aria-expanded={expanded}
               onMouseEnter={(e) => {
-                e.currentTarget.style.background = '#FAFAF8';
+                e.currentTarget.style.background = '#5DD3E3';
                 e.currentTarget.style.color = '#0A0A0C';
-                e.currentTarget.style.borderColor = '#FAFAF8';
                 e.currentTarget.style.transform = 'translateY(-4px)';
               }}
               onMouseLeave={(e) => {
                 e.currentTarget.style.background = 'transparent';
-                e.currentTarget.style.color = '#FAFAF8';
-                e.currentTarget.style.borderColor = 'rgba(250,250,248,0.4)';
+                e.currentTarget.style.color = '#5DD3E3';
                 e.currentTarget.style.transform = 'translateY(0)';
               }}
             >

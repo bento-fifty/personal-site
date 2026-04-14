@@ -52,44 +52,47 @@ function HookContent({ mounted, igniting }: { mounted: boolean; igniting: boolea
         style={{ background: 'radial-gradient(ellipse 55% 55% at 50% 50%, transparent 0%, rgba(0,0,0,0.6) 100%)' }}
       />
 
-      {/* 等級 + THE LEVEL — bilingual outline, side by side */}
+      {/* 等級 outline (flame) + THE LEVEL solid (ice) — contrast composition */}
       <motion.div
-        className="absolute inset-0 flex items-center justify-center pointer-events-none gap-[clamp(24px,5vw,96px)] px-[5vw]"
+        className="absolute inset-0 flex items-end justify-center pointer-events-none px-[5vw] pb-[22vh]"
         initial={{ opacity: 0, scale: 0.92 }}
         animate={{ opacity: mounted ? 1 : 0, scale: mounted ? 1 : 0.92 }}
         transition={{ duration: 1.5, ease: [0.22, 1, 0.36, 1] }}
       >
-        <h1
-          aria-label="等級 · THE LEVEL"
-          style={{
-            fontFamily: 'var(--font-noto-serif-tc), serif',
-            fontSize: 'clamp(92px, 22vw, 320px)',
-            fontWeight: 700,
-            color: igniting ? '#E63E1F' : 'transparent',
-            WebkitTextStroke: '2px #E63E1F',
-            lineHeight: 0.9,
-            letterSpacing: '-0.03em',
-            margin: 0,
-            transition: 'color 150ms ease-out',
-          }}
-        >
-          等級
-        </h1>
-        <div
-          aria-hidden
-          style={{
-            fontFamily: 'var(--font-display), serif',
-            fontVariationSettings: '"opsz" 144, "wght" 900',
-            fontSize: 'clamp(64px, 16vw, 220px)',
-            color: igniting ? '#E63E1F' : 'transparent',
-            WebkitTextStroke: '2px #E63E1F',
-            lineHeight: 0.86,
-            letterSpacing: '-0.04em',
-            transition: 'color 150ms ease-out',
-          }}
-        >
-          <div>THE</div>
-          <div>LEVEL</div>
+        <div className="relative flex items-end gap-[clamp(16px,4vw,80px)]">
+          {/* 等級 — flame outline */}
+          <h1
+            aria-label="等級 · THE LEVEL"
+            style={{
+              fontFamily: 'var(--font-noto-serif-tc), serif',
+              fontSize: 'clamp(100px, 24vw, 360px)',
+              fontWeight: 700,
+              color: 'transparent',
+              WebkitTextStroke: '2.5px #E63E1F',
+              lineHeight: 0.86,
+              letterSpacing: '-0.03em',
+              margin: 0,
+            }}
+          >
+            等級
+          </h1>
+          {/* THE / LEVEL — ice solid, vertically offset for creative baseline */}
+          <div
+            aria-hidden
+            style={{
+              fontFamily: 'var(--font-display), serif',
+              fontVariationSettings: '"opsz" 144, "wght" 900',
+              fontSize: 'clamp(72px, 18vw, 260px)',
+              color: igniting ? '#0A0A0C' : '#5DD3E3',
+              lineHeight: 0.82,
+              letterSpacing: '-0.04em',
+              marginBottom: 'clamp(8px, 2vh, 24px)',
+              transition: 'color 150ms ease-out',
+            }}
+          >
+            <div>THE</div>
+            <div>LEVEL</div>
+          </div>
         </div>
       </motion.div>
 

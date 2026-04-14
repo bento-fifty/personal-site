@@ -89,20 +89,27 @@ export default function EditorialMasthead() {
           transition: 'background 200ms ease-out, backdrop-filter 200ms ease-out',
         }}
       >
-        <div className="h-full flex items-center justify-between px-5 md:px-8 gap-6">
+        <div
+          className="h-full items-center px-5 md:px-8"
+          style={{
+            display: 'grid',
+            gridTemplateColumns: 'minmax(0, 1fr) auto minmax(0, 1fr)',
+            gap: 24,
+          }}
+        >
           {/* Left */}
           <Link
             href={`${localePrefix}/`}
             data-cursor="▸ HOME"
             data-cursor-variant="link"
-            className="font-mono text-[10px] tracking-[0.22em] text-[#FAFAF8] hover:text-[#E63E1F] transition-colors shrink-0"
+            className="font-mono text-[10px] tracking-[0.22em] text-[#FAFAF8] hover:text-[#E63E1F] transition-colors justify-self-start"
             style={{ fontFamily: 'var(--font-mono), monospace', textTransform: 'uppercase' }}
           >
             THE LEVEL STUDIO
           </Link>
 
           {/* Center: inline nav (desktop) */}
-          <nav className="hidden md:flex items-center gap-6 flex-1 justify-center">
+          <nav className="hidden md:flex items-center gap-6 justify-self-center">
             {NAV.map((item) => {
               const active = isActiveRoute(item.href);
               return (
@@ -115,7 +122,7 @@ export default function EditorialMasthead() {
                   style={{
                     fontFamily: 'var(--font-mono), monospace',
                     textTransform: 'uppercase',
-                    color: active ? '#FAFAF8' : 'rgba(250,250,248,0.5)',
+                    color: active ? '#5DD3E3' : 'rgba(250,250,248,0.5)',
                     borderBottom: active ? '1px solid #5DD3E3' : '1px solid transparent',
                     paddingBottom: 2,
                   }}
@@ -125,20 +132,20 @@ export default function EditorialMasthead() {
               );
             })}
           </nav>
+          <span
+            className="md:hidden font-mono text-[10px] tracking-[0.22em] text-[rgba(250,250,248,0.55)] justify-self-center"
+            style={{ fontFamily: 'var(--font-mono), monospace', textTransform: 'uppercase' }}
+          >
+            {context}
+          </span>
 
           {/* Right */}
-          <div className="flex items-center gap-4 shrink-0">
+          <div className="flex items-center gap-4 justify-self-end">
             <span
               className="hidden lg:inline font-mono text-[9px] tracking-[0.22em] text-[rgba(250,250,248,0.3)]"
               style={{ fontFamily: 'var(--font-mono), monospace' }}
             >
               REF. {ref} · {now} · TPE
-            </span>
-            <span
-              className="md:hidden font-mono text-[10px] tracking-[0.22em] text-[rgba(250,250,248,0.55)]"
-              style={{ fontFamily: 'var(--font-mono), monospace', textTransform: 'uppercase' }}
-            >
-              {context}
             </span>
             <button
               type="button"

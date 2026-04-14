@@ -30,21 +30,32 @@ export default function IssueCover({ locale }: Props) {
       style={{ height: 'calc(100dvh - 44px)', background: '#0A0A0C' }}
       aria-label="Issue Cover"
     >
-      {/* Perspective grid background — Ichiki-lite wireframe floor */}
+      {/* Perspective grid — Ichiki-style wireframe floor (stronger than before) */}
       <div
         aria-hidden
         className="hidden md:block absolute inset-x-0 bottom-0 pointer-events-none"
         style={{
-          height: '55%',
+          height: '65%',
           backgroundImage: `
-            linear-gradient(rgba(250,250,248,0.06) 1px, transparent 1px),
-            linear-gradient(90deg, rgba(250,250,248,0.06) 1px, transparent 1px)
+            linear-gradient(rgba(93,211,227,0.22) 1px, transparent 1px),
+            linear-gradient(90deg, rgba(93,211,227,0.22) 1px, transparent 1px)
           `,
-          backgroundSize: '60px 60px',
-          transform: 'perspective(600px) rotateX(62deg)',
+          backgroundSize: '48px 48px',
+          transform: 'perspective(520px) rotateX(64deg)',
           transformOrigin: 'bottom center',
-          maskImage: 'linear-gradient(to top, black 0%, transparent 90%)',
-          WebkitMaskImage: 'linear-gradient(to top, black 0%, transparent 90%)',
+          maskImage: 'linear-gradient(to top, black 15%, transparent 95%)',
+          WebkitMaskImage: 'linear-gradient(to top, black 15%, transparent 95%)',
+          zIndex: 0,
+        }}
+      />
+      {/* Thin horizon line at wireframe origin */}
+      <div
+        aria-hidden
+        className="hidden md:block absolute inset-x-0 pointer-events-none"
+        style={{
+          bottom: '35%',
+          height: 1,
+          background: 'rgba(93,211,227,0.3)',
           zIndex: 0,
         }}
       />
@@ -106,49 +117,6 @@ export default function IssueCover({ locale }: Props) {
         ))}
       </div>
 
-      {/* Tagline — desktop right, mobile top */}
-      <motion.p
-        className="absolute hidden md:block"
-        initial={{ opacity: 0, y: 8 }}
-        animate={{ opacity: 1, y: 0 }}
-        transition={{ duration: 0.8, ease: 'easeOut', delay: 0.9 }}
-        style={{
-          right: 40,
-          bottom: 'clamp(120px, 18vh, 200px)',
-          fontFamily: 'var(--font-display), serif',
-          fontVariationSettings: '"opsz" 18, "wght" 400',
-          fontSize: 'clamp(15px, 1.2vw, 20px)',
-          fontStyle: 'italic',
-          color: 'rgba(250,250,248,0.75)',
-          maxWidth: 320,
-          textAlign: 'right',
-          lineHeight: 1.35,
-        }}
-      >
-        {TAGLINES[locale]}
-      </motion.p>
-
-      {/* Tagline on mobile — top right under meta */}
-      <motion.p
-        className="absolute md:hidden"
-        initial={{ opacity: 0, y: 8 }}
-        animate={{ opacity: 1, y: 0 }}
-        transition={{ duration: 0.8, ease: 'easeOut', delay: 0.9 }}
-        style={{
-          top: 120,
-          right: 20,
-          left: 20,
-          fontFamily: 'var(--font-display), serif',
-          fontVariationSettings: '"opsz" 18, "wght" 400',
-          fontSize: 18,
-          fontStyle: 'italic',
-          color: 'rgba(250,250,248,0.75)',
-          textAlign: 'right',
-          lineHeight: 1.35,
-        }}
-      >
-        {TAGLINES[locale]}
-      </motion.p>
 
       {/* Bottom-left CTA — single anchor for action */}
       <motion.div
