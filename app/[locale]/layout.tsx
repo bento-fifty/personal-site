@@ -3,11 +3,10 @@ import {NextIntlClientProvider, hasLocale} from 'next-intl';
 import {notFound} from 'next/navigation';
 import {routing} from '@/i18n/routing';
 import {getMessages} from 'next-intl/server';
-import {Geist, Playfair_Display, Noto_Serif_TC, Noto_Sans_TC} from 'next/font/google';
+import {Geist, Fraunces, Noto_Serif_TC, Noto_Sans_TC} from 'next/font/google';
 import localFont from 'next/font/local';
-import Nav from '@/components/layout/Nav';
-import Footer from '@/components/layout/Footer';
-import { NavThemeProvider } from '@/contexts/NavThemeContext';
+import EditorialMasthead from '@/components/shared/EditorialMasthead';
+import EditorialFooter from '@/components/layout/EditorialFooter';
 import { Analytics } from '@vercel/analytics/next';
 import { SpeedInsights } from '@vercel/speed-insights/next';
 import '../globals.css';
@@ -18,10 +17,10 @@ const geist = Geist({
   display: 'swap',
 });
 
-const playfairDisplay = Playfair_Display({
-  variable: '--font-playfair',
+const fraunces = Fraunces({
+  variable: '--font-fraunces',
   subsets: ['latin'],
-  weight: ['400', '500', '600', '700'],
+  axes: ['opsz', 'SOFT', 'WONK'],
   display: 'swap',
 });
 
@@ -81,17 +80,15 @@ export default async function LocaleLayout({
   return (
     <html
       lang={locale}
-      className={`${geist.variable} ${playfairDisplay.variable} ${departureMono.variable} ${notoSerifTC.variable} ${notoSansTC.variable} h-full antialiased`}
+      className={`${geist.variable} ${fraunces.variable} ${departureMono.variable} ${notoSerifTC.variable} ${notoSansTC.variable} h-full antialiased`}
     >
-      <body className="min-h-full flex flex-col">
+      <body className="min-h-full flex flex-col" style={{ background: '#0A0A0C', color: '#FAFAF8' }}>
         <NextIntlClientProvider messages={messages}>
-          <NavThemeProvider>
-            <Nav />
-            <main className="flex-1 pt-14">
-              {children}
-            </main>
-            <Footer />
-          </NavThemeProvider>
+          <EditorialMasthead />
+          <main className="flex-1 pt-8">
+            {children}
+          </main>
+          <EditorialFooter />
         </NextIntlClientProvider>
         <Analytics />
         <SpeedInsights />

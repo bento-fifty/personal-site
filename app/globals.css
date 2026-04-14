@@ -45,7 +45,8 @@
   --border-dark-medium: rgba(255, 255, 255, 0.12);
 
   /* ── Font assignments ── */
-  --font-heading: var(--font-playfair);
+  --font-heading: var(--font-fraunces);
+  --font-display: var(--font-fraunces);
   --font-body: var(--font-geist);
   --font-mono: var(--font-departure-mono);
   --font-cjk-display: var(--font-noto-serif-tc), "Chiron Sung HK WS";
@@ -83,23 +84,46 @@ html {
 
 body {
   font-family: var(--font-body), var(--font-cjk-sans), sans-serif;
-  background: var(--bg-space);
-  color: var(--text-primary);
+  background: var(--ink);
+  color: var(--paper);
   -webkit-font-smoothing: antialiased;
   position: relative;
 }
 
-/* ── Full-page star dust texture ── */
-body::before {
-  content: '';
-  position: fixed;
-  inset: 0;
-  z-index: 0;
-  pointer-events: none;
-  opacity: 0.4;
-  background-image: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='300' height='300'%3E%3Cdefs%3E%3Cfilter id='s'%3E%3CfeTurbulence type='fractalNoise' baseFrequency='1.2' numOctaves='2' seed='42' stitchTiles='stitch'/%3E%3CfeComponentTransfer%3E%3CfeFuncA type='discrete' tableValues='0 0 0 0 0 0 1'/%3E%3C/feComponentTransfer%3E%3C/filter%3E%3C/defs%3E%3Crect width='300' height='300' filter='url(%23s)' opacity='0.3'/%3E%3C/svg%3E");
-  background-size: 300px 300px;
-  background-repeat: repeat;
+/* ── v8 Editorial: Fraunces display utility classes ── */
+.font-display {
+  font-family: var(--font-display), var(--font-cjk-display), serif;
+  font-feature-settings: "ss01", "ss02";
+  -webkit-font-smoothing: antialiased;
+}
+
+.font-display-xl {
+  font-family: var(--font-display), serif;
+  font-variation-settings: "opsz" 144, "wght" 900, "SOFT" 0, "WONK" 0;
+  font-weight: 900;
+  letter-spacing: -0.04em;
+  line-height: 0.85;
+}
+
+.font-display-lg {
+  font-family: var(--font-display), serif;
+  font-variation-settings: "opsz" 72, "wght" 700;
+  font-weight: 700;
+  letter-spacing: -0.025em;
+  line-height: 1;
+}
+
+.font-display-md {
+  font-family: var(--font-display), serif;
+  font-variation-settings: "opsz" 36, "wght" 500;
+  font-weight: 500;
+  letter-spacing: -0.015em;
+}
+
+.font-display-sm {
+  font-family: var(--font-display), serif;
+  font-variation-settings: "opsz" 14, "wght" 400;
+  font-weight: 400;
 }
 
 
