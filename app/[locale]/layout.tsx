@@ -9,6 +9,7 @@ import EditorialMasthead from '@/components/shared/EditorialMasthead';
 import EditorialFooter from '@/components/layout/EditorialFooter';
 import CursorChip from '@/components/shared/CursorChip';
 import RouteTransition from '@/components/shared/RouteTransition';
+import GlobalAmbientBg from '@/components/shared/GlobalAmbientBg';
 import { Analytics } from '@vercel/analytics/next';
 import { SpeedInsights } from '@vercel/speed-insights/next';
 import '../globals.css';
@@ -86,6 +87,7 @@ export default async function LocaleLayout({
     >
       <body className="min-h-full flex flex-col" style={{ background: '#0B1026', color: '#FAFAF8' }}>
         <NextIntlClientProvider messages={messages}>
+          <GlobalAmbientBg />
           <RouteTransition>
             <EditorialMasthead />
             <main className="flex-1 pt-11">

@@ -3,7 +3,6 @@
 import { useState, useCallback } from 'react';
 import HookScreen from './HookScreen';
 import IssueCover from './IssueCover';
-
 interface Props {
   locale: 'zh-TW' | 'en-US';
 }
