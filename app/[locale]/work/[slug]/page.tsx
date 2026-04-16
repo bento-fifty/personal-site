@@ -30,60 +30,70 @@ export default async function CaseStudyPage({
   const c = getCaseBySlug(slug);
   if (!c) notFound();
 
-  const zh    = locale === 'zh-TW';
+  const zh = locale === 'zh-TW';
   const title = zh ? c.title : c.titleEn;
-  const pick  = (field?: LocalizedText) => (field ? (zh ? field.zh : field.en) : null);
+  const pick = (field?: LocalizedText) => (field ? (zh ? field.zh : field.en) : null);
   const pending = zh ? '[ 案例內容持續更新中 ]' : '[ Case copy coming soon ]';
 
   const sections = [
     {
-      num:     '01',
-      label:   'OBJECTIVE',
+      num: '01',
+      label: 'OBJECTIVE',
       heading: zh ? '客戶要解決什麼？' : 'What we set out to solve.',
-      body:    pick(c.objective),
+      body: pick(c.objective),
     },
     {
-      num:     '02',
-      label:   'STRATEGY',
+      num: '02',
+      label: 'STRATEGY',
       heading: zh ? '我們怎麼切進來？' : 'How we approached it.',
-      body:    pick(c.strategy),
+      body: pick(c.strategy),
     },
     {
-      num:     '03',
-      label:   'EXECUTION',
+      num: '03',
+      label: 'EXECUTION',
       heading: zh ? '現場怎麼跑起來？' : 'How it came to life.',
-      body:    pick(c.execution),
+      body: pick(c.execution),
     },
   ];
 
   return (
-    <article className="theme-light min-h-screen">
-      {/* ── Hero cover ──────────────────────────────── */}
+    <article className="min-h-screen text-[#F0EDE6]">
+      {/* ── Hero cover — transparent so ambient INK POOL shows ───── */}
       <div
-        className="relative w-full bg-[#1A1A1A] flex items-end overflow-hidden"
+        className="relative w-full flex items-end overflow-hidden"
         style={{ minHeight: '55vh' }}
       >
         <div className="absolute inset-0 flex items-center justify-center">
-          <span className="font-label text-white/10 text-xs">COVER_IMAGE</span>
+          <span
+            className="font-mono text-[10px] tracking-[0.3em] text-[#F0EDE6]/15"
+            style={{ fontFamily: 'var(--font-mono), monospace' }}
+          >
+            COVER_IMAGE
+          </span>
         </div>
         <div className="relative z-10 w-full max-w-5xl mx-auto px-6 md:px-10 pb-12 pt-32 flex items-end justify-between">
           <div className="max-w-3xl">
-            <span className="case-number block mb-4">
+            <span
+              className="block mb-5 font-mono text-[10px] tracking-[0.3em] text-[#5DD3E3]"
+              style={{ fontFamily: 'var(--font-mono), monospace' }}
+            >
               {c.id} / [ {c.type} ]
             </span>
             <h1
-              className="text-white text-4xl md:text-6xl leading-[1.05]"
+              className="text-[#F0EDE6] text-4xl md:text-6xl lg:text-7xl leading-[1.02]"
               style={{
-                fontFamily:          'var(--font-geist), "Chiron Sung HK WS", sans-serif',
-                fontWeight:          500,
-                letterSpacing:       '-0.015em',
-                WebkitFontSmoothing: 'antialiased',
+                fontFamily: 'var(--font-fraunces), "Noto Serif TC", serif',
+                fontWeight: 500,
+                letterSpacing: '-0.02em',
               }}
             >
               {title}
             </h1>
           </div>
-          <span className="hidden md:block font-label text-white/30 text-[0.625rem] self-end">
+          <span
+            className="hidden md:block font-mono text-[10px] tracking-[0.28em] text-[#F0EDE6]/35 self-end"
+            style={{ fontFamily: 'var(--font-mono), monospace' }}
+          >
             {c.date}
           </span>
         </div>
@@ -91,8 +101,11 @@ export default async function CaseStudyPage({
 
       <div className="max-w-5xl mx-auto px-6 md:px-10">
         {/* ── Client + back link ──────────────────────── */}
-        <div className="flex items-center justify-between py-8 border-b border-[rgba(0,0,0,0.07)]">
-          <p className="font-label text-[#1A1A1A]/50 text-[0.625rem] tracking-[0.2em] uppercase">
+        <div className="flex items-center justify-between py-8 border-b border-[rgba(93,211,227,0.15)]">
+          <p
+            className="font-mono text-[10px] tracking-[0.28em] uppercase text-[#5DD3E3]/70"
+            style={{ fontFamily: 'var(--font-mono), monospace' }}
+          >
             CLIENT / {c.client}
           </p>
           <Link
@@ -105,7 +118,7 @@ export default async function CaseStudyPage({
           </Link>
         </div>
 
-        {/* ── OSER: Objective → Strategy → Execution ──── */}
+        {/* ── OSER ────────────────────────────────────── */}
         <div className="py-20 md:py-28 space-y-20 md:space-y-28">
           {sections.map((s) => (
             <OSERSection
@@ -118,7 +131,7 @@ export default async function CaseStudyPage({
             />
           ))}
 
-          {/* ── Result — stats live inside this section ── */}
+          {/* ── Result + stats ─────────────────────────── */}
           <OSERSection
             num="04"
             label="RESULT"
@@ -127,21 +140,27 @@ export default async function CaseStudyPage({
             isPending={!c.result}
           >
             {c.stats.length > 0 && (
-              <div className="grid grid-cols-1 md:grid-cols-3 gap-px bg-[rgba(0,0,0,0.06)] mt-12">
+              <div className="grid grid-cols-1 md:grid-cols-3 gap-px bg-[rgba(93,211,227,0.12)] mt-14">
                 {c.stats.map((stat) => (
-                  <div key={stat.label} className="bg-[#F7F5F2] px-8 py-12 text-center">
+                  <div
+                    key={stat.label}
+                    className="px-8 py-14 text-center"
+                    style={{ background: 'rgba(11, 16, 38, 0.5)' }}
+                  >
                     <p
-                      className="text-[#1A1A1A] text-[44px] md:text-[66px] lg:text-[77px] leading-none mb-4 tabular-nums"
+                      className="text-[#E63E1F] text-[52px] md:text-[72px] lg:text-[88px] leading-none mb-5 tabular-nums"
                       style={{
-                        fontFamily:          'var(--font-geist), "Chiron Sung HK WS", sans-serif',
-                        fontWeight:          500,
-                        letterSpacing:       '-0.02em',
-                        WebkitFontSmoothing: 'antialiased',
+                        fontFamily: 'var(--font-fraunces), serif',
+                        fontWeight: 500,
+                        letterSpacing: '-0.03em',
                       }}
                     >
                       {stat.value}
                     </p>
-                    <p className="font-label text-[#1A1A1A]/40 text-[0.625rem] tracking-[0.25em] uppercase">
+                    <p
+                      className="font-mono text-[10px] tracking-[0.28em] uppercase text-[#5DD3E3]/70"
+                      style={{ fontFamily: 'var(--font-mono), monospace' }}
+                    >
                       {zh ? stat.label : stat.labelEn}
                     </p>
                   </div>
@@ -151,13 +170,19 @@ export default async function CaseStudyPage({
           </OSERSection>
         </div>
 
-        {/* ── Highlight reel (optional) ───────────────── */}
+        {/* ── Highlight reel ───────────────────────────── */}
         {c.videoUrl && (
           <div className="mb-16">
-            <p className="font-label text-[#1A1A1A]/25 text-[0.625rem] mb-6 tracking-[0.2em]">
-              {'// HIGHLIGHT_REEL'}
+            <p
+              className="font-mono text-[10px] mb-6 tracking-[0.28em] text-[#5DD3E3]/70"
+              style={{ fontFamily: 'var(--font-mono), monospace' }}
+            >
+              // HIGHLIGHT_REEL
             </p>
-            <div className="relative aspect-video w-full bg-black">
+            <div
+              className="relative aspect-video w-full"
+              style={{ background: 'rgba(0,0,0,0.6)' }}
+            >
               <iframe
                 src={c.videoUrl}
                 className="absolute inset-0 w-full h-full"
@@ -170,16 +195,23 @@ export default async function CaseStudyPage({
 
         {/* ── Gallery placeholder ─────────────────────── */}
         <div className="mb-24">
-          <p className="font-label text-[#1A1A1A]/25 text-[0.625rem] mb-6 tracking-[0.2em]">
-            {'// GALLERY'}
+          <p
+            className="font-mono text-[10px] mb-6 tracking-[0.28em] text-[#5DD3E3]/70"
+            style={{ fontFamily: 'var(--font-mono), monospace' }}
+          >
+            // GALLERY
           </p>
-          <div className="grid grid-cols-2 md:grid-cols-3 gap-px bg-[rgba(0,0,0,0.06)]">
+          <div className="grid grid-cols-2 md:grid-cols-3 gap-px bg-[rgba(93,211,227,0.12)]">
             {Array.from({ length: 6 }).map((_, i) => (
               <div
                 key={i}
-                className="aspect-[4/3] bg-[#F7F5F2] flex items-center justify-center"
+                className="aspect-[4/3] flex items-center justify-center"
+                style={{ background: 'rgba(11, 16, 38, 0.5)' }}
               >
-                <span className="font-label text-[#1A1A1A]/10 text-[0.5rem]">
+                <span
+                  className="font-mono text-[9px] tracking-[0.28em] text-[#F0EDE6]/15"
+                  style={{ fontFamily: 'var(--font-mono), monospace' }}
+                >
                   PHOTO_{String(i + 1).padStart(2, '0')}
                 </span>
               </div>
@@ -203,7 +235,6 @@ export default async function CaseStudyPage({
   );
 }
 
-// ── OSER Section — one Objective / Strategy / Execution / Result block ──
 function OSERSection({
   num,
   label,
@@ -212,47 +243,49 @@ function OSERSection({
   isPending,
   children,
 }: {
-  num:        string;
-  label:      string;
-  heading:    string;
-  body:       string;
+  num: string;
+  label: string;
+  heading: string;
+  body: string;
   isPending?: boolean;
-  children?:  ReactNode;
+  children?: ReactNode;
 }) {
   return (
     <section className="grid grid-cols-1 md:grid-cols-[200px_1fr] gap-6 md:gap-16">
       <div>
         <p
-          className="font-label text-[#0891B2] text-[11px] tracking-[0.28em] uppercase mb-2"
-          style={{ textShadow: '0 0 0 transparent' }}
+          className="font-mono text-[10px] tracking-[0.28em] uppercase"
+          style={{
+            fontFamily: 'var(--font-mono), monospace',
+            color: '#E63E1F',
+          }}
         >
           [ {num} // {label} ]
         </p>
         <span
           aria-hidden
-          className="block w-10 h-px bg-[#0891B2]/40 mt-3"
+          className="block w-10 h-px mt-3"
+          style={{ background: 'rgba(93, 211, 227, 0.5)' }}
         />
       </div>
       <div>
         <h2
-          className="text-[#1A1A1A] text-[28px] md:text-[44px] lg:text-[55px] leading-[1.1] mb-8 max-w-3xl"
+          className="text-[#F0EDE6] text-[28px] md:text-[44px] lg:text-[52px] leading-[1.08] mb-8 max-w-3xl"
           style={{
-            fontFamily:          'var(--font-geist), "Chiron Sung HK WS", sans-serif',
-            fontWeight:          500,
-            letterSpacing:       '-0.015em',
-            WebkitFontSmoothing: 'antialiased',
+            fontFamily: 'var(--font-fraunces), "Noto Serif TC", serif',
+            fontWeight: 500,
+            letterSpacing: '-0.02em',
           }}
         >
           {heading}
         </h2>
         <p
           className={
-            'text-[15px] md:text-[17px] leading-[1.8] max-w-2xl whitespace-pre-line ' +
-            (isPending ? 'text-[#1A1A1A]/30 italic' : 'text-[#1A1A1A]/70')
+            'text-[15px] md:text-[17px] leading-[1.85] max-w-2xl whitespace-pre-line ' +
+            (isPending ? 'italic text-[#F0EDE6]/35' : 'text-[#F0EDE6]/75')
           }
           style={{
-            fontFamily:          'var(--font-geist), "Chiron Hei HK WS", sans-serif',
-            WebkitFontSmoothing: 'antialiased',
+            fontFamily: 'var(--font-noto-serif-tc), var(--font-fraunces), serif',
           }}
         >
           {body}
