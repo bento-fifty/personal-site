@@ -86,9 +86,9 @@ export default function Nav() {
             aria-label={menuOpen ? 'Close menu' : 'Open menu'}
             className={`md:hidden flex flex-col gap-[5px] w-5 ${text}`}
           >
-            <span className={`block h-px w-full transition-all ${isDark ? 'bg-white' : 'bg-[#141413]'} ${menuOpen ? 'rotate-45 translate-y-[6px]' : ''}`} />
-            <span className={`block h-px w-full transition-all ${isDark ? 'bg-white' : 'bg-[#141413]'} ${menuOpen ? 'opacity-0' : ''}`} />
-            <span className={`block h-px w-full transition-all ${isDark ? 'bg-white' : 'bg-[#141413]'} ${menuOpen ? '-rotate-45 -translate-y-[6px]' : ''}`} />
+            <span className={`block h-px w-full transition ${isDark ? 'bg-white' : 'bg-[#141413]'} ${menuOpen ? 'rotate-45 translate-y-[6px]' : ''}`} />
+            <span className={`block h-px w-full transition ${isDark ? 'bg-white' : 'bg-[#141413]'} ${menuOpen ? 'opacity-0' : ''}`} />
+            <span className={`block h-px w-full transition ${isDark ? 'bg-white' : 'bg-[#141413]'} ${menuOpen ? '-rotate-45 -translate-y-[6px]' : ''}`} />
           </button>
         </div>
       </div>

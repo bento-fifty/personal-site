@@ -75,7 +75,7 @@ export default function HomeMenuButton() {
               key={key}
               href={href}
               onClick={() => setOpen(false)}
-              className="group block py-2 text-center transition-all duration-200"
+              className="group block py-2 text-center transition duration-200"
               style={{
                 opacity: open ? 1 : 0,
                 transform: open ? 'translateY(0)' : 'translateY(-4px)',
@@ -83,7 +83,7 @@ export default function HomeMenuButton() {
               }}
             >
               <span
-                className="block transition-all duration-200 group-hover:tracking-[0.2em] group-hover:scale-[1.05]"
+                className="block transition duration-200 group-hover:tracking-[0.2em] group-hover:scale-[1.05]"
                 style={{
                   fontFamily: 'var(--font-heading), Georgia, serif',
                   fontSize: '15px',

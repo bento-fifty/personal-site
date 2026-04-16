@@ -78,6 +78,7 @@
 /* ── Base ─────────────────────────────────────────── */
 html {
   scroll-behavior: smooth;
+  color: var(--paper);
 }
 
 @media (prefers-reduced-motion: reduce) {

@@ -67,7 +67,7 @@ export default async function Footer() {
           >
             evanchang818@gmail.com
           </span>
-          <span className="text-[#888886] group-hover:text-[#818CF8] group-hover:translate-x-1 transition-all">&rarr;</span>
+          <span className="text-[#888886] group-hover:text-[#818CF8] group-hover:translate-x-1 transition">&rarr;</span>
         </a>
       </div>
 
