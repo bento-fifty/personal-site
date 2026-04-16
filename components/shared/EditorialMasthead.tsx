@@ -99,7 +99,9 @@ export default function EditorialMasthead() {
 
   const NAV = [
     { label: 'WORKS', href: `${localePrefix}/work` },
+    { label: 'SERVICES', href: `${localePrefix}/services` },
     { label: 'PROFILE', href: `${localePrefix}/about` },
+    { label: 'BLOG', href: `${localePrefix}/blog` },
     { label: 'CONTACT', href: `${localePrefix}/contact` },
   ];
 
@@ -143,7 +145,7 @@ export default function EditorialMasthead() {
           </Link>
 
           {/* Center: inline nav (desktop) */}
-          <nav className="hidden md:flex items-center gap-6 justify-self-center">
+          <nav className="hidden md:flex items-center gap-4 lg:gap-5 justify-self-center">
             {NAV.map((item) => {
               const active = isActiveRoute(item.href);
               return (

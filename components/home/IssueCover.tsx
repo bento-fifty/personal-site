@@ -22,7 +22,7 @@ export default function IssueCover({ locale }: Props) {
   return (
     <section
       className="relative w-full overflow-hidden"
-      style={{ height: 'calc(100dvh - 44px)', background: '#0B1026' }}
+      style={{ height: 'calc(100dvh - 44px)', background: 'transparent' }}
       aria-label="Issue Cover"
     >
       {/* Wireframe floor — white lines (stronger, ichiki direction) */}

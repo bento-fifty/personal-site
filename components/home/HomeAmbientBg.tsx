@@ -1,6 +1,17 @@
-// v8 stub — ambient canvas retired. About / Contact still import this while
-// they await M5 restyling; rendering null keeps them building without changing
-// their current layout.
+'use client';
+
+import ShaderCanvas from '@/components/lab/ShaderCanvas';
+import { dithered } from '@/components/lab/shaders';
+
 export default function HomeAmbientBg() {
-  return null;
+  return (
+    <div
+      aria-hidden
+      className="fixed inset-0 -z-10 pointer-events-none"
+      style={{ opacity: 0.55 }}
+    >
+      <ShaderCanvas frag={dithered} className="block w-full h-full" />
+      <div className="absolute inset-0 bg-[#080808]/30" />
+    </div>
+  );
 }
