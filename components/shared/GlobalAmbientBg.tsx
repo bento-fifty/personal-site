@@ -14,10 +14,8 @@ function variantFor(pathname: string): AmbientVariant {
   if (p === '/') return 'dithered';
   if (/^\/work\/[^/]+/.test(p)) return 'inkPool';
   if (p === '/work') return 'chrome';
-  if (p === '/about') return 'ember';
+  if (p === '/about') return 'obsidian';
   if (p === '/services') return 'emerald';
-  if (p === '/contact') return 'pulse';
-  if (/^\/blog(\/|$)/.test(p)) return 'ink';
   return 'dithered';
 }
 

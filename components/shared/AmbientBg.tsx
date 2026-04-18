@@ -9,6 +9,7 @@ import {
   blueprint as emeraldFerrofluid,
   pulse,
   ink,
+  obsidianPour,
 } from '@/components/lab/ambientShaders';
 
 export type AmbientVariant =
@@ -18,7 +19,8 @@ export type AmbientVariant =
   | 'ember'
   | 'emerald'
   | 'pulse'
-  | 'ink';
+  | 'ink'
+  | 'obsidian';
 
 const SHADER: Record<AmbientVariant, string> = {
   dithered,
@@ -28,6 +30,7 @@ const SHADER: Record<AmbientVariant, string> = {
   emerald: emeraldFerrofluid,
   pulse,
   ink,
+  obsidian: obsidianPour,
 };
 
 // Per-variant opacity + mask tuning so none overpowers content
@@ -39,6 +42,7 @@ const TUNE: Record<AmbientVariant, { opacity: number; mask: number }> = {
   emerald:  { opacity: 0.40, mask: 0.45 },
   pulse:    { opacity: 0.40, mask: 0.45 },
   ink:      { opacity: 0.45, mask: 0.4 },
+  obsidian: { opacity: 0.42, mask: 0.38 },
 };
 
 export default function AmbientBg({

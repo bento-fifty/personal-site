@@ -10,6 +10,8 @@ import EditorialFooter from '@/components/layout/EditorialFooter';
 import CursorChip from '@/components/shared/CursorChip';
 import RouteTransition from '@/components/shared/RouteTransition';
 import GlobalAmbientBg from '@/components/shared/GlobalAmbientBg';
+import { ContactComposeProvider } from '@/components/contact/ContactComposeContext';
+import ContactComposeWidget from '@/components/contact/ContactComposeWidget';
 import { Analytics } from '@vercel/analytics/next';
 import { SpeedInsights } from '@vercel/speed-insights/next';
 import '../globals.css';
@@ -89,12 +91,15 @@ export default async function LocaleLayout({
         <NextIntlClientProvider messages={messages}>
           <GlobalAmbientBg />
           <RouteTransition>
-            <EditorialMasthead />
-            <main className="flex-1 pt-11">
-              {children}
-            </main>
-            <EditorialFooter />
-            <CursorChip />
+            <ContactComposeProvider>
+              <EditorialMasthead />
+              <main className="flex-1 pt-11">
+                {children}
+              </main>
+              <EditorialFooter />
+              <CursorChip />
+              <ContactComposeWidget locale={locale as 'zh-TW' | 'en-US'} />
+            </ContactComposeProvider>
           </RouteTransition>
         </NextIntlClientProvider>
         <Analytics />

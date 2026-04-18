@@ -36,7 +36,6 @@ function getContextLabel(pathname: string): string {
   if (path === '/work') return 'ARCHIVE · 042 ENTRIES';
   if (path.startsWith('/work/')) return 'FEATURE · CASE FILE';
   if (path === '/about') return 'PRINCIPAL · EVAN CHANG';
-  if (path === '/contact') return 'CONTACT';
   if (path === '/services') return 'SERVICES';
   return path.toUpperCase().slice(1);
 }
@@ -101,8 +100,6 @@ export default function EditorialMasthead() {
     { label: 'WORKS', href: `${localePrefix}/work` },
     { label: 'SERVICES', href: `${localePrefix}/services` },
     { label: 'PROFILE', href: `${localePrefix}/about` },
-    { label: 'BLOG', href: `${localePrefix}/blog` },
-    { label: 'CONTACT', href: `${localePrefix}/contact` },
   ];
 
   const normalizedPath = (pathname || '/').replace(/^\/(zh-TW|en-US)/, '') || '/';

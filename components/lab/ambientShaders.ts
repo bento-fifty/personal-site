@@ -279,3 +279,210 @@ void main(){
   gl_FragColor = vec4(col, 1.0);
 }
 `;
+
+// ═══════════════════ PROFILE SHADER CANDIDATES (v2) ═══════════════════
+// All four push toward **liquid molten metal with environment-reflection** — the
+// reference look (Octane/Redshift melted chrome/gold). Shared recipe:
+//   1. height field (different noise structure per variant)
+//   2. normals via analytic derivative → strong Blinn specular pow(x, 60+)
+//   3. procedural env-map sampled by reflect(-V, N) for that "sky-in-metal"
+//   4. high contrast: near-black body + near-white spec + tinted rim
+// What changes per variant: height-field ALGORITHM (ridged / domain-warp /
+// directional-curl / sparse-ripple) and env-map PALETTE.
+
+// Shared env-map helper (procedural sky for reflection)
+const METAL_ENV = `
+vec3 sampleEnv(vec3 R, vec3 skyHi, vec3 skyMid, vec3 horizon, vec3 ground){
+  float y = R.y;
+  float sky   = smoothstep(0.0, 1.0, y);
+  float horiz = smoothstep(-0.15, 0.08, y) * (1.0 - sky);
+  float flr   = smoothstep(-0.6, -0.15, y) * (1.0 - horiz) * (1.0 - sky);
+  vec3 c = ground;
+  c = mix(c, horizon, flr);
+  c = mix(c, skyMid,  horiz);
+  c = mix(c, skyHi,   sky * sky);
+  return c;
+}
+`;
+
+// ── A · MOLTEN — ridged fbm + cool chrome env (liquid silver, the reference look) ──
+export const profileShatter = HEAD + METAL_ENV + `
+float ridgedA(vec2 p){
+  float v = 0.0, a = 0.5, f = 1.0;
+  for(int i=0;i<6;i++){
+    float n = noise(p * f);
+    n = 1.0 - abs(n * 2.0 - 1.0);
+    n = n * n;
+    v += a * n;
+    f *= 2.04; a *= 0.5;
+  }
+  return v;
+}
+void main(){
+  vec2 uv = gl_FragCoord.xy / u_res.xy;
+  float t = u_time * 0.035;
+  vec2 p = uv * 2.6 + vec2(t * 0.6, -t);
+  float h = ridgedA(p);
+  float e = 0.012;
+  float hx = ridgedA(p + vec2(e,0.0)) - ridgedA(p - vec2(e,0.0));
+  float hy = ridgedA(p + vec2(0.0,e)) - ridgedA(p - vec2(0.0,e));
+  vec3 N = normalize(vec3(-hx * 26.0, -hy * 26.0, 1.0));
+  vec3 V = vec3(0.0, 0.0, 1.0);
+  vec3 R = reflect(-V, N);
+
+  // CHROME env: deep sky blue → cool ice → hot white → warm horizon → shadow
+  vec3 env = sampleEnv(R,
+    vec3(0.75, 0.85, 1.00),   // sky hi (near-white ice)
+    vec3(0.18, 0.32, 0.52),   // sky mid (navy)
+    vec3(0.50, 0.35, 0.25),   // horizon (warm)
+    vec3(0.04, 0.05, 0.09));  // ground (night)
+
+  vec3 L = normalize(vec3(0.35, 0.6, 0.7));
+  float diff = max(0.0, dot(N, L));
+  float spec = pow(max(0.0, dot(reflect(-L, N), V)), 90.0);
+  float rim  = pow(1.0 - max(0.0, dot(N, V)), 2.8);
+
+  vec3 BODY = vec3(0.06, 0.08, 0.12);
+  vec3 col = BODY + env * 0.65;       // env reflection dominates
+  col = mix(col, col + vec3(0.12) * diff, 0.4);
+  col += vec3(1.0, 0.98, 0.92) * spec * 2.2;   // bright highlights (overshoot OK with clamp)
+  col += FLAME * rim * 0.12;
+  col = pow(col, vec3(0.92));
+  gl_FragColor = vec4(clamp(col, 0.0, 1.5), 1.0);
+}
+`;
+
+// ── B · POURED GOLD — domain-warped fbm + amber env (the gold reference) ──
+export const profileBrushed = HEAD + METAL_ENV + `
+float warpedB(vec2 p, float t){
+  vec2 q = vec2(fbm(p + vec2(0.0, t)), fbm(p + vec2(5.2, -t)));
+  vec2 r = vec2(fbm(p + q * 2.4 + vec2(1.7, 9.2) + t * 0.5),
+                fbm(p + q * 2.4 + vec2(8.3, 2.8) - t * 0.5));
+  return fbm(p + r * 2.0);
+}
+void main(){
+  vec2 uv = gl_FragCoord.xy / u_res.xy;
+  float t = u_time * 0.05;
+  vec2 p = uv * 1.8;
+  float h = warpedB(p, t);
+  float e = 0.014;
+  float hx = warpedB(p + vec2(e,0.0), t) - warpedB(p - vec2(e,0.0), t);
+  float hy = warpedB(p + vec2(0.0,e), t) - warpedB(p - vec2(0.0,e), t);
+  vec3 N = normalize(vec3(-hx * 32.0, -hy * 32.0, 1.0));
+  vec3 V = vec3(0.0, 0.0, 1.0);
+  vec3 R = reflect(-V, N);
+
+  // GOLD env: bright amber highlights, warm horizon, deep brown shadow
+  vec3 env = sampleEnv(R,
+    vec3(1.00, 0.88, 0.50),   // hot amber sky
+    vec3(0.75, 0.52, 0.18),   // honey
+    vec3(0.40, 0.20, 0.08),   // burnt sienna
+    vec3(0.06, 0.04, 0.02));  // deep brown
+
+  vec3 L = normalize(vec3(-0.3, 0.55, 0.75));
+  float diff = max(0.0, dot(N, L));
+  float spec = pow(max(0.0, dot(reflect(-L, N), V)), 70.0);
+
+  vec3 BODY = vec3(0.10, 0.06, 0.02);
+  vec3 col = BODY + env * 0.75;
+  col = mix(col, col * 1.15, diff * 0.6);
+  col += vec3(1.0, 0.95, 0.7) * spec * 2.4;
+  // deep shadow tone
+  col -= vec3(0.04, 0.03, 0.02) * (1.0 - diff);
+  col = pow(col, vec3(0.90));
+  gl_FragColor = vec4(clamp(col, 0.0, 1.5), 1.0);
+}
+`;
+
+// ── C · QUICKSILVER — directional curl flow + pewter env (sideways flowing metal) ──
+export const profileThinfilm = HEAD + METAL_ENV + `
+// directional-biased fbm (X axis flow dominates) + curl swirls
+float flowC(vec2 p, float t){
+  // stretch the X axis so noise forms horizontal streaks
+  vec2 q = vec2(p.x * 0.6 + t, p.y * 1.4);
+  float n1 = fbm(q);
+  // second layer, offset + opposite flow → creates swirls
+  vec2 q2 = vec2(p.x * 0.55 - t * 0.7, p.y * 1.2 + n1 * 0.8);
+  float n2 = fbm(q2);
+  return n1 * 0.6 + n2 * 0.5;
+}
+void main(){
+  vec2 uv = gl_FragCoord.xy / u_res.xy;
+  float t = u_time * 0.035;
+  vec2 p = uv * 2.2;
+  float h = flowC(p, t);
+  float e = 0.012;
+  float hx = flowC(p + vec2(e,0.0), t) - flowC(p - vec2(e,0.0), t);
+  float hy = flowC(p + vec2(0.0,e), t) - flowC(p - vec2(0.0,e), t);
+  vec3 N = normalize(vec3(-hx * 28.0, -hy * 28.0, 1.0));
+  vec3 V = vec3(0.0, 0.0, 1.0);
+  vec3 R = reflect(-V, N);
+
+  // QUICKSILVER env: neutral silver with flame-lit horizon
+  vec3 env = sampleEnv(R,
+    vec3(0.85, 0.88, 0.92),   // bright silver sky
+    vec3(0.40, 0.44, 0.50),   // pewter mid
+    vec3(0.55, 0.25, 0.15),   // flame-lit horizon
+    vec3(0.03, 0.04, 0.07));  // night
+
+  vec3 L = normalize(vec3(0.5, 0.4, 0.75));
+  float diff = max(0.0, dot(N, L));
+  float spec = pow(max(0.0, dot(reflect(-L, N), V)), 80.0);
+  float rim  = pow(1.0 - max(0.0, dot(N, V)), 2.5);
+
+  vec3 BODY = vec3(0.08, 0.09, 0.11);
+  vec3 col = BODY + env * 0.70;
+  col += vec3(1.0, 0.96, 0.90) * spec * 2.0;
+  col += FLAME * rim * 0.18;
+  col = pow(col, vec3(0.93));
+  gl_FragColor = vec4(clamp(col, 0.0, 1.5), 1.0);
+}
+`;
+
+// ── D · OBSIDIAN POUR — low-frequency smooth pour + ice sky env (dark + dramatic) ──
+export const profileRidged = HEAD + METAL_ENV + `
+// smooth large-scale domain warping → slow oily pour
+float pourD(vec2 p, float t){
+  vec2 q1 = vec2(fbm(p * 0.9 + vec2(0.0, t * 0.4)),
+                 fbm(p * 0.9 + vec2(2.1, -t * 0.3)));
+  // twice-warped → smoothest, softest ridges
+  vec2 q2 = vec2(fbm(p * 0.8 + q1 * 1.6 + vec2(t, 0.0)),
+                 fbm(p * 0.8 + q1 * 1.6 + vec2(0.0, -t)));
+  return fbm(p * 0.75 + q2 * 2.2);
+}
+void main(){
+  vec2 uv = gl_FragCoord.xy / u_res.xy;
+  float t = u_time * 0.04;
+  vec2 p = uv * 1.6;
+  float h = pourD(p, t);
+  float e = 0.016;
+  float hx = pourD(p + vec2(e,0.0), t) - pourD(p - vec2(e,0.0), t);
+  float hy = pourD(p + vec2(0.0,e), t) - pourD(p - vec2(0.0,e), t);
+  vec3 N = normalize(vec3(-hx * 40.0, -hy * 40.0, 1.0));
+  vec3 V = vec3(0.0, 0.0, 1.0);
+  vec3 R = reflect(-V, N);
+
+  // OBSIDIAN env: deep violet night + sharp ice highlights + crimson horizon
+  vec3 env = sampleEnv(R,
+    vec3(0.55, 0.68, 0.85),   // ice sky
+    vec3(0.18, 0.12, 0.32),   // violet night
+    vec3(0.45, 0.10, 0.08),   // crimson horizon
+    vec3(0.01, 0.02, 0.04));  // near-black
+
+  vec3 L = normalize(vec3(0.3, 0.5, 0.8));
+  float diff = max(0.0, dot(N, L));
+  float spec = pow(max(0.0, dot(reflect(-L, N), V)), 110.0);  // ultra-sharp
+  float rim  = pow(1.0 - max(0.0, dot(N, V)), 3.2);
+
+  // near-black body; what you see is almost entirely env + spec
+  vec3 BODY = vec3(0.02, 0.025, 0.05);
+  vec3 col = BODY + env * 0.50;
+  col += vec3(0.95, 0.98, 1.0) * spec * 2.6;
+  col += FLAME * rim * 0.22;
+  col = pow(col, vec3(0.95));
+  gl_FragColor = vec4(clamp(col, 0.0, 1.4), 1.0);
+}
+`;
+
+// PROFILE — QUICKSILVER (picked variant C for /about)
+export const obsidianPour = profileThinfilm;
