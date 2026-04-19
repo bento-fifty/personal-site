@@ -19,7 +19,7 @@ export default function ArchivePage({ locale }: Props) {
   const [activeType, setActiveType] = useState<EventType | 'ALL'>('ALL');
   const [activeYear, setActiveYear] = useState<number | 'ALL'>('ALL');
   const [expandedId, setExpandedId] = useState<string | null>(null);
-  const [viewMode, setViewMode] = useState<ViewMode>('bento');
+  const [viewMode, setViewMode] = useState<ViewMode>('list');
   const [spawnPos, setSpawnPos] = useState<{ x: number; y: number } | null>(null);
 
   const filtered = useMemo(() => {
