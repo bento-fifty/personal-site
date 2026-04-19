@@ -89,7 +89,7 @@ export default function ArchivePage({ locale }: Props) {
             </p>
             {/* View mode toggle */}
             <div className="flex gap-0" role="tablist" aria-label="View mode">
-              {(['bento', 'list', 'photo'] as ViewMode[]).map((m) => {
+              {(['list', 'bento', 'photo'] as ViewMode[]).map((m) => {
                 const active = viewMode === m;
                 return (
                   <button
