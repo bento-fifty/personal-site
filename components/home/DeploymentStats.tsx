@@ -3,6 +3,7 @@
 // Pure CASES derivation; server component.
 
 import { CASES } from '@/lib/work-data';
+import type { LocationKey } from '@/lib/locations';
 
 interface Props {
   locale: 'zh-TW' | 'en-US';
@@ -20,7 +21,7 @@ export default function DeploymentStats({ locale }: Props) {
   const yearMax = years.length ? Math.max(...years) : 0;
 
   const cities = new Set(
-    CASES.map((c) => c.location).filter((l): l is string => Boolean(l)),
+    CASES.map((c) => c.location).filter((l): l is LocationKey => Boolean(l)),
   ).size;
 
   const stats = [
