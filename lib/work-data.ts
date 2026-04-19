@@ -45,6 +45,14 @@ export interface Case {
   clusterLayout: ClusterLayout;
   featured: boolean;
 
+  // Dossier Spine — optional redaction / declass metadata
+  confidential?: {
+    client?: boolean;    // redact client name in RedactionBar
+    budget?: boolean;    // redact budget fields
+    fields?: string[];   // extra custom field keys to redact
+  };
+  declassifiedAt?: string;   // ISO year+quarter, e.g. "2027.Q1"
+
   // Legacy compat (older code paths still reference these)
   type?: EventType;
   date?: string;
