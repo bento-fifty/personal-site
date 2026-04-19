@@ -34,7 +34,7 @@ Evan 的診斷：**缺結構骨（共用 skeleton）+ 缺敘事骨（這個 site
 | `/work` | § 02 · CASE ARCHIVE | 全 files 索引（bento / list / photo 三檢視），每筆含 [DECLASSIFIED] tag / CLEARANCE / 結案日 |
 | `/work/[slug]` | § 02.xx · CASE FILE | OSER → **BRIEF · OPS · EXECUTION · POST-ACTION**，敏感欄位走 RedactionBar |
 | `/services` | APPENDIX B · FIELD KIT | 現有 Rigs. 表格，套 appendix 外殼 |
-| `/blog` | § 03 · TRANSMISSION LOG | 時間序訊號紀錄（現行設計對齊 spine 即可） |
+| `/blog` | § 03 · TRANSMISSION LOG | **預留 section slot**。bc508ff 拔掉獨立 route 後目前未 reintroduce。`07` section 計數保留此位，pageConfig 不 map 實路由。未來 reintroduce 再套 DossierHeader |
 | contact widget | REQUEST CHANNEL | ContactComposeWidget 維持浮動，外殼文案換「request for comms · channel open」 |
 
 ### 3.2 共用 Spine Chrome
@@ -45,11 +45,9 @@ Evan 的診斷：**缺結構骨（共用 skeleton）+ 缺敘事骨（這個 site
 - 下左：`§ [sectionIndex] · [SECTION NAME]`
 - 下右：`CLEARANCE · A`
 
-**DossierFooter**（replace 現有 EditorialFooter）
-- 上：`— END OF SECTION —`
-- 中：`[DECLASSIFIED 年.Q]` stamp（可旋轉 -4 到 -6deg）
-- 下左：`TX · [ISO timestamp]`
-- 下右：`PG [sectionIndex] / 07`
+**DossierFooter**（replace 現有 EditorialFooter，**必須保留既有 COPY EMAIL + AVAILABLE pulse 功能**）
+- 上列 · dossier chrome：`— END OF SECTION —` / `[DECLASSIFIED 年.Q]` stamp（-4 到 -6deg 傾斜） / `PG [sectionIndex] / 07`
+- 下列 · 繼承 EditorialFooter：`● AVAILABLE for Q2·Q3 2026` (ice dot pulse) / email copy button (hover reveal `[ ▸ COPY ]`, click copied `[ ✓ COPIED ]`) / `TX · [ISO timestamp]` / `TPE · [year]`
 
 **數字系統說明**
 - `caseTotal` = `CASES.length`（動態）。`caseId` 依頁：`/work/[slug]` 顯示該 case 的 3-digit id（e.g. `019`）；非 case 頁顯示該 section 的代號（e.g. `/about` = `GEN-01`，`/services` = `APX-B`）。具體每頁 `caseId` / `sectionIndex` / `sectionName` 三值對應表在 implementation plan 中 lock。
@@ -142,7 +140,7 @@ declassifiedAt?: string;  // ISO 年.Q, e.g. "2027.Q1"
 3. `/work/[slug]` 的 4 節是 BRIEF / OPS / EXECUTION / POST-ACTION，不是 OSER
 4. 至少一個 case 的客戶 / 預算欄位套 RedactionBar、hover 可 decrypt reveal
 5. Build 通過（`npm run build`），Lint 通過（`npm run lint`）
-6. Playwright 巡 6 個主要 route（`/`、`/about`、`/work`、`/work/[首筆 slug]`、`/services`、`/blog`）+ contact widget 開關狀態，截圖無 spine 重疊 / 文字穿透 / 不可見元素
+6. Playwright 巡 5 個現存 route（`/`、`/about`、`/work`、`/work/[首筆 slug]`、`/services`）+ contact widget 開關狀態，截圖無 spine 重疊 / 文字穿透 / 不可見元素
 
 ## 10. Risks
 
