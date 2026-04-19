@@ -6,7 +6,8 @@ import {getMessages} from 'next-intl/server';
 import {Geist, Fraunces, Noto_Serif_TC, Noto_Sans_TC} from 'next/font/google';
 import localFont from 'next/font/local';
 import EditorialMasthead from '@/components/shared/EditorialMasthead';
-import EditorialFooter from '@/components/layout/EditorialFooter';
+import DossierFooter from '@/components/dossier/DossierFooter';
+import DossierHeader from '@/components/dossier/DossierHeader';
 import CursorChip from '@/components/shared/CursorChip';
 import RouteTransition from '@/components/shared/RouteTransition';
 import GlobalAmbientBg from '@/components/shared/GlobalAmbientBg';
@@ -94,9 +95,10 @@ export default async function LocaleLayout({
             <ContactComposeProvider>
               <EditorialMasthead />
               <main className="flex-1 pt-11">
+                <DossierHeader />
                 {children}
               </main>
-              <EditorialFooter />
+              <DossierFooter />
               <CursorChip />
               <ContactComposeWidget locale={locale as 'zh-TW' | 'en-US'} />
             </ContactComposeProvider>
