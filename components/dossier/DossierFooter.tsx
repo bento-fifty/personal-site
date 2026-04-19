@@ -21,13 +21,13 @@ export default function DossierFooter() {
   const [hovering, setHovering] = useState(false);
   const [txNow, setTxNow] = useState('');
 
-  // eslint-disable-next-line react-hooks/set-state-in-effect
   useEffect(() => {
     // Compute TX timestamp on client only to avoid SSR/hydration mismatch.
     const iso = new Date()
       .toISOString()
       .replace('T', ' ')
       .slice(0, 19);
+    // eslint-disable-next-line react-hooks/set-state-in-effect
     setTxNow(iso);
   }, []);
 
