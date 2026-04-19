@@ -1,6 +1,7 @@
 // components/home/LatestTransmission.tsx
-// Typewriter reveal + spring-in DECLASSIFIED stamp on scroll intersect.
-// Flame caret blinks while typing; stamp overshoots then settles at -6deg.
+// Editorial-minimal transmission. Full-viewport, one giant Fraunces serif line
+// as hero statement, small mono TX timestamp + label floating in upper-left.
+// No card wrapper, no box — just typography in negative space.
 'use client';
 
 import { useEffect, useRef, useState } from 'react';
@@ -11,161 +12,120 @@ interface Props {
 
 const SIGNAL = {
   ts: '2026.04.19 22:40',
-  lineZh: 'Stage 1 dossier spine 已部署 — header / footer / chrome 統一',
-  lineEn: 'Stage 1 dossier spine deployed — header / footer / chrome unified',
+  // Deliberately editorial — same cadence as dialect/ichiki heroes.
+  lineZh: '做一場活動的意義，在結案後還被人記得多久。',
+  lineEn: 'An event is only worth what people remember of it a year later.',
+  sourceZh: '— TRANSMISSION Nº 17 · EDITOR’S SIGNAL',
+  sourceEn: '— Transmission №17 · Editor’s signal',
 };
 
 export default function LatestTransmission({ locale }: Props) {
   const zh = locale === 'zh-TW';
   const fullLine = zh ? SIGNAL.lineZh : SIGNAL.lineEn;
-
-  const [typed, setTyped] = useState('');
-  const [stamped, setStamped] = useState(false);
+  const [revealed, setRevealed] = useState(false);
   const ref = useRef<HTMLElement>(null);
-  const startedRef = useRef(false);
-  const doneTypingRef = useRef(false);
 
   useEffect(() => {
     const reducedMotion =
       window.matchMedia?.('(prefers-reduced-motion: reduce)').matches ?? false;
     if (reducedMotion) {
       // eslint-disable-next-line react-hooks/set-state-in-effect
-      setTyped(fullLine);
-      // eslint-disable-next-line react-hooks/set-state-in-effect
-      setStamped(true);
+      setRevealed(true);
       return;
     }
     if (!ref.current) return;
     const el = ref.current;
-    let typeId: ReturnType<typeof setInterval> | null = null;
-    let stampTimeoutId: ReturnType<typeof setTimeout> | null = null;
-
     const io = new IntersectionObserver(
       ([entry]) => {
-        if (entry.isIntersecting && !startedRef.current) {
-          startedRef.current = true;
-          let i = 0;
-          typeId = setInterval(() => {
-            i += 1;
-            setTyped(fullLine.slice(0, i));
-            if (i >= fullLine.length) {
-              if (typeId) clearInterval(typeId);
-              doneTypingRef.current = true;
-              stampTimeoutId = setTimeout(() => setStamped(true), 180);
-            }
-          }, 38);
+        if (entry.isIntersecting) {
+          setRevealed(true);
           io.disconnect();
         }
       },
-      { threshold: 0.45 },
+      { threshold: 0.35 },
     );
     io.observe(el);
-    return () => {
-      io.disconnect();
-      if (typeId) clearInterval(typeId);
-      if (stampTimeoutId) clearTimeout(stampTimeoutId);
-    };
-  }, [fullLine]);
+    return () => io.disconnect();
+  }, []);
 
-  const showCaret = typed.length < fullLine.length;
+  // Split into words; each word fades up with a stagger.
+  const words = fullLine.split(/(\s+)/);
 
   return (
     <section
       ref={ref}
       aria-label="Latest transmission"
-      className="px-5 md:px-8 py-16"
-      style={{ background: 'transparent' }}
+      className="relative px-6 md:px-16"
+      style={{
+        minHeight: '88vh',
+        background: 'transparent',
+        display: 'flex',
+        alignItems: 'center',
+      }}
     >
-      <style>{`
-        @keyframes tx-caret-blink {
-          0%, 55% { opacity: 1; }
-          56%, 100% { opacity: 0; }
-        }
-        @keyframes stamp-press {
-          0%   { transform: rotate(-6deg) scale(1); }
-          50%  { transform: rotate(-6deg) scale(0.93); }
-          100% { transform: rotate(-6deg) scale(1); }
-        }
-      `}</style>
-      <div className="max-w-5xl mx-auto">
-        <p
-          className="mb-6 text-[10px] tracking-[0.3em] uppercase"
-          style={{
-            fontFamily: 'var(--font-mono), monospace',
-            color: 'rgba(250,250,248,0.45)',
-          }}
-        >
-          § 03 · LATEST TRANSMISSION
-        </p>
+      <div className="w-full max-w-[1200px] mx-auto">
+        {/* Top meta — absolute corner floating */}
         <div
-          className="relative flex flex-col md:flex-row md:items-baseline gap-3 md:gap-6 py-6 px-5 md:px-6 group"
-          style={{
-            border: '1px solid rgba(250,250,248,0.12)',
-            background: 'rgba(11,16,38,0.35)',
-          }}
+          className="flex items-baseline gap-3 mb-10 md:mb-14"
+          style={{ fontFamily: 'var(--font-mono), monospace' }}
         >
           <span
-            className="text-[10px] tracking-[0.28em] uppercase whitespace-nowrap"
-            style={{
-              fontFamily: 'var(--font-mono), monospace',
-              color: '#5DD3E3',
-            }}
+            className="text-[10px] tracking-[0.4em] uppercase"
+            style={{ color: '#5DD3E3' }}
+          >
+            § 03 · TRANSMISSION
+          </span>
+          <span aria-hidden style={{ color: 'rgba(250,250,248,0.2)' }}>/</span>
+          <span
+            className="text-[10px] tracking-[0.3em] uppercase"
+            style={{ color: 'rgba(250,250,248,0.55)' }}
           >
             TX · {SIGNAL.ts}
           </span>
-
-          <span
-            className="flex-1 text-[14px] md:text-[16px]"
-            style={{
-              fontFamily: 'var(--font-noto-serif-tc), var(--font-fraunces), serif',
-              color: 'rgba(250,250,248,0.88)',
-              lineHeight: 1.6,
-              minHeight: '1.6em',
-            }}
-            aria-label={fullLine}
-          >
-            {typed}
-            {showCaret && (
-              <span
-                aria-hidden
-                style={{
-                  display: 'inline-block',
-                  width: '0.55em',
-                  height: '1em',
-                  background: '#E63E1F',
-                  marginLeft: 2,
-                  verticalAlign: 'text-bottom',
-                  animation: 'tx-caret-blink 0.85s steps(1) infinite',
-                }}
-              />
-            )}
-          </span>
-
-          <span
-            aria-label="DECLASSIFIED 2027.Q1"
-            className="group-hover:animate-[stamp-press_0.35s_ease-out]"
-            style={{
-              display: 'inline-block',
-              border: '1.5px solid #E63E1F',
-              color: '#E63E1F',
-              padding: '3px 9px',
-              fontFamily: 'var(--font-mono), monospace',
-              fontSize: 9,
-              letterSpacing: '0.3em',
-              fontWeight: 700,
-              textTransform: 'uppercase',
-              whiteSpace: 'nowrap',
-              transform: stamped
-                ? 'rotate(-6deg) scale(1)'
-                : 'rotate(-22deg) scale(0.3)',
-              opacity: stamped ? 1 : 0,
-              transition:
-                'transform 0.5s cubic-bezier(0.34, 1.56, 0.64, 1), opacity 0.28s ease-out',
-            }}
-          >
-            Declassified 2027.Q1
-          </span>
         </div>
+
+        {/* Giant serif statement */}
+        <p
+          className="max-w-[22ch]"
+          style={{
+            fontFamily: 'var(--font-fraunces), var(--font-noto-serif-tc), serif',
+            color: '#FAFAF8',
+            fontWeight: 400,
+            fontSize: 'clamp(40px, 6.5vw, 104px)',
+            letterSpacing: '-0.025em',
+            lineHeight: 1.02,
+          }}
+        >
+          {words.map((w, i) => (
+            <span
+              key={i}
+              style={{
+                display: 'inline-block',
+                opacity: revealed ? 1 : 0,
+                transform: revealed ? 'translateY(0)' : 'translateY(24px)',
+                transition: `opacity 700ms cubic-bezier(0.22, 1, 0.36, 1) ${i * 40}ms, transform 800ms cubic-bezier(0.22, 1, 0.36, 1) ${i * 40}ms`,
+                whiteSpace: 'pre',
+              }}
+            >
+              {w}
+            </span>
+          ))}
+        </p>
+
+        {/* Signature */}
+        <p
+          className="mt-14 text-[10px] tracking-[0.3em] uppercase"
+          style={{
+            fontFamily: 'var(--font-mono), monospace',
+            color: '#E63E1F',
+            opacity: revealed ? 1 : 0,
+            transform: revealed ? 'translateY(0)' : 'translateY(12px)',
+            transition:
+              'opacity 700ms cubic-bezier(0.22, 1, 0.36, 1) 800ms, transform 700ms cubic-bezier(0.22, 1, 0.36, 1) 800ms',
+          }}
+        >
+          {zh ? SIGNAL.sourceZh : SIGNAL.sourceEn}
+        </p>
       </div>
     </section>
   );

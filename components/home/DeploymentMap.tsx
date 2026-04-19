@@ -1,7 +1,9 @@
 // components/home/DeploymentMap.tsx
-// Taiwan map w/ REDACTED pin labels. Hover decrypts city name (GlitchText).
-// Click a pin → fold-down folder card on the side panel listing that city's
-// cases, paper-color manila file aesthetic. Pulsing flame pin rings.
+// Editorial-minimal Taiwan deployment map. No side-panel cards, no chrome
+// noise. Giant Fraunces section title. Map on the left, dossier-list of
+// cities on the right with REDACTED labels that decrypt on hover via
+// GlitchText. Clicking a city swaps the right panel for that city's case
+// list — no fold-down card wrapper, just a clean editorial block swap.
 'use client';
 
 import { useMemo, useState } from 'react';
@@ -55,52 +57,82 @@ export default function DeploymentMap({ locale }: Props) {
 
   const activeGroup = groups.find((g) => g.key === activeKey) ?? null;
   const totalPlotted = groups.reduce((s, g) => s + g.count, 0);
-  const revealed = (k: LocationKey) => k === hoveredKey || k === activeKey;
 
   return (
     <section
       aria-label="Deployment map"
-      className="px-5 md:px-8 py-20 md:py-24"
-      style={{ background: 'transparent' }}
+      className="relative px-6 md:px-16"
+      style={{
+        minHeight: '100vh',
+        background: 'transparent',
+        display: 'flex',
+        flexDirection: 'column',
+        justifyContent: 'center',
+        paddingTop: '10vh',
+        paddingBottom: '10vh',
+      }}
     >
-      <div className="max-w-5xl mx-auto">
-        <div className="flex items-baseline flex-wrap gap-3 mb-10">
-          <p
-            className="text-[10px] tracking-[0.3em] uppercase"
-            style={{
-              fontFamily: 'var(--font-mono), monospace',
-              color: 'rgba(250,250,248,0.45)',
-            }}
+      <div className="w-full max-w-[1400px] mx-auto">
+        {/* Section meta row */}
+        <div
+          className="flex items-baseline gap-4 flex-wrap mb-10"
+          style={{ fontFamily: 'var(--font-mono), monospace' }}
+        >
+          <span
+            className="text-[10px] tracking-[0.4em] uppercase"
+            style={{ color: '#5DD3E3' }}
           >
-            § DEPLOYMENT MAP · TW
-          </p>
+            § 05 · DEPLOYMENT MAP
+          </span>
           <span aria-hidden style={{ color: 'rgba(250,250,248,0.2)' }}>/</span>
-          <p
+          <span
             className="text-[10px] tracking-[0.3em] uppercase"
-            style={{
-              fontFamily: 'var(--font-mono), monospace',
-              color: 'rgba(93,211,227,0.7)',
-            }}
+            style={{ color: 'rgba(250,250,248,0.5)' }}
           >
-            {String(totalPlotted).padStart(3, '0')} PINS · {groups.length} CITIES
-          </p>
+            TPE · TW
+          </span>
           <span aria-hidden style={{ color: 'rgba(250,250,248,0.2)' }}>/</span>
-          <p
+          <span
             className="text-[10px] tracking-[0.3em] uppercase"
-            style={{
-              fontFamily: 'var(--font-mono), monospace',
-              color: 'rgba(250,250,248,0.35)',
-            }}
+            style={{ color: 'rgba(250,250,248,0.35)' }}
           >
-            {zh ? '懸停 · 解密 · 點擊 · 開檔' : 'Hover decrypt · Click open'}
-          </p>
+            {String(totalPlotted).padStart(3, '0')} pins · {groups.length} cities
+          </span>
         </div>
 
-        <div className="grid grid-cols-1 md:grid-cols-[1fr_300px] gap-10 md:gap-14 items-start">
-          {/* Map container — SVG + HTML pin-label overlay */}
+        {/* Editorial title */}
+        <h2
+          className="max-w-[18ch] mb-16 md:mb-20"
+          style={{
+            fontFamily: 'var(--font-fraunces), var(--font-noto-serif-tc), serif',
+            color: '#FAFAF8',
+            fontWeight: 400,
+            fontSize: 'clamp(48px, 7vw, 120px)',
+            letterSpacing: '-0.035em',
+            lineHeight: 0.95,
+          }}
+        >
+          {zh ? (
+            <>
+              我們降落過的
+              <br />
+              每一個座標。
+            </>
+          ) : (
+            <>
+              Every coordinate we’ve
+              <br />
+              actually touched down on.
+            </>
+          )}
+        </h2>
+
+        {/* Map + Content */}
+        <div className="grid grid-cols-1 md:grid-cols-[minmax(280px,380px)_1fr] gap-12 md:gap-20 items-start">
+          {/* Map — larger, editorial */}
           <div
-            className="relative mx-auto w-full"
-            style={{ aspectRatio: '400 / 800', maxWidth: 420 }}
+            className="relative w-full"
+            style={{ aspectRatio: '400 / 800', maxWidth: 380 }}
           >
             <svg
               viewBox="0 0 400 800"
@@ -110,129 +142,49 @@ export default function DeploymentMap({ locale }: Props) {
             >
               <path
                 d={TAIWAN_OUTLINE_PATH}
-                fill="rgba(11,16,38,0.5)"
-                stroke="rgba(93,211,227,0.35)"
-                strokeWidth={1.5}
+                fill="rgba(250,250,248,0.03)"
+                stroke="rgba(250,250,248,0.4)"
+                strokeWidth={1}
               />
               {groups.map((g) => {
-                const r = Math.max(5, Math.min(10, 5 + g.count * 1.4));
-                const rMax = Math.max(14, Math.min(28, 12 + g.count * 3));
+                const r = Math.max(6, Math.min(12, 6 + g.count * 1.6));
+                const rMax = Math.max(18, Math.min(36, 16 + g.count * 4));
                 const active = g.key === activeKey;
+                const dim = !!activeKey && !active;
                 return (
-                  <g key={g.key}>
+                  <g key={g.key} style={{ opacity: dim ? 0.3 : 1, transition: 'opacity 240ms' }}>
                     <circle cx={g.x} cy={g.y} r={r} fill="none" stroke="#E63E1F" strokeWidth={1}>
                       <animate attributeName="r" from={r} to={rMax} dur="2.4s" repeatCount="indefinite" />
-                      <animate attributeName="opacity" from="0.55" to="0" dur="2.4s" repeatCount="indefinite" />
+                      <animate attributeName="opacity" from="0.5" to="0" dur="2.4s" repeatCount="indefinite" />
                     </circle>
                     <circle
                       cx={g.x}
                       cy={g.y}
                       r={r}
                       fill={active ? '#5DD3E3' : '#E63E1F'}
-                      fillOpacity={0.9}
-                    />
-                    <rect
-                      x={g.x - r - 4}
-                      y={g.y - r - 4}
-                      width={(r + 4) * 2}
-                      height={(r + 4) * 2}
-                      fill="none"
-                      stroke={active ? '#5DD3E3' : 'rgba(230,62,31,0.35)'}
-                      strokeWidth={1}
                     />
                   </g>
                 );
               })}
             </svg>
-
-            {/* Interactive HTML pin labels positioned via viewBox percent */}
-            {groups.map((g) => {
-              const isRevealed = revealed(g.key);
-              const isActive = g.key === activeKey;
-              const label = zh ? g.labelZh : g.labelEn;
-              return (
-                <button
-                  key={g.key}
-                  type="button"
-                  onMouseEnter={() => setHoveredKey(g.key)}
-                  onMouseLeave={() => setHoveredKey(null)}
-                  onClick={() => setActiveKey((k) => (k === g.key ? null : g.key))}
-                  data-cursor={isActive ? '✕ CLOSE' : '▸ OPEN FILES'}
-                  data-cursor-variant="action"
-                  aria-label={`${g.labelEn} · ${g.count} files`}
-                  className="absolute flex items-center gap-2"
-                  style={{
-                    left: `${(g.x / 400) * 100}%`,
-                    top: `${(g.y / 800) * 100}%`,
-                    transform: 'translate(4%, -50%)',
-                    fontFamily: 'var(--font-mono), monospace',
-                    background: 'transparent',
-                    border: 'none',
-                    cursor: 'pointer',
-                    padding: 0,
-                    whiteSpace: 'nowrap',
-                  }}
-                >
-                  <span
-                    style={{
-                      fontSize: 13,
-                      letterSpacing: '0.15em',
-                      textTransform: 'uppercase',
-                      color: isRevealed ? 'rgba(250,250,248,0.92)' : 'transparent',
-                      background: isRevealed ? 'transparent' : '#0B1026',
-                      padding: '1px 6px',
-                      transition: 'color 120ms, background 120ms',
-                      borderBottom: isActive ? '1px solid #5DD3E3' : '1px solid transparent',
-                    }}
-                  >
-                    {isRevealed ? (
-                      <GlitchText
-                        text={label}
-                        trigger={g.key + (isActive ? '-a' : '-h')}
-                        speed={18}
-                      />
-                    ) : (
-                      '\u2588'.repeat(Math.max(5, label.length))
-                    )}
-                  </span>
-                  <span
-                    style={{
-                      fontSize: 9,
-                      letterSpacing: '0.28em',
-                      color: isRevealed ? '#5DD3E3' : 'rgba(93,211,227,0.4)',
-                    }}
-                  >
-                    × {g.count}
-                  </span>
-                </button>
-              );
-            })}
           </div>
 
-          {/* Side panel — fold folder card on active city */}
-          <div className="min-h-[200px]">
+          {/* Right panel — list or active city detail */}
+          <div>
             {activeGroup ? (
-              <FoldCard
-                key={activeGroup.key}
+              <CityDetail
                 group={activeGroup}
                 zh={zh}
                 onClose={() => setActiveKey(null)}
               />
             ) : (
-              <div
-                className="text-[10px] tracking-[0.25em] uppercase"
-                style={{
-                  fontFamily: 'var(--font-mono), monospace',
-                  color: 'rgba(250,250,248,0.35)',
-                  lineHeight: 1.8,
-                }}
-              >
-                [ WAITING FOR TARGET ]
-                <br />
-                {zh
-                  ? '點擊地圖上任一城市以解密檔案'
-                  : 'Click any city to decrypt files.'}
-              </div>
+              <CityList
+                groups={groups}
+                zh={zh}
+                hoveredKey={hoveredKey}
+                onHover={setHoveredKey}
+                onSelect={(k) => setActiveKey(k)}
+              />
             )}
           </div>
         </div>
@@ -241,7 +193,112 @@ export default function DeploymentMap({ locale }: Props) {
   );
 }
 
-function FoldCard({
+function CityList({
+  groups,
+  zh,
+  hoveredKey,
+  onHover,
+  onSelect,
+}: {
+  groups: PinGroup[];
+  zh: boolean;
+  hoveredKey: LocationKey | null;
+  onHover: (k: LocationKey | null) => void;
+  onSelect: (k: LocationKey) => void;
+}) {
+  return (
+    <div>
+      <p
+        className="mb-8 text-[10px] tracking-[0.4em] uppercase"
+        style={{
+          fontFamily: 'var(--font-mono), monospace',
+          color: 'rgba(250,250,248,0.5)',
+        }}
+      >
+        [ REDACTED UNTIL HOVERED ]
+      </p>
+      <ul className="flex flex-col">
+        {groups.map((g, i) => {
+          const isHovered = g.key === hoveredKey;
+          const label = zh ? g.labelZh : g.labelEn;
+          return (
+            <li
+              key={g.key}
+              className="group"
+              onMouseEnter={() => onHover(g.key)}
+              onMouseLeave={() => onHover(null)}
+            >
+              <button
+                type="button"
+                onClick={() => onSelect(g.key)}
+                data-cursor="▸ OPEN FILES"
+                data-cursor-variant="action"
+                className="w-full flex items-baseline gap-6 py-5"
+                style={{
+                  background: 'transparent',
+                  border: 'none',
+                  borderTop:
+                    i === 0
+                      ? '1px solid rgba(250,250,248,0.12)'
+                      : '1px solid transparent',
+                  borderBottom: '1px solid rgba(250,250,248,0.12)',
+                  cursor: 'pointer',
+                  padding: '20px 0',
+                  textAlign: 'left',
+                  color: 'inherit',
+                  transition: 'background 200ms ease-out',
+                }}
+              >
+                <span
+                  className="text-[11px] tracking-[0.3em] uppercase w-[52px] shrink-0"
+                  style={{
+                    fontFamily: 'var(--font-mono), monospace',
+                    color: isHovered ? '#E63E1F' : 'rgba(250,250,248,0.4)',
+                    transition: 'color 200ms',
+                  }}
+                >
+                  {String(i + 1).padStart(2, '0')}
+                </span>
+                <span
+                  className="flex-1"
+                  style={{
+                    fontFamily:
+                      'var(--font-fraunces), var(--font-noto-serif-tc), serif',
+                    fontSize: 'clamp(28px, 3.5vw, 48px)',
+                    fontWeight: 400,
+                    letterSpacing: '-0.02em',
+                    lineHeight: 1,
+                    color: isHovered ? '#FAFAF8' : 'rgba(250,250,248,0.2)',
+                    transition: 'color 220ms ease-out',
+                    textTransform: 'none',
+                  }}
+                >
+                  {isHovered ? (
+                    <GlitchText text={label} trigger={g.key} speed={20} />
+                  ) : (
+                    '\u2588'.repeat(Math.max(6, label.length * 2))
+                  )}
+                </span>
+                <span
+                  className="text-[11px] tracking-[0.3em] uppercase shrink-0"
+                  style={{
+                    fontFamily: 'var(--font-mono), monospace',
+                    color: isHovered ? '#5DD3E3' : 'rgba(250,250,248,0.35)',
+                    transition: 'color 200ms',
+                  }}
+                >
+                  × {String(g.count).padStart(2, '0')}
+                </span>
+              </button>
+            </li>
+          );
+        })}
+      </ul>
+    </div>
+  );
+}
+
+function CityDetail({
   group,
   zh,
   onClose,
@@ -251,115 +308,112 @@ function FoldCard({
   onClose: () => void;
 }) {
   return (
-    <>
-      <style>{`
-        @keyframes fold-down {
-          0%   { transform: scaleY(0.02); opacity: 0; }
-          60%  { opacity: 1; }
-          100% { transform: scaleY(1); opacity: 1; }
-        }
-      `}</style>
+    <div>
       <div
-        className="relative overflow-hidden"
+        className="flex items-baseline flex-wrap gap-4 mb-8"
+        style={{ fontFamily: 'var(--font-mono), monospace' }}
+      >
+        <button
+          type="button"
+          onClick={onClose}
+          className="text-[10px] tracking-[0.3em] uppercase"
+          style={{
+            background: 'transparent',
+            border: 'none',
+            padding: 0,
+            cursor: 'pointer',
+            color: 'rgba(250,250,248,0.5)',
+          }}
+          aria-label="Back to all cities"
+        >
+          ← BACK
+        </button>
+        <span aria-hidden style={{ color: 'rgba(250,250,248,0.2)' }}>/</span>
+        <span
+          className="text-[10px] tracking-[0.3em] uppercase"
+          style={{ color: '#5DD3E3' }}
+        >
+          {group.count} FILES ON SITE
+        </span>
+      </div>
+
+      <h3
+        className="mb-10"
         style={{
-          animation: 'fold-down 0.55s cubic-bezier(0.22, 1, 0.36, 1) both',
-          transformOrigin: 'top',
-          background: '#F0EDE6',
-          color: '#0B1026',
-          border: '1px solid rgba(230,62,31,0.4)',
-          boxShadow: '0 14px 40px rgba(0,0,0,0.4)',
+          fontFamily: 'var(--font-fraunces), var(--font-noto-serif-tc), serif',
+          color: '#FAFAF8',
+          fontWeight: 400,
+          fontSize: 'clamp(56px, 7vw, 104px)',
+          letterSpacing: '-0.03em',
+          lineHeight: 1,
         }}
       >
-        <div
-          className="flex items-baseline gap-3 flex-wrap px-5 py-3"
-          style={{
-            background: 'rgba(230,62,31,0.08)',
-            borderBottom: '1px dashed rgba(230,62,31,0.35)',
-            fontFamily: 'var(--font-mono), monospace',
-          }}
-        >
-          <span style={{ fontSize: 9, letterSpacing: '0.3em', color: '#E63E1F' }}>
-            FOLDER · {group.labelEn.toUpperCase()}
-          </span>
-          <span aria-hidden style={{ color: 'rgba(11,16,38,0.25)' }}>·</span>
-          <span
-            style={{
-              fontSize: 9,
-              letterSpacing: '0.28em',
-              color: 'rgba(11,16,38,0.6)',
-            }}
-          >
-            {group.count} FILES
-          </span>
-          <button
-            type="button"
-            onClick={onClose}
-            aria-label="Close folder"
-            className="ml-auto"
-            style={{
-              background: 'transparent',
-              border: 'none',
-              cursor: 'pointer',
-              padding: 0,
-              fontSize: 9,
-              letterSpacing: '0.28em',
-              color: 'rgba(11,16,38,0.55)',
-            }}
-          >
-            [ ✕ ]
-          </button>
-        </div>
-        <ul className="px-5 py-4 flex flex-col">
-          {group.cases.map((c, i) => (
-            <li key={c.slug}>
-              <Link
-                href={`/work/${c.slug}`}
-                data-cursor="▸ OPEN FILE"
-                data-cursor-variant="action"
-                className="block py-2.5 px-1 hover:bg-[rgba(230,62,31,0.06)] transition-colors"
-                style={{ textDecoration: 'none', color: 'inherit' }}
+        <GlitchText
+          text={zh ? group.labelZh : group.labelEn}
+          trigger={`${group.key}-active`}
+          speed={22}
+        />
+      </h3>
+
+      <ul className="flex flex-col">
+        {group.cases.map((c, i) => (
+          <li key={c.slug}>
+            <Link
+              href={`/work/${c.slug}`}
+              data-cursor="▸ OPEN FILE"
+              data-cursor-variant="action"
+              className="block py-5"
+              style={{
+                textDecoration: 'none',
+                color: 'inherit',
+                borderTop:
+                  i === 0
+                    ? '1px solid rgba(250,250,248,0.12)'
+                    : 'none',
+                borderBottom: '1px solid rgba(250,250,248,0.12)',
+              }}
+            >
+              <div
+                className="flex items-baseline gap-4 mb-2"
+                style={{ fontFamily: 'var(--font-mono), monospace' }}
               >
-                <div
-                  className="flex items-baseline gap-2"
-                  style={{ fontFamily: 'var(--font-mono), monospace' }}
+                <span
+                  className="text-[10px] tracking-[0.3em] uppercase"
+                  style={{ color: '#E63E1F' }}
                 >
-                  <span style={{ fontSize: 9, letterSpacing: '0.3em', color: '#E63E1F' }}>
-                    CASE · {c.id}
-                  </span>
-                  <span aria-hidden style={{ color: 'rgba(11,16,38,0.2)' }}>/</span>
-                  <span
-                    style={{
-                      fontSize: 9,
-                      letterSpacing: '0.25em',
-                      color: 'rgba(11,16,38,0.55)',
-                    }}
-                  >
-                    {c.year}
-                  </span>
-                </div>
-                <p
-                  className="mt-1 text-[14px] leading-tight"
-                  style={{
-                    fontFamily: 'var(--font-fraunces), var(--font-noto-serif-tc), serif',
-                    color: 'rgba(11,16,38,0.9)',
-                  }}
+                  CASE · {c.id}
+                </span>
+                <span aria-hidden style={{ color: 'rgba(250,250,248,0.2)' }}>/</span>
+                <span
+                  className="text-[10px] tracking-[0.3em] uppercase"
+                  style={{ color: 'rgba(250,250,248,0.45)' }}
                 >
-                  {zh ? c.title : c.titleEn}
-                </p>
-              </Link>
-              {i < group.cases.length - 1 && (
-                <hr
-                  style={{
-                    border: 'none',
-                    borderTop: '1px dashed rgba(11,16,38,0.12)',
-                    margin: '2px 0',
-                  }}
-                />
-              )}
-            </li>
-          ))}
-        </ul>
-      </div>
-    </>
+                  {c.year}
+                </span>
+                <span aria-hidden style={{ color: 'rgba(250,250,248,0.2)' }}>/</span>
+                <span
+                  className="text-[10px] tracking-[0.3em] uppercase"
+                  style={{ color: 'rgba(250,250,248,0.45)' }}
+                >
+                  {c.client}
+                </span>
+              </div>
+              <p
+                className="text-[20px] md:text-[24px] leading-tight max-w-[42ch]"
+                style={{
+                  fontFamily:
+                    'var(--font-fraunces), var(--font-noto-serif-tc), serif',
+                  color: 'rgba(250,250,248,0.9)',
+                  fontWeight: 400,
+                  letterSpacing: '-0.01em',
+                }}
+              >
+                {zh ? c.title : c.titleEn}
+              </p>
+            </Link>
+          </li>
+        ))}
+      </ul>
+    </div>
   );
 }
