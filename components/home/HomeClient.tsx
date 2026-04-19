@@ -3,6 +3,10 @@
 import { useState, useCallback, useEffect } from 'react';
 import HookScreen from './HookScreen';
 import IssueCover from './IssueCover';
+import LatestTransmission from './LatestTransmission';
+import DeploymentStats from './DeploymentStats';
+import DeploymentMap from './DeploymentMap';
+import BrandMarquee from './BrandMarquee';
 import { useContactCompose } from '@/components/contact/ContactComposeContext';
 
 interface Props {
@@ -23,6 +27,10 @@ export default function HomeClient({ locale }: Props) {
   return (
     <>
       <IssueCover locale={locale} />
+      <LatestTransmission locale={locale} />
+      <DeploymentStats locale={locale} />
+      <DeploymentMap locale={locale} />
+      <BrandMarquee locale={locale} />
       {!entered && <HookScreen onEnter={handleEnter} />}
     </>
   );
